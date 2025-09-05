@@ -4,15 +4,19 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Overhaul · WDS</title>
-  <meta name="description" content="Overhaul — January 31–February 1, 2025." />
+  <meta name="description" content="Overhaul — January 31–February 1, 2025. Bright. Vibrant. Colourful. Minimalistic." />
   <link rel="icon" href="images/favicon.ico" />
   <link rel="stylesheet" href="assets/styles.css" />
+  <!-- Preload fonts (add files later in /assets/fonts/) -->
+  <link rel="preload" href="assets/fonts/Metropolis-Bold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/Metropolis-Regular.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
+  <!-- Header -->
   <header class="site-header">
     <div class="wrapper nav">
-      <a class="logo" href="#home">WDS</a>
-      <nav class="nav-links">
+      <a class="logo" href="#home" aria-label="WDS home">WDS</a>
+      <nav class="nav-links" aria-label="Primary">
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#testimonials">Testimonials</a>
@@ -23,13 +27,106 @@
   </header>
 
   <main id="home">
-    <section class="section hero" aria-label="Hero"></section>
-    <section id="about" class="section" aria-label="What is Overhaul"></section>
-    <section id="testimonials" class="section" aria-label="Testimonials"></section>
-    <section id="sponsors" class="section" aria-label="Sponsors"></section>
-    <section id="faq" class="section" aria-label="FAQ"></section>
+    <!-- HERO -->
+    <section class="hero section" aria-label="Hero">
+      <div class="hero-bg" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="hill hill-1"></div>
+        <div class="hill hill-2"></div>
+      </div>
+      <div class="wrapper hero-inner">
+        <p class="eyebrow">craft at</p>
+        <h1 class="h1">Overhaul</h1>
+        <p class="date">January 31 – February 1, 2025 · In-person event</p>
+        <a class="btn btn-primary" href="#" id="waitlist">Join Waitlist</a>
+      </div>
+    </section>
+
+    <!-- WHAT IS OVERHAUL -->
+    <section id="about" class="section about" aria-label="What is Overhaul">
+      <div class="wrapper about-grid">
+        <div class="about-copy">
+          <h2 class="h2">What is Overhaul</h2>
+          <p class="body-18">
+            Overhaul is a bright, vibrant, and minimalistic build weekend where hackers,
+            designers, and builders craft useful things together. Zero fluff. All signal.
+          </p>
+          <p class="body-16 dim">
+            Two days of hands-on learning, workshops, and building with the WDS community.
+            Join the waitlist to get early access to applications and updates.
+          </p>
+        </div>
+        <div class="tiles">
+          <div class="tile"></div>
+          <div class="tile"></div>
+          <div class="tile wide"></div>
+          <div class="tile"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="section testimonials" aria-label="Testimonials">
+      <div class="wrapper">
+        <h2 class="h2 light">Testimonials</h2>
+        <div id="testimonials-list" class="t-list">
+          <!-- Populated from content.json; fallback cards for first render -->
+          <article class="t-card">
+            <h3 class="h3">Hacker Name (pronouns)</h3>
+            <p class="body-16">“Loved the pace and the people. Walked away with a project and friends.”</p>
+          </article>
+          <article class="t-card">
+            <h3 class="h3">Hacker Name (pronouns)</h3>
+            <p class="body-16">“Workshops were actually useful. Felt like building, not lectures.”</p>
+          </article>
+        </div>
+      </div>
+      <div class="pond" aria-hidden="true">
+        <span class="bubble b1"></span>
+        <span class="bubble b2"></span>
+        <span class="bubble b3"></span>
+      </div>
+    </section>
+
+    <!-- SPONSORS -->
+    <section id="sponsors" class="section sponsors">
+      <div class="wrapper center">
+        <h2 class="h2">Want to Sponsor?</h2>
+        <p class="body-18 dim">
+          Sponsors make Overhaul possible. Help students build for impact and connect with top talent.
+        </p>
+        <a class="btn btn-primary" href="mailto:ryhana.williams0@gmail.com">Become a Sponsor</a>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section faq">
+      <div class="wrapper">
+        <h2 class="h2">FAQ</h2>
+        <div id="faq-list" class="faq-list">
+          <!-- JS expands/collapses -->
+          <div class="faq-item">
+            <button class="faq-q" type="button" data-accordion>
+              <span>What is a hackathon?</span><span class="plus">+</span>
+            </button>
+            <div class="faq-a body-16">
+              A weekend to learn, build, and ship. Teams are optional. Beginners welcome.
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button" data-accordion>
+              <span>Do I need coding experience?</span><span class="plus">+</span>
+            </button>
+            <div class="faq-a body-16">
+              No. We have workshops and mentors. Curiosity > resume.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="wrapper">© WDS Overhaul</div>
   </footer>
