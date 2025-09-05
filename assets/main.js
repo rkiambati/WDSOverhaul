@@ -1,4 +1,4 @@
-// Safety: wrap everything so a JS error never blanks the page.
+// Wrap so a stray error never blanks the page.
 (function(){
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -34,24 +34,26 @@
     }, { threshold: 0.12 });
     revealEls.forEach(el => obs.observe(el));
   } else {
-    // fallback: reveal everything
     revealEls.forEach(el => el.classList.add('in'));
   }
 
   // ===== FAQ buttery animation
   function toggleFAQ(item) {
     const content = item.querySelector('.faq-a');
-    const isOpen = item.classList.contains('open');
     if (!content) return;
 
+    const isOpen = item.classList.contains('open');
     if (isOpen) {
       const start = content.scrollHeight;
       content.style.height = start + 'px';
       requestAnimationFrame(() => { content.style.height = '0px'; });
-      const ender = function onEnd(){ item.classList.remove('open'); content.removeEventListener('transitionend', onEnd); };
-      function onEnd(){ ender(); } // keep linters happy
-      content.addEventListener('transitionend', onEnd);
+      content.addEventListener('transitionend', function handler(ev){
+        if (ev.propertyName !== 'height') return;
+        item.classList.remove('open');
+        content.removeEventListener('transitionend', handler);
+      });
     } else {
+      // close others
       document.querySelectorAll('.faq-item.open').forEach(o => {
         const c = o.querySelector('.faq-a');
         if (!c) return;
@@ -59,12 +61,15 @@
         requestAnimationFrame(() => { c.style.height = '0px'; });
         o.classList.remove('open');
       });
+      // open this
       item.classList.add('open');
       const end = content.scrollHeight;
       content.style.height = end + 'px';
-      const ender = function onEnd(){ content.style.height = 'auto'; content.removeEventListener('transitionend', onEnd); };
-      function onEnd(){ ender(); }
-      content.addEventListener('transitionend', onEnd);
+      content.addEventListener('transitionend', function handler(ev){
+        if (ev.propertyName !== 'height') return;
+        content.style.height = 'auto';
+        content.removeEventListener('transitionend', handler);
+      });
     }
   }
   document.querySelectorAll('[data-accordion]').forEach(btn => {
@@ -74,15 +79,18 @@
     });
   });
 
-  // ===== Magnetic CTA (hero + sponsors)
+  // ===== Magnetic CTAs (hero + sponsors)
+  setupMagnet('.magnet-wrap', '.magnet');
+  setupMagnet('#sponsors .center', '.magnet-2');
+
   function setupMagnet(selectorWrap, selectorBtn){
     const wrap = document.querySelector(selectorWrap);
     const btn = document.querySelector(selectorBtn);
     if (!wrap || !btn) return;
 
     let tx=0, ty=0, dx=0, dy=0, raf=null;
-    const strength = 0.25; // movement ratio
-    const radius = 140;     // active area
+    const strength = 0.25;
+    const radius = 140;
 
     function animate(){
       tx += (dx - tx) * 0.18;
@@ -110,8 +118,6 @@
     wrap.addEventListener('pointermove', onMove);
     wrap.addEventListener('pointerleave', onLeave);
   }
-  setupMagnet('.magnet-wrap', '.magnet');        // Hero
-  setupMagnet('#sponsors .center', '.magnet-2'); // Sponsors button
 
   // ===== Parallax for tiles (subtle)
   const pxEls = Array.from(document.querySelectorAll('.px'));
@@ -121,7 +127,7 @@
       const speed = parseFloat(el.dataset.speed || '0.1');
       const rect = el.getBoundingClientRect();
       const mid = rect.top + rect.height/2;
-      const offsetFromCenter = mid - vh/2; // positive when below center
+      const offsetFromCenter = mid - vh/2;
       const translate = offsetFromCenter * speed * 0.15;
       el.style.transform = `translateY(${translate}px)`;
     });
@@ -140,7 +146,7 @@
   }
   parallaxHero();
 
-  // ===== a11y focus on anchor jump
+  // ===== A11y focus on anchor jump
   document.querySelectorAll('.nav-links a').forEach(a=>{
     a.addEventListener('click', ()=>{
       const id = a.getAttribute('href') || '';
@@ -151,7 +157,7 @@
     });
   });
 
-  // ===== Waitlist button (plug your form URL when ready)
+  // ===== Wire your waitlist when ready
   // document.getElementById('waitlist')?.addEventListener('click', (e)=>{
   //   e.preventDefault(); location.href = 'https://forms.gle/your-waitlist';
   // });
