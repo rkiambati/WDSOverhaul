@@ -1,131 +1,158 @@
-// ===== utilities
-const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Safety: wrap everything so a JS error never blanks the page.
+(function(){
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// ===== header scroll + progress
-const header = document.getElementById('header');
-const progressBar = document.querySelector('.progress span');
-function onScroll() {
-  const y = window.scrollY || 0;
-  header.classList.toggle('scrolled', y > 6);
+  // ===== Header scroll + progress
+  const header = document.getElementById('header');
+  const progressBar = document.querySelector('.progress span');
 
-  const h = document.documentElement.scrollHeight - window.innerHeight;
-  progressBar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+  function onScroll() {
+    const y = window.scrollY || 0;
+    if (header) header.classList.toggle('scrolled', y > 6);
 
-  if (!prefersReduced) parallaxTick();
-}
-window.addEventListener('scroll', onScroll, { passive: true });
-onScroll();
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if (progressBar) progressBar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
 
-// ===== reveal on scroll
-const revealEls = document.querySelectorAll('.reveal');
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('in');
-      obs.unobserve(e.target);
+    if (!prefersReduced) {
+      parallaxTiles();
+      parallaxHero();
     }
-  });
-}, { threshold: 0.12 });
-revealEls.forEach(el => obs.observe(el));
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-// ===== FAQ buttery animation
-function toggleFAQ(item) {
-  const content = item.querySelector('.faq-a');
-  const isOpen = item.classList.contains('open');
-
-  if (isOpen) {
-    const start = content.scrollHeight;
-    content.style.height = start + 'px';
-    requestAnimationFrame(() => { content.style.height = '0px'; });
-    content.addEventListener('transitionend', function onEnd() {
-      item.classList.remove('open'); content.removeEventListener('transitionend', onEnd);
-    });
+  // ===== Reveal on scroll (with fallback)
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => obs.observe(el));
   } else {
-    document.querySelectorAll('.faq-item.open').forEach(o => {
-      const c = o.querySelector('.faq-a');
-      c.style.height = c.scrollHeight + 'px';
-      requestAnimationFrame(() => { c.style.height = '0px'; });
-      o.classList.remove('open');
-    });
-    item.classList.add('open');
-    const end = content.scrollHeight;
-    content.style.height = end + 'px';
-    content.addEventListener('transitionend', function onEnd() {
-      content.style.height = 'auto'; content.removeEventListener('transitionend', onEnd);
-    });
-  }
-}
-document.querySelectorAll('[data-accordion]').forEach(btn => {
-  btn.addEventListener('click', () => toggleFAQ(btn.closest('.faq-item')));
-});
-
-// ===== magnetic CTA
-(function setupMagnet(){
-  const wrap = document.querySelector('.magnet-wrap');
-  const btn = document.querySelector('.magnet');
-  if (!wrap || !btn) return;
-
-  let tx = 0, ty = 0, dx = 0, dy = 0, raf;
-  const strength = 0.25;   // how far to move relative to mouse
-  const radius = 140;       // active area in px
-
-  function animate(){
-    tx += (dx - tx) * 0.18;
-    ty += (dy - ty) * 0.18;
-    btn.style.transform = `translate(${tx}px, ${ty}px)`;
-    raf = requestAnimationFrame(animate);
+    // fallback: reveal everything
+    revealEls.forEach(el => el.classList.add('in'));
   }
 
-  function onMove(e){
-    const rect = wrap.getBoundingClientRect();
-    const mx = e.clientX - (rect.left + rect.width/2);
-    const my = e.clientY - (rect.top + rect.height/2);
-    const dist = Math.hypot(mx, my);
+  // ===== FAQ buttery animation
+  function toggleFAQ(item) {
+    const content = item.querySelector('.faq-a');
+    const isOpen = item.classList.contains('open');
+    if (!content) return;
 
-    if (dist < radius && !prefersReduced) {
-      dx = mx * strength;
-      dy = my * strength;
-      if (!raf) raf = requestAnimationFrame(animate);
+    if (isOpen) {
+      const start = content.scrollHeight;
+      content.style.height = start + 'px';
+      requestAnimationFrame(() => { content.style.height = '0px'; });
+      const ender = function onEnd(){ item.classList.remove('open'); content.removeEventListener('transitionend', onEnd); };
+      function onEnd(){ ender(); } // keep linters happy
+      content.addEventListener('transitionend', onEnd);
     } else {
+      document.querySelectorAll('.faq-item.open').forEach(o => {
+        const c = o.querySelector('.faq-a');
+        if (!c) return;
+        c.style.height = c.scrollHeight + 'px';
+        requestAnimationFrame(() => { c.style.height = '0px'; });
+        o.classList.remove('open');
+      });
+      item.classList.add('open');
+      const end = content.scrollHeight;
+      content.style.height = end + 'px';
+      const ender = function onEnd(){ content.style.height = 'auto'; content.removeEventListener('transitionend', onEnd); };
+      function onEnd(){ ender(); }
+      content.addEventListener('transitionend', onEnd);
+    }
+  }
+  document.querySelectorAll('[data-accordion]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      if (item) toggleFAQ(item);
+    });
+  });
+
+  // ===== Magnetic CTA (hero + sponsors)
+  function setupMagnet(selectorWrap, selectorBtn){
+    const wrap = document.querySelector(selectorWrap);
+    const btn = document.querySelector(selectorBtn);
+    if (!wrap || !btn) return;
+
+    let tx=0, ty=0, dx=0, dy=0, raf=null;
+    const strength = 0.25; // movement ratio
+    const radius = 140;     // active area
+
+    function animate(){
+      tx += (dx - tx) * 0.18;
+      ty += (dy - ty) * 0.18;
+      btn.style.transform = `translate(${tx}px, ${ty}px)`;
+      raf = requestAnimationFrame(animate);
+    }
+    function onMove(e){
+      const r = wrap.getBoundingClientRect();
+      const mx = e.clientX - (r.left + r.width/2);
+      const my = e.clientY - (r.top + r.height/2);
+      const dist = Math.hypot(mx, my);
+      if (dist < radius && !prefersReduced) {
+        dx = mx * strength; dy = my * strength;
+        if (!raf) raf = requestAnimationFrame(animate);
+      } else {
+        dx = dy = 0;
+      }
+    }
+    function onLeave(){
       dx = dy = 0;
+      if (raf) cancelAnimationFrame(raf); raf = null;
+      btn.style.transform = 'translate(0,0)';
     }
+    wrap.addEventListener('pointermove', onMove);
+    wrap.addEventListener('pointerleave', onLeave);
   }
-  function onLeave(){
-    dx = dy = 0;
-    cancelAnimationFrame(raf); raf = null;
-    btn.style.transform = 'translate(0,0)';
-  }
+  setupMagnet('.magnet-wrap', '.magnet');        // Hero
+  setupMagnet('#sponsors .center', '.magnet-2'); // Sponsors button
 
-  wrap.addEventListener('pointermove', onMove);
-  wrap.addEventListener('pointerleave', onLeave);
+  // ===== Parallax for tiles (subtle)
+  const pxEls = Array.from(document.querySelectorAll('.px'));
+  function parallaxTiles(){
+    const vh = window.innerHeight || 1;
+    pxEls.forEach(el=>{
+      const speed = parseFloat(el.dataset.speed || '0.1');
+      const rect = el.getBoundingClientRect();
+      const mid = rect.top + rect.height/2;
+      const offsetFromCenter = mid - vh/2; // positive when below center
+      const translate = offsetFromCenter * speed * 0.15;
+      el.style.transform = `translateY(${translate}px)`;
+    });
+  }
+  parallaxTiles();
+
+  // ===== Parallax for hero layers (super subtle)
+  const sun = document.querySelector('.sun');
+  const hill1 = document.querySelector('.hill-1');
+  const hill2 = document.querySelector('.hill-2');
+  function parallaxHero(){
+    const y = window.scrollY || 0;
+    if (sun)   sun.style.transform  = `translateY(${y * -0.08}px)`;
+    if (hill1) hill1.style.transform = `translateY(${y * 0.06}px)`;
+    if (hill2) hill2.style.transform = `translateY(${y * 0.12}px)`;
+  }
+  parallaxHero();
+
+  // ===== a11y focus on anchor jump
+  document.querySelectorAll('.nav-links a').forEach(a=>{
+    a.addEventListener('click', ()=>{
+      const id = a.getAttribute('href') || '';
+      if (id.startsWith('#')) {
+        const el = document.querySelector(id);
+        if (el) { el.setAttribute('tabindex','-1'); el.focus({ preventScroll:true }); }
+      }
+    });
+  });
+
+  // ===== Waitlist button (plug your form URL when ready)
+  // document.getElementById('waitlist')?.addEventListener('click', (e)=>{
+  //   e.preventDefault(); location.href = 'https://forms.gle/your-waitlist';
+  // });
 })();
-
-// ===== subtle parallax for tiles (and can be reused for other elems)
-const pxEls = [...document.querySelectorAll('.px')];
-function parallaxTick(){
-  const vh = window.innerHeight;
-  pxEls.forEach(el=>{
-    const speed = parseFloat(el.dataset.speed || '0.1');
-    const rect = el.getBoundingClientRect();
-    const mid = rect.top + rect.height/2;
-    const offsetFromCenter = mid - vh/2; // positive when below center
-    const translate = offsetFromCenter * speed * 0.15; // small multiplier for subtlety
-    el.style.transform = `translateY(${translate}px)`;
-  });
-}
-
-// ===== a11y focus on anchor jump
-document.querySelectorAll('.nav-links a').forEach(a=>{
-  a.addEventListener('click', ()=>{
-    const id = a.getAttribute('href') || '';
-    if (id.startsWith('#')) {
-      const el = document.querySelector(id);
-      if (el) { el.setAttribute('tabindex','-1'); el.focus({ preventScroll:true }); }
-    }
-  });
-});
-
-// ===== waitlist (plug your form URL when ready)
-// document.getElementById('waitlist')?.addEventListener('click', (e)=>{
-//   e.preventDefault(); location.href = 'https://forms.gle/your-waitlist';
-// });
