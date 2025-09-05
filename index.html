@@ -7,8 +7,10 @@
   <meta name="description" content="Overhaul — January 31–February 1, 2025. Bright. Vibrant. Colourful. Minimalistic." />
   <link rel="icon" href="images/favicon.ico" />
   <link rel="stylesheet" href="assets/styles.css" />
+  <!-- Optional: self-host fonts when ready -->
   <link rel="preload" href="assets/fonts/Metropolis-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/Metropolis-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <noscript><style>.reveal{opacity:1!important;transform:none!important}.faq-a{height:auto!important}</style></noscript>
 </head>
 <body>
   <!-- Sticky Glass Header -->
@@ -75,10 +77,10 @@
 
         <!-- subtle parallax tiles -->
         <div class="tiles">
-          <div class="tile px reveal" data-speed="0.10"></div>
-          <div class="tile px reveal" data-speed="-0.06" style="--reveal-delay:.05s"></div>
-          <div class="tile wide px reveal" data-speed="0.14" style="--reveal-delay:.1s"></div>
-          <div class="tile px reveal" data-speed="-0.08" style="--reveal-delay:.15s"></div>
+          <div class="tile px reveal" data-speed="0.10" aria-hidden="true"></div>
+          <div class="tile px reveal" data-speed="-0.06" style="--reveal-delay:.05s" aria-hidden="true"></div>
+          <div class="tile wide px reveal" data-speed="0.14" style="--reveal-delay:.1s" aria-hidden="true"></div>
+          <div class="tile px reveal" data-speed="-0.08" style="--reveal-delay:.15s" aria-hidden="true"></div>
         </div>
       </div>
     </section>
@@ -112,7 +114,7 @@
         <p class="body-18 dim reveal" style="--reveal-delay:.05s">
           Sponsors make Overhaul possible. Help students build for impact and connect with top talent.
         </p>
-        <a class="btn btn-primary shimmer reveal" style="--reveal-delay:.1s"
+        <a class="btn btn-primary shimmer reveal magnet-2" style="--reveal-delay:.1s"
            href="mailto:ryhana.williams0@gmail.com">Become a Sponsor</a>
       </div>
     </section>
@@ -151,6 +153,7 @@
     </section>
   </main>
 
+  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="wrapper">© WDS Overhaul</div>
   </footer>
