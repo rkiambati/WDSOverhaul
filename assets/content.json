@@ -1,0 +1,13 @@
+{
+  "testimonials": [
+    { "name": "Hacker Name (she/her)", "quote": "Sample testimonial text." },
+    { "name": "Hacker Name (he/him)", "quote": "Another sample testimonial." }
+  ],
+  "faq": [
+    { "q": "What is Overhaul?", "a": "A bright, vibrant, minimalistic hack event." },
+    { "q": "Do I need experience?", "a": "No. Beginners are welcome." }
+  ],
+  "sponsors": [
+    { "name": "Company A", "url": "https://example.com", "logo": "/images/company-a.svg" }
+  ]
+}
