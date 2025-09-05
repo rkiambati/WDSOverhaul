@@ -7,13 +7,13 @@
   <meta name="description" content="Overhaul — January 31–February 1, 2025. Bright. Vibrant. Colourful. Minimalistic." />
   <link rel="icon" href="images/favicon.ico" />
   <link rel="stylesheet" href="assets/styles.css" />
-  <!-- Preload fonts (add files later in /assets/fonts/) -->
+  <!-- Self-host fonts when ready -->
   <link rel="preload" href="assets/fonts/Metropolis-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/Metropolis-Regular.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
-  <!-- Header -->
-  <header class="site-header">
+  <!-- Sticky Glass Header -->
+  <header class="site-header" id="header">
     <div class="wrapper nav">
       <a class="logo" href="#home" aria-label="WDS home">WDS</a>
       <nav class="nav-links" aria-label="Primary">
@@ -24,28 +24,32 @@
         <a href="#faq">FAQ</a>
       </nav>
     </div>
+    <div class="progress" aria-hidden="true"><span></span></div>
   </header>
 
   <main id="home">
     <!-- HERO -->
     <section class="hero section" aria-label="Hero">
       <div class="hero-bg" aria-hidden="true">
-        <div class="sun"></div>
-        <div class="hill hill-1"></div>
-        <div class="hill hill-2"></div>
+        <div class="sun parallax" data-speed="-0.08"></div>
+        <div class="hill hill-1 parallax" data-speed="0.06"></div>
+        <div class="hill hill-2 parallax" data-speed="0.12"></div>
+        <div class="float flower f1"></div>
+        <div class="float flower f2"></div>
+        <div class="float flower f3"></div>
       </div>
-      <div class="wrapper hero-inner">
+      <div class="wrapper hero-inner reveal">
         <p class="eyebrow">craft at</p>
         <h1 class="h1">Overhaul</h1>
-        <p class="date">January 31 – February 1, 2025 · In-person event</p>
-        <a class="btn btn-primary" href="#" id="waitlist">Join Waitlist</a>
+        <p class="date body-18">January 31 – February 1, 2025 · In-person event</p>
+        <a class="btn btn-primary shimmer" href="#" id="waitlist">Join Waitlist</a>
       </div>
     </section>
 
     <!-- WHAT IS OVERHAUL -->
-    <section id="about" class="section about" aria-label="What is Overhaul">
+    <section id="about" class="section about">
       <div class="wrapper about-grid">
-        <div class="about-copy">
+        <div class="about-copy reveal">
           <h2 class="h2">What is Overhaul</h2>
           <p class="body-18">
             Overhaul is a bright, vibrant, and minimalistic build weekend where hackers,
@@ -57,25 +61,24 @@
           </p>
         </div>
         <div class="tiles">
-          <div class="tile"></div>
-          <div class="tile"></div>
-          <div class="tile wide"></div>
-          <div class="tile"></div>
+          <div class="tile reveal"></div>
+          <div class="tile reveal" style="--reveal-delay:.05s"></div>
+          <div class="tile wide reveal" style="--reveal-delay:.1s"></div>
+          <div class="tile reveal" style="--reveal-delay:.15s"></div>
         </div>
       </div>
     </section>
 
     <!-- TESTIMONIALS -->
-    <section id="testimonials" class="section testimonials" aria-label="Testimonials">
+    <section id="testimonials" class="section testimonials">
       <div class="wrapper">
-        <h2 class="h2 light">Testimonials</h2>
+        <h2 class="h2 light reveal">Testimonials</h2>
         <div id="testimonials-list" class="t-list">
-          <!-- Populated from content.json; fallback cards for first render -->
-          <article class="t-card">
+          <article class="t-card reveal">
             <h3 class="h3">Hacker Name (pronouns)</h3>
             <p class="body-16">“Loved the pace and the people. Walked away with a project and friends.”</p>
           </article>
-          <article class="t-card">
+          <article class="t-card reveal" style="--reveal-delay:.05s">
             <h3 class="h3">Hacker Name (pronouns)</h3>
             <p class="body-16">“Workshops were actually useful. Felt like building, not lectures.”</p>
           </article>
@@ -91,21 +94,21 @@
     <!-- SPONSORS -->
     <section id="sponsors" class="section sponsors">
       <div class="wrapper center">
-        <h2 class="h2">Want to Sponsor?</h2>
-        <p class="body-18 dim">
+        <h2 class="h2 reveal">Want to Sponsor?</h2>
+        <p class="body-18 dim reveal" style="--reveal-delay:.05s">
           Sponsors make Overhaul possible. Help students build for impact and connect with top talent.
         </p>
-        <a class="btn btn-primary" href="mailto:ryhana.williams0@gmail.com">Become a Sponsor</a>
+        <a class="btn btn-primary shimmer reveal" style="--reveal-delay:.1s"
+           href="mailto:ryhana.williams0@gmail.com">Become a Sponsor</a>
       </div>
     </section>
 
     <!-- FAQ -->
     <section id="faq" class="section faq">
       <div class="wrapper">
-        <h2 class="h2">FAQ</h2>
+        <h2 class="h2 reveal">FAQ</h2>
         <div id="faq-list" class="faq-list">
-          <!-- JS expands/collapses -->
-          <div class="faq-item">
+          <div class="faq-item reveal">
             <button class="faq-q" type="button" data-accordion>
               <span>What is a hackathon?</span><span class="plus">+</span>
             </button>
@@ -113,12 +116,20 @@
               A weekend to learn, build, and ship. Teams are optional. Beginners welcome.
             </div>
           </div>
-          <div class="faq-item">
+          <div class="faq-item reveal" style="--reveal-delay:.05s">
             <button class="faq-q" type="button" data-accordion>
               <span>Do I need coding experience?</span><span class="plus">+</span>
             </button>
             <div class="faq-a body-16">
               No. We have workshops and mentors. Curiosity > resume.
+            </div>
+          </div>
+          <div class="faq-item reveal" style="--reveal-delay:.1s">
+            <button class="faq-q" type="button" data-accordion>
+              <span>Will there be travel reimbursements?</span><span class="plus">+</span>
+            </button>
+            <div class="faq-a body-16">
+              Details announced closer to the event. Join the waitlist for updates.
             </div>
           </div>
         </div>
