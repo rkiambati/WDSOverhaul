@@ -7,7 +7,6 @@
   <meta name="description" content="Overhaul — January 31–February 1, 2025. Bright. Vibrant. Colourful. Minimalistic." />
   <link rel="icon" href="images/favicon.ico" />
   <link rel="stylesheet" href="assets/styles.css" />
-  <!-- Self-host fonts when ready -->
   <link rel="preload" href="assets/fonts/Metropolis-Bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/Metropolis-Regular.woff2" as="font" type="font/woff2" crossorigin>
 </head>
@@ -31,18 +30,31 @@
     <!-- HERO -->
     <section class="hero section" aria-label="Hero">
       <div class="hero-bg" aria-hidden="true">
-        <div class="sun parallax" data-speed="-0.08"></div>
-        <div class="hill hill-1 parallax" data-speed="0.06"></div>
-        <div class="hill hill-2 parallax" data-speed="0.12"></div>
-        <div class="float flower f1"></div>
-        <div class="float flower f2"></div>
-        <div class="float flower f3"></div>
+        <div class="sun"></div>
+        <div class="hill hill-1"></div>
+        <div class="hill hill-2"></div>
+
+        <!-- extra motion: floating flowers -->
+        <div class="flower is-red f1"></div>
+        <div class="flower is-yellow f2"></div>
+        <div class="flower is-mint f3"></div>
+        <div class="flower is-blue f4"></div>
+        <div class="flower is-red f5"></div>
+        <div class="flower is-yellow f6"></div>
+        <div class="flower is-mint f7"></div>
+        <div class="flower is-blue f8"></div>
+        <div class="flower is-red f9"></div>
       </div>
+
       <div class="wrapper hero-inner reveal">
         <p class="eyebrow">craft at</p>
         <h1 class="h1">Overhaul</h1>
         <p class="date body-18">January 31 – February 1, 2025 · In-person event</p>
-        <a class="btn btn-primary shimmer" href="#" id="waitlist">Join Waitlist</a>
+
+        <!-- magnetic CTA -->
+        <div class="magnet-wrap">
+          <a class="btn btn-primary shimmer magnet" href="#" id="waitlist">Join Waitlist</a>
+        </div>
       </div>
     </section>
 
@@ -60,11 +72,13 @@
             Join the waitlist to get early access to applications and updates.
           </p>
         </div>
+
+        <!-- subtle parallax tiles -->
         <div class="tiles">
-          <div class="tile reveal"></div>
-          <div class="tile reveal" style="--reveal-delay:.05s"></div>
-          <div class="tile wide reveal" style="--reveal-delay:.1s"></div>
-          <div class="tile reveal" style="--reveal-delay:.15s"></div>
+          <div class="tile px reveal" data-speed="0.10"></div>
+          <div class="tile px reveal" data-speed="-0.06" style="--reveal-delay:.05s"></div>
+          <div class="tile wide px reveal" data-speed="0.14" style="--reveal-delay:.1s"></div>
+          <div class="tile px reveal" data-speed="-0.08" style="--reveal-delay:.15s"></div>
         </div>
       </div>
     </section>
@@ -137,7 +151,6 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="wrapper">© WDS Overhaul</div>
   </footer>
