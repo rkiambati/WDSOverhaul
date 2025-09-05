@@ -1,5 +1,8 @@
 // Wrap so a stray error never blanks the page.
 (function(){
+  // Mark that JS is running (lets CSS opt-in to animated reveals)
+  document.documentElement.classList.add('js');
+
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ===== Header scroll + progress
