@@ -1,0 +1,42 @@
+/* ===== Tokens (Figma colors; expand later) ===== */
+:root{
+  --primary-yellow:#FFD42E;
+  --primary-mint:#B0D1B2;
+  --primary-blue:#2D479E;
+  --teal:#0D5C63;
+  --tan:#654218;
+  --navy:#012C3D;
+
+  --bg:#f7fafc;       /* neutral canvas */
+  --text:#0e0e0e;     /* dark text */
+  --radius:16px;
+}
+
+/* ===== Base ===== */
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+}
+.wrapper{max-width:1100px;margin-inline:auto;padding-inline:20px}
+.section{padding:72px 0}
+
+/* ===== Header (fixed, translucent — polish later) ===== */
+.site-header{
+  position:sticky; top:0; z-index:10;
+  background:rgba(255,255,255,.65);
+  backdrop-filter:saturate(1.2) blur(8px);
+  border-bottom:1px solid rgba(0,0,0,.05);
+}
+.nav{display:flex;align-items:center;justify-content:space-between;min-height:64px}
+.logo{font-weight:800;letter-spacing:.3px;text-decoration:none;color:var(--text)}
+.nav-links a{margin-left:20px;text-decoration:none;color:var(--text);opacity:.8}
+.nav-links a:hover{opacity:1}
+
+/* ===== Hero placeholder ===== */
+.hero{min-height:48vh;}
+
+/* ===== Footer ===== */
+.site-footer{background:var(--navy); color:#fff; padding:28px 0}
