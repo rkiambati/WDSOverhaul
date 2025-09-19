@@ -1,4 +1,3 @@
-// No-blank-page: wrap all logic
 (function () {
   // Let CSS know JS is active (for progressive enhancement reveals)
   document.documentElement.classList.add('js');
@@ -172,7 +171,7 @@
   // Kick off initial paint AFTER functions + refs exist
   onScroll();
 
-  // Ready for waitlist wiring later:
+  // Waitlist goes down here
   // document.getElementById('waitlist')?.addEventListener('click', (e)=>{
   //   e.preventDefault(); location.href = 'https://forms.gle/your-waitlist';
   // });
