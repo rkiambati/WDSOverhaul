@@ -58,7 +58,6 @@ a{color:inherit;text-decoration:none}
 /* ===== Hero (includes FALLBACK BACKGROUND so it never looks blank) ===== */
 .hero{
   position:relative;color:var(--white);padding:140px 0 130px;overflow:hidden;
-  /* fallback paint in case .hero-bg fails */
   background:linear-gradient(180deg,#73C9FF 0%,#78D2FF 36%,#91DE85 100%);
 }
 .hero .hero-inner{position:relative;z-index:2}
@@ -107,7 +106,6 @@ a{color:inherit;text-decoration:none}
 .faq-item.open .plus{transform:rotate(45deg)}
 
 /* ===== Reveal on scroll (progressive enhancement) ===== */
-/* Default: visible (works even if JS fails or is cached) */
 .reveal{opacity:1; transform:none}
 /* When JS is running, start hidden and animate in */
 .js .reveal{
