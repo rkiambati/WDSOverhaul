@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Overhaul — Sponsor Us</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .page {max-width: 960px; margin: 64px auto; padding: 0 16px;}
+    .card {background: #0b0f14; border: 1px solid #1f2937; border-radius: 16px; padding: 20px;}
+    .grid {display: grid; gap: 16px;}
+    @media (min-width: 768px){ .grid-2 {grid-template-columns: 1fr 1fr;} }
+    .field {display:flex; flex-direction:column; gap:6px;}
+    .field label {font-weight:600}
+    .actions {display:flex; gap:12px; flex-wrap:wrap; margin-top:12px}
+    .pdf-wrap {height: 72vh; border: 1px solid #1f2937; border-radius: 12px; overflow: hidden;}
+    .note {font-size: 0.9rem; opacity: 0.8}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Sponsor Overhaul</h1>
+    <p class="note">Fill this and keep the tab open if you plan to add more details. Nothing is sent to a server. It will save locally and you can export a CSV.</p>
+
+    <div class="grid grid-2">
+      <form id="sponsor-form" class="card" novalidate>
+        <div class="field">
+          <label for="org">Organization</label>
+          <input id="org" name="org" required />
+        </div>
+        <div class="field">
+          <label for="name">Contact name</label>
+          <input id="name" name="name" required />
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required />
+        </div>
+        <div class="field">
+          <label for="phone">Phone (optional)</label>
+          <input id="phone" name="phone" />
+        </div>
+        <div class="field">
+          <label for="subject">Email subject</label>
+          <input id="subject" name="subject" placeholder="Sponsorship inquiry" />
+        </div>
+        <div class="field">
+          <label for="message">Message body</label>
+          <textarea id="message" name="message" rows="5" placeholder="Tell us what you have in mind"></textarea>
+        </div>
+        <div class="field">
+          <label for="budget">Budget range</label>
+          <select id="budget" name="budget">
+            <option value="">Select...</option>
+            <option>Under $500</option><option>$500–$1,000</option>
+            <option>$1,000–$2,500</option><option>$2,500–$5,000</option>
+            <option>$5,000+</option>
+          </select>
+        </div>
+        <fieldset class="field">
+          <legend>Interests</legend>
+          <label><input type="checkbox" name="interests" value="Cash" /> Cash</label>
+          <label><input type="checkbox" name="interests" value="In-kind" /> In-kind</label>
+          <label><input type="checkbox" name="interests" value="Judging" /> Judging</label>
+          <label><input type="checkbox" name="interests" value="Venue" /> Venue</label>
+          <label><input type="checkbox" name="interests" value="Prizes" /> Prizes</label>
+        </fieldset>
+
+        <!-- honeypot -->
+        <input type="text" id="company" name="company" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
+
+        <div class="actions">
+          <button class="btn btn-primary" type="submit">Save</button>
+          <button class="btn" type="button" id="export-sponsors">Export CSV</button>
+          <a class="btn" href="/admin.html" target="_blank" rel="noopener">Owner view</a>
+        </div>
+        <p id="sponsor-status" class="note" role="status"></p>
+      </form>
+
+      <div class="card">
+        <h2>Sponsorship package</h2>
+        <div class="pdf-wrap">
+          <!-- Replace the data path when you drop in the real PDF -->
+          <object id="sponsor-pdf" data="/assets/Overhaul-Sponsor-Package.pdf" type="application/pdf" width="100%" height="100%">
+            <p>PDF preview unsupported. <a href="/assets/Overhaul-Sponsor-Package.pdf" target="_blank" rel="noopener">Download the sponsor package</a>.</p>
+          </object>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/forms.js"></script>
+  <script>
+    const form = document.getElementById('sponsor-form');
+    const statusEl = document.getElementById('sponsor-status');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+
+      // bot check
+      if (fd.get('company')) return;
+
+      // basic validation
+      if (!fd.get('org') || !fd.get('name') || !fd.get('email')) {
+        statusEl.textContent = "Please complete organization, name, and email.";
+        return;
+      }
+
+      const interests = fd.getAll('interests').join('; ');
+      const row = {
+        org: fd.get('org'),
+        name: fd.get('name'),
+        email: fd.get('email'),
+        phone: fd.get('phone') || "",
+        subject: fd.get('subject') || "",
+        message: fd.get('message') || "",
+        budget: fd.get('budget') || "",
+        interests
+      };
+
+      saveEntry('sponsors', row);
+      statusEl.textContent = "Saved locally. Use Export CSV to download.";
+      form.reset();
+    });
+
+    document.getElementById('export-sponsors').addEventListener('click', () => {
+      const rows = loadEntries('sponsors');
+      downloadCSV(`sponsors-${new Date().toISOString().slice(0,10)}.csv`, rows);
+    });
+  </script>
+</body>
+</html>
