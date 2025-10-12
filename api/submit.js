@@ -137,8 +137,10 @@ module.exports = async (req, res) => {
           current = Buffer.from(meta.content, "base64").toString("utf8");
           continue;
         }
-        console.error(e);
-        return res.status(500).json({ error: "GitHub write failed" });
+        console.error("WRITE_FAIL", String(e));
+        // expose useful details to the browser so you can see the real error
+        return res.status(500).json({ error: String(e).slice(0, 400) });
+
       }
     }
   } catch (err) {
