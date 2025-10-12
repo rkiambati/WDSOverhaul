@@ -47,16 +47,29 @@
   <script>
     const form = document.getElementById('waitlist-form');
     const statusEl = document.getElementById('wl-status');
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      if (fd.get('city')) return;
-      if (!fd.get('name') || !fd.get('email') || !fd.get('role')) {
-        statusEl.textContent = "Please complete name, email, and role."; return;
-      }
-      saveEntry('waitlist', { name: fd.get('name'), email: fd.get('email'), role: fd.get('role'), note: fd.get('note') || "" });
-      statusEl.textContent = "Saved on this device. Thank you."; form.reset();
+    form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(form);
+  if (fd.get('city')) return; // honeypot
+  if (!fd.get('name') || !fd.get('email') || !fd.get('role')) {
+    statusEl.textContent = "Please complete name, email, and role."; return;
+  }
+  statusEl.textContent = "Saving…";
+  try{
+    await postEntry('waitlist', {
+      name: fd.get('name'),
+      email: fd.get('email'),
+      role: fd.get('role'),
+      note: fd.get('note') || "",
+      honey: fd.get('city') || ""
     });
+    statusEl.textContent = "Saved. Thanks!";
+    form.reset();
+  }catch(err){
+    statusEl.textContent = "Could not save. Please try again.";
+    console.error(err);
+  }
+});
     // hidden owner shortcut
     window.addEventListener('keydown', e => { if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener'); });
   </script>
