@@ -1,1 +1,9 @@
+{
+  "functions": {
+    "assets/api/submit.js": { "runtime": "nodejs18.x" }
+  },
+  "routes": [
+    { "src": "/api/submit", "dest": "assets/api/submit.js" }
+  ]
+}
 
