@@ -44,68 +44,76 @@
 
 <script src="./assets/forms.js"></script>
 <script>
-  // Owner hash is stored once in localStorage as hex
-  const KEY = "wds_owner_hash_hex";
+  // Owner view fetches CSV via /api/list with ADMIN_KEY
+  const qs = new URLSearchParams(location.search);
+  let OWNER_KEY = ""; // set after unlocking
 
-  async function sha256Hex(str){
-    const enc = new TextEncoder().encode(str);
-    const buf = await crypto.subtle.digest("SHA-256", enc);
-    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  function csvToRows(csv){
+    if (!csv.trim()) return [];
+    const lines = csv.split(/\r?\n/);
+    const rows = [];
+    for (const line of lines){
+      if (line === "") continue;
+      const cells = line.match(/("([^"]|"")*"|[^,]*)/g).filter(Boolean)
+        .map(s => s.replace(/^"|"$/g,"").replace(/""/g,'"'));
+      rows.push(cells);
+    }
+    return rows;
   }
-
-  // Setup UI: if no hash stored, let owner set one
-  const gate = document.getElementById('gate');
-  const app  = document.getElementById('app');
-
-  const setupRow = document.createElement('div');
-  setupRow.innerHTML = `
-    <p class="note">No owner passphrase set yet. Create one now.</p>
-    <input id="newpw" type="password" placeholder="New passphrase" />
-    <button id="setpw" class="btn btn-primary">Set passphrase</button>
-  `;
-
-  if(!localStorage.getItem(KEY)){
-    gate.appendChild(setupRow);
-    document.getElementById('setpw').onclick = async () => {
-      const pw = document.getElementById('newpw').value.trim();
-      if(!pw) return alert("Enter a passphrase");
-      localStorage.setItem(KEY, await sha256Hex(pw));
-      alert("Passphrase set. Use it to unlock below.");
-      setupRow.remove();
-    };
+  async function fetchCSV(kind){
+    const r = await fetch(`/api/list?kind=${kind}&key=${encodeURIComponent(OWNER_KEY)}`, { cache:"no-store" });
+    if (!r.ok) throw new Error(`${kind} ${r.status} ${await r.text()}`);
+    return await r.text();
   }
-
-  document.getElementById('go').addEventListener('click', async () => {
-    const inputHex = await sha256Hex(document.getElementById('pw').value);
-    const savedHex = localStorage.getItem(KEY);
-    if(!savedHex){ return alert("No passphrase set yet."); }
-    if(inputHex !== savedHex){ alert("Wrong passphrase"); return; }
-    gate.hidden = true; app.hidden = false; render();
-  });
-
-  function render(){
-    const wl = loadEntries('waitlist');
-    const sp = loadEntries('sponsors');
-    renderTable('tbl-wl', wl);
-    renderTable('tbl-sp', sp);
-    document.getElementById('exp-wl').onclick = () => downloadCSV(`waitlist-${new Date().toISOString().slice(0,10)}.csv`, wl);
-    document.getElementById('exp-sp').onclick = () => downloadCSV(`sponsors-${new Date().toISOString().slice(0,10)}.csv`, sp);
-    document.getElementById('clear').onclick = () => {
-      if(confirm("Clear all local entries on this device?")){
-        localStorage.removeItem("wds_waitlist_entries_v1");
-        localStorage.removeItem("wds_sponsor_entries_v1");
-        render();
-      }
-    };
-  }
-
   function renderTable(id, rows){
     const el = document.getElementById(id);
-    if(!rows.length){ el.innerHTML = "<tr><td>No entries yet</td></tr>"; return; }
+    if (!rows.length || rows.length === 1){ el.innerHTML = "<tr><td>No entries yet</td></tr>"; return; }
+    const head = "<thead><tr>"+rows[0].map(h=>`<th>${h}</th>`).join("")+"</tr></thead>";
+    const body = "<tbody>"+rows.slice(1).map(r=>"<tr>"+r.map(c=>`<td>${c}</td>`).join("")+"</tr>").join("")+"</tbody>";
+    el.innerHTML = head + body;
+  }
+
+  // Gate UI 
+  const gate = document.getElementById('gate');
+  const app  = document.getElementById('app');
+  document.getElementById('go').addEventListener('click', async () => {
+    OWNER_KEY = document.getElementById('pw').value.trim();
+    if (!OWNER_KEY){ alert("Enter passphrase"); return; }
+    try{
+      // quick ping to verify
+      await fetchCSV('waitlist');
+      gate.hidden = true; app.hidden = false;
+      render();
+    }catch(e){ alert("Wrong passphrase or server error"); }
+  });
+
+  async function render(){
+    try{
+      const wlCSV = await fetchCSV('waitlist');
+      const spCSV = await fetchCSV('sponsor');
+      const wl = csvToRows(wlCSV), sp = csvToRows(spCSV);
+      renderTable('tbl-wl', wl);
+      renderTable('tbl-sp', sp);
+
+      document.getElementById('exp-wl').onclick = () => downloadCSV('waitlist.csv', wl.map(r=>Object.fromEntries(wl[0].map((h,i)=>[h,r[i]]))).slice(1));
+      document.getElementById('exp-sp').onclick = () => downloadCSV('sponsors.csv', sp.map(r=>Object.fromEntries(sp[0].map((h,i)=>[h,r[i]]))).slice(1));
+      document.getElementById('clear').onclick = () => alert("Server-backed storage: nothing to clear locally.");
+    }catch(e){
+      console.error(e);
+      alert("Could not load data. Check ADMIN_KEY and try again.");
+    }
+  }
+
+
+  function downloadCSV(filename, rows){
+    if (!rows.length) return;
     const headers = Object.keys(rows[0]);
-    el.innerHTML =
-      "<thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead>"+
-      "<tbody>"+rows.map(r=>"<tr>"+headers.map(h=>`<td>${r[h]??""}</td>`).join("")+"</tr>").join("")+"</tbody>";
+    const esc = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
+    const csv = [headers.join(",")].concat(rows.map(r=>headers.map(h=>esc(r[h])).join(","))).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
   }
 </script>
 
