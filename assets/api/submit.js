@@ -1,9 +1,9 @@
 // /api/submit.js
 // Appends form rows to CSV in the SAME GitHub repo using the Contents API.
-const OWNER  = process.env.GITHUB_OWNER;  
-const REPO   = process.env.GITHUB_REPO;   
-const BRANCH = process.env.GITHUB_BRANCH || "main";
-const TOKEN  = process.env.GITHUB_TOKEN;   // repo scope
+const OWNER  = process.env.GITHUB_OWNER  || process.env.VERCEL_GIT_REPO_OWNER;
+const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG;
+const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || "main";
+const TOKEN  = process.env.GITHUB_TOKEN;
 
 async function getFile(path){
   const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
