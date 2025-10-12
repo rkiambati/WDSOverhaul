@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Overhaul — Join Waitlist</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .page {max-width: 720px; margin: 64px auto; padding: 0 16px;}
+    .card {background: #0b0f14; border: 1px solid #1f2937; border-radius: 16px; padding: 20px;}
+    .field {display:flex; flex-direction:column; gap:6px;}
+    .field label {font-weight:600}
+    .actions {display:flex; gap:12px; flex-wrap:wrap; margin-top:12px}
+    .note {font-size: 0.9rem; opacity: 0.8}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Join the Overhaul waitlist</h1>
+    <form id="waitlist-form" class="card" novalidate>
+      <div class="field">
+        <label for="wl-name">Name</label>
+        <input id="wl-name" name="name" required />
+      </div>
+      <div class="field">
+        <label for="wl-email">Email</label>
+        <input id="wl-email" name="email" type="email" required />
+      </div>
+      <div class="field">
+        <label for="wl-role">Role</label>
+        <select id="wl-role" name="role" required>
+          <option value="">Select...</option>
+          <option>Student</option><option>Sponsor</option>
+          <option>Mentor</option><option>Volunteer</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="wl-note">Note (optional)</label>
+        <textarea id="wl-note" name="note" rows="4"></textarea>
+      </div>
+
+      <!-- honeypot -->
+      <input type="text" id="city" name="city" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
+
+      <div class="actions">
+        <button class="btn btn-primary" type="submit">Save</button>
+        <button class="btn" type="button" id="export-wl">Export CSV</button>
+        <a class="btn" href="/admin.html" target="_blank" rel="noopener">Owner view</a>
+      </div>
+      <p id="wl-status" class="note" role="status"></p>
+    </form>
+  </div>
+
+  <script src="/assets/js/forms.js"></script>
+  <script>
+    const form = document.getElementById('waitlist-form');
+    const statusEl = document.getElementById('wl-status');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      if (fd.get('city')) return; // bot
+
+      if (!fd.get('name') || !fd.get('email') || !fd.get('role')) {
+        statusEl.textContent = "Please complete name, email, and role.";
+        return;
+      }
+
+      const row = {
+        name: fd.get('name'),
+        email: fd.get('email'),
+        role: fd.get('role'),
+        note: fd.get('note') || ""
+      };
+
+      saveEntry('waitlist', row);
+      statusEl.textContent = "Saved locally. Use Export CSV to download.";
+      form.reset();
+    });
+
+    document.getElementById('export-wl').addEventListener('click', () => {
+      const rows = loadEntries('waitlist');
+      downloadCSV(`waitlist-${new Date().toISOString().slice(0,10)}.csv`, rows);
+    });
+  </script>
+</body>
+</html>
