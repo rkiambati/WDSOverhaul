@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Overhaul — Owner</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .page {max-width: 960px; margin: 64px auto; padding: 0 16px;}
+    table {width:100%; border-collapse: collapse;}
+    th, td {border-bottom: 1px solid #1f2937; padding: 8px 6px; text-align: left;}
+    .row {display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px}
+    .card {background:#0b0f14;border:1px solid #1f2937;border-radius:16px;padding:16px}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Owner view</h1>
+    <div id="gate" class="card">
+      <p>Enter passphrase to view entries.</p>
+      <input id="pw" type="password" placeholder="Passphrase" />
+      <button id="go" class="btn btn-primary">Unlock</button>
+      <p class="note" style="opacity:.8">Tip: change the passphrase and hash in the script before pushing.</p>
+    </div>
+
+    <div id="app" hidden>
+      <div class="row">
+        <button class="btn" id="exp-wl">Export waitlist CSV</button>
+        <button class="btn" id="exp-sp">Export sponsors CSV</button>
+        <button class="btn" id="clear">Clear local data</button>
+      </div>
+
+      <h2>Waitlist</h2>
+      <div class="card">
+        <table id="tbl-wl"></table>
+      </div>
+
+      <h2>Sponsors</h2>
+      <div class="card">
+        <table id="tbl-sp"></table>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/forms.js"></script>
+  <script>
+    // 1) Choose a passphrase you like, then compute its SHA-256 once and paste the hex here.
+    // For now it is the hash of "overhaul-owner-2025". Change it.
+    const HASH_HEX = "b9b4f4c6a9f4a3aef0e9d1be5b2a2e0f5d2d8a8a4d2b5f0f2a6a6f5bde0a6a4c";
+
+    async function sha256Hex(str){
+      const enc = new TextEncoder().encode(str);
+      const buf = await crypto.subtle.digest("SHA-256", enc);
+      const bytes = Array.from(new Uint8Array(buf));
+      return bytes.map(b => b.toString(16).padStart(2,"0")).join("");
+    }
+
+    document.getElementById('go').addEventListener('click', async () => {
+      const ok = (await sha256Hex(document.getElementById('pw').value)) === HASH_HEX;
+      if(!ok){ alert("Wrong passphrase"); return; }
+      document.getElementById('gate').hidden = true;
+      document.getElementById('app').hidden = false;
+      render();
+    });
+
+    function render(){
+      const wl = loadEntries('waitlist');
+      const sp = loadEntries('sponsors');
+      renderTable('tbl-wl', wl);
+      renderTable('tbl-sp', sp);
+      document.getElementById('exp-wl').onclick = () => downloadCSV(`waitlist-${new Date().toISOString().slice(0,10)}.csv`, wl);
+      document.getElementById('exp-sp').onclick = () => downloadCSV(`sponsors-${new Date().toISOString().slice(0,10)}.csv`, sp);
+      document.getElementById('clear').onclick = () => {
+        if(confirm("Clear all local entries on this device?")){
+          localStorage.removeItem("wds_waitlist_entries_v1");
+          localStorage.removeItem("wds_sponsor_entries_v1");
+          render();
+        }
+      };
+    }
+
+    function renderTable(id, rows){
+      const el = document.getElementById(id);
+      if(!rows.length){ el.innerHTML = "<tr><td>No entries yet</td></tr>"; return; }
+      const headers = Object.keys(rows[0]);
+      const head = "<thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead>";
+      const body = "<tbody>"+rows.map(r=>"<tr>"+headers.map(h=>`<td>${r[h] ?? ""}</td>`).join("")+"</tr>").join("")+"</tbody>";
+      el.innerHTML = head + body;
+    }
+  </script>
+</body>
+</html>
