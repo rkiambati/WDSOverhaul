@@ -55,20 +55,20 @@
     statusEl.textContent = "Please complete name, email, and role."; return;
   }
   statusEl.textContent = "Saving…";
-  try{
-    await postEntry('waitlist', {
-      name: fd.get('name'),
-      email: fd.get('email'),
-      role: fd.get('role'),
-      note: fd.get('note') || "",
-      honey: fd.get('city') || ""
-    });
-    statusEl.textContent = "Saved. Thanks!";
-    form.reset();
-  }catch(err){
-    statusEl.textContent = "Could not save. Please try again.";
-    console.error(err);
-  }
+try{
+  await postEntry('waitlist', {
+    name: fd.get('name'),
+    email: fd.get('email'),
+    role: fd.get('role'),
+    note: fd.get('note') || "",
+    honey: fd.get('city') || ""
+  });
+  statusEl.textContent = "Saved. Thanks!";
+  form.reset();
+}catch(err){
+  statusEl.textContent = "Could not save: " + err.message;
+}
+
 });
     // hidden owner shortcut
     window.addEventListener('keydown', e => { if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener'); });
