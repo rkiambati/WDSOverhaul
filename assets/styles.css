@@ -58,7 +58,8 @@ a{color:inherit;text-decoration:none}
 /* ===== Hero (includes FALLBACK BACKGROUND so it never looks blank) ===== */
 .hero{
   position:relative;color:var(--white);padding:140px 0 130px;overflow:hidden;
-  background:linear-gradient(180deg,#73C9FF 0%,#78D2FF 36%,#91DE85 100%);
+  background: radial-gradient(1200px 600px at 70% 20%, rgba(255, 245, 180, 0.55), rgba(255, 245, 180, 0) 60%),
+              linear-gradient(180deg, #54b6ff 0%, #4aa8f0 55%, #0d5561 100%);
 }
 .hero .hero-inner{position:relative;z-index:2}
 .eyebrow{opacity:.95;margin:0 0 6px}
@@ -68,6 +69,14 @@ a{color:inherit;text-decoration:none}
 .hill{position:absolute;left:-10%;right:-10%;border-radius:50%;filter:blur(.2px)}
 .hill-1{bottom:-60px;height:240px;background:radial-gradient(120% 140% at 50% 0%,rgba(0,0,0,.08),transparent 60%),var(--clr-mint)}
 .hill-2{bottom:-140px;height:280px;opacity:.9;background:radial-gradient(120% 140% at 50% 0%,rgba(0,0,0,.08),transparent 60%),var(--clr-teal)}
+.hero .sun {
+  filter: blur(24px);
+  opacity: .55;
+}
+@media (max-width: 480px){
+  .hero h1 { font-size: clamp(28px, 6vw, 40px); }
+  .hero .sun { top: 8%; left: 65%; }
+}
 
 /* Floating flowers (visible motion) */
 .flower{position:absolute;width:12px;height:12px;border-radius:3px;transform:rotate(45deg);box-shadow:0 0 0 2px rgba(255,255,255,.4) inset;animation:drift 7s ease-in-out infinite}
