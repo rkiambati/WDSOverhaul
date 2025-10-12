@@ -14,21 +14,15 @@
     .center{text-align:center}
   </style>
 </head>
-<body>
+<body class="page--dark">
   <main class="section">
-    <div class="wrap">
+    <div class="wrap" style="max-width:760px">
       <h1 class="center">Join the Overhaul waitlist</h1>
-      <p class="note center">We’ll email key dates and openings. Data is saved locally on your device.</p>
+      <p class="note center">We’ll email key dates and openings. Saved locally on your device.</p>
 
       <form id="waitlist-form" class="glass" novalidate>
-        <div class="field">
-          <label for="wl-name">Name</label>
-          <input id="wl-name" name="name" required />
-        </div>
-        <div class="field">
-          <label for="wl-email">Email</label>
-          <input id="wl-email" name="email" type="email" required />
-        </div>
+        <div class="field"><label for="wl-name">Name</label><input id="wl-name" name="name" required /></div>
+        <div class="field"><label for="wl-email">Email</label><input id="wl-email" name="email" type="email" required /></div>
         <div class="field">
           <label for="wl-role">Role</label>
           <select id="wl-role" name="role" required>
@@ -37,21 +31,11 @@
             <option>Mentor</option><option>Volunteer</option>
           </select>
         </div>
-        <div class="field">
-          <label for="wl-note">Note (optional)</label>
-          <textarea id="wl-note" name="note" rows="4"></textarea>
-        </div>
-
-        <!-- honeypot -->
+        <div class="field"><label for="wl-note">Note (optional)</label><textarea id="wl-note" name="note" rows="4"></textarea></div>
         <input type="text" id="city" name="city" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
-
         <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
-          <span class="magnet-wrap">
-            <button type="submit" class="btn btn-primary shimmer magnet">Save</button>
-          </span>
-          <span class="magnet-wrap">
-            <a href="/" class="btn btn-outline shimmer magnet">Back to site</a>
-          </span>
+          <span class="magnet-wrap"><button type="submit" class="btn btn-primary shimmer magnet">Save</button></span>
+          <span class="magnet-wrap"><a href="/" class="btn btn-outline shimmer magnet">Back to site</a></span>
         </div>
         <p id="wl-status" class="note" role="status"></p>
       </form>
@@ -63,32 +47,19 @@
   <script>
     const form = document.getElementById('waitlist-form');
     const statusEl = document.getElementById('wl-status');
-
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const fd = new FormData(form);
-      if (fd.get('city')) return; // bot
-
+      if (fd.get('city')) return;
       if (!fd.get('name') || !fd.get('email') || !fd.get('role')) {
-        statusEl.textContent = "Please complete name, email, and role.";
-        return;
+        statusEl.textContent = "Please complete name, email, and role."; return;
       }
-
-      saveEntry('waitlist', {
-        name: fd.get('name'),
-        email: fd.get('email'),
-        role: fd.get('role'),
-        note: fd.get('note') || ""
-      });
-
-      statusEl.textContent = "Saved on this device. Thank you.";
-      form.reset();
+      saveEntry('waitlist', { name: fd.get('name'), email: fd.get('email'), role: fd.get('role'), note: fd.get('note') || "" });
+      statusEl.textContent = "Saved on this device. Thank you."; form.reset();
     });
-
     // hidden owner shortcut
-    window.addEventListener('keydown', e => {
-      if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener');
-    });
+    window.addEventListener('keydown', e => { if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener'); });
   </script>
 </body>
+
 </html>
