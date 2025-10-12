@@ -1,5 +1,5 @@
-// Minimal client: POST to /api/submit
-export async function postEntry(kind, data) {
+// assets/forms.js
+window.postEntry = async function(kind, data) {
   const r = await fetch("/api/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -13,4 +13,4 @@ export async function postEntry(kind, data) {
     throw new Error(msg);
   }
   return payload;
-}
+};
