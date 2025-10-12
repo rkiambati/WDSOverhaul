@@ -81,24 +81,23 @@
     statusEl.textContent = "Please complete organization, name, and email."; return;
   }
   statusEl.textContent = "Saving…";
-  try{
-    await postEntry('sponsor', {
-      org: fd.get('org'),
-      name: fd.get('name'),
-      email: fd.get('email'),
-      phone: fd.get('phone') || "",
-      subject: fd.get('subject') || "",
-      message: fd.get('message') || "",
-      budget: fd.get('budget') || "",
-      interests: fd.getAll('interests').join('; '),
-      honey: fd.get('company') || ""
-    });
-    statusEl.textContent = "Saved. Thank you!";
-    form.reset();
-  }catch(err){
-    statusEl.textContent = "Could not save. Please try again.";
-    console.error(err);
-  }
+try{
+  await postEntry('sponsor', {
+    org: fd.get('org'),
+    name: fd.get('name'),
+    email: fd.get('email'),
+    phone: fd.get('phone') || "",
+    subject: fd.get('subject') || "",
+    message: fd.get('message') || "",
+    budget: fd.get('budget') || "",
+    interests: fd.getAll('interests').join('; '),
+    honey: fd.get('company') || ""
+  });
+  statusEl.textContent = "Saved. Thank you!";
+  form.reset();
+}catch(err){
+  statusEl.textContent = "Could not save: " + err.message;
+}
 });
     window.addEventListener('keydown', e => { if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener'); });
   </script>
