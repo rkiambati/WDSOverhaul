@@ -6,48 +6,30 @@
   <title>Overhaul — Sponsor Us</title>
   <link rel="stylesheet" href="/styles.css" />
   <style>
-    .section {padding: 72px 0;}
-    .wrap {max-width: 1040px; margin: 0 auto; padding: 0 16px;}
-    .grid {display:grid; gap:18px;}
-    @media (min-width: 900px){ .grid {grid-template-columns: 1fr 1fr;} }
-    .glass {background: rgba(8,16,24,.6); border:1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 20px; backdrop-filter: blur(8px);}
-    .field {display:flex; flex-direction:column; gap:6px; margin:10px 0;}
-    .pdf-wrap {height: 72vh; border:1px solid rgba(255,255,255,.08); border-radius:12px; overflow:hidden}
-    .note {opacity:.8; font-size:.95rem}
+    .section{padding:72px 0}
+    .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+    .grid{display:grid;gap:18px}
+    @media (min-width:900px){.grid{grid-template-columns:1fr 1fr}}
+    .glass{background:rgba(8,16,24,.6);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;backdrop-filter:blur(8px)}
+    .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+    .pdf-wrap{height:72vh;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
+    .note{opacity:.8;font-size:.95rem}
   </style>
 </head>
 <body>
   <main class="section">
     <div class="wrap">
       <h1>Sponsor Overhaul</h1>
-      <p class="note">Tell us a bit about your organization. This saves on your device only. For the full package, use the viewer on the right.</p>
+      <p class="note">Share a few details. This saves locally on your device. View the package on the right.</p>
 
       <div class="grid">
         <form id="sponsor-form" class="glass" novalidate>
-          <div class="field">
-            <label for="org">Organization</label>
-            <input id="org" name="org" required />
-          </div>
-          <div class="field">
-            <label for="name">Contact name</label>
-            <input id="name" name="name" required />
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" required />
-          </div>
-          <div class="field">
-            <label for="phone">Phone (optional)</label>
-            <input id="phone" name="phone" />
-          </div>
-          <div class="field">
-            <label for="subject">Email subject</label>
-            <input id="subject" name="subject" placeholder="Sponsorship inquiry" />
-          </div>
-          <div class="field">
-            <label for="message">Message body</label>
-            <textarea id="message" name="message" rows="5" placeholder="Tell us what you have in mind"></textarea>
-          </div>
+          <div class="field"><label for="org">Organization</label><input id="org" name="org" required /></div>
+          <div class="field"><label for="name">Contact name</label><input id="name" name="name" required /></div>
+          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
+          <div class="field"><label for="phone">Phone (optional)</label><input id="phone" name="phone" /></div>
+          <div class="field"><label for="subject">Email subject</label><input id="subject" name="subject" placeholder="Sponsorship inquiry" /></div>
+          <div class="field"><label for="message">Message body</label><textarea id="message" name="message" rows="5" placeholder="Tell us what you have in mind"></textarea></div>
           <div class="field">
             <label for="budget">Budget range</label>
             <select id="budget" name="budget">
@@ -59,19 +41,23 @@
           </div>
           <fieldset class="field">
             <legend>Interests</legend>
-            <label><input type="checkbox" name="interests" value="Cash" /> Cash</label>
-            <label><input type="checkbox" name="interests" value="In-kind" /> In-kind</label>
-            <label><input type="checkbox" name="interests" value="Judging" /> Judging</label>
-            <label><input type="checkbox" name="interests" value="Venue" /> Venue</label>
-            <label><input type="checkbox" name="interests" value="Prizes" /> Prizes</label>
+            <label><input type="checkbox" name="interests" value="Cash"> Cash</label>
+            <label><input type="checkbox" name="interests" value="In-kind"> In-kind</label>
+            <label><input type="checkbox" name="interests" value="Judging"> Judging</label>
+            <label><input type="checkbox" name="interests" value="Venue"> Venue</label>
+            <label><input type="checkbox" name="interests" value="Prizes"> Prizes</label>
           </fieldset>
 
           <!-- honeypot -->
           <input type="text" id="company" name="company" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
 
-          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
-            <button class="btn btn-primary" type="submit"><span>Save</span></button>
-            <a class="btn btn-outline" href="/" rel="noopener"><span>Back to site</span></a>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+            <span class="magnet-wrap">
+              <button type="submit" class="btn btn-primary shimmer magnet">Save</button>
+            </span>
+            <span class="magnet-wrap">
+              <a href="/" class="btn btn-outline shimmer magnet">Back to site</a>
+            </span>
           </div>
           <p id="sponsor-status" class="note" role="status"></p>
         </form>
@@ -79,8 +65,7 @@
         <div class="glass">
           <h2>Sponsorship package</h2>
           <div class="pdf-wrap">
-            <!-- Swap the PDF when you have it -->
-            <object id="sponsor-pdf" data="/assets/Overhaul-Sponsor-Package.pdf" type="application/pdf" width="100%" height="100%">
+            <object data="/assets/Overhaul-Sponsor-Package.pdf" type="application/pdf" width="100%" height="100%">
               <p>PDF preview unsupported. <a href="/assets/Overhaul-Sponsor-Package.pdf" target="_blank" rel="noopener">Download the sponsor package</a>.</p>
             </object>
           </div>
@@ -99,11 +84,13 @@
       e.preventDefault();
       const fd = new FormData(form);
       if (fd.get('company')) return;
+
       if (!fd.get('org') || !fd.get('name') || !fd.get('email')) {
         statusEl.textContent = "Please complete organization, name, and email.";
         return;
       }
-      const row = {
+
+      saveEntry('sponsors', {
         org: fd.get('org'),
         name: fd.get('name'),
         email: fd.get('email'),
@@ -112,15 +99,15 @@
         message: fd.get('message') || "",
         budget: fd.get('budget') || "",
         interests: fd.getAll('interests').join('; ')
-      };
-      saveEntry('sponsors', row);
+      });
+
       statusEl.textContent = "Saved on this device. Thank you.";
       form.reset();
     });
 
-    // Owner shortcut
+    // hidden owner shortcut
     window.addEventListener('keydown', e => {
-      if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html', '_blank', 'noopener');
+      if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener');
     });
   </script>
 </body>
