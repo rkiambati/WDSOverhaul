@@ -42,50 +42,72 @@
     </div>
   </div>
 
-  <script src="/assets/js/forms.js"></script>
-  <script>
-    // 1) To Change: Choose a passphrase you like, then compute its SHA-256 once and paste the hex here.
-    const HASH_HEX = "fe9fc4f87260df9edf54230c66b4df638f278ab887c19b89dd0cf50d92b97450";
+<script src="./assets/forms.js"></script>
+<script>
+  // Owner hash is stored once in localStorage as hex
+  const KEY = "wds_owner_hash_hex";
 
-    async function sha256Hex(str){
-      const enc = new TextEncoder().encode(str);
-      const buf = await crypto.subtle.digest("SHA-256", enc);
-      const bytes = Array.from(new Uint8Array(buf));
-      return bytes.map(b => b.toString(16).padStart(2,"0")).join("");
-    }
+  async function sha256Hex(str){
+    const enc = new TextEncoder().encode(str);
+    const buf = await crypto.subtle.digest("SHA-256", enc);
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
 
-    document.getElementById('go').addEventListener('click', async () => {
-      const ok = (await sha256Hex(document.getElementById('pw').value)) === HASH_HEX;
-      if(!ok){ alert("Wrong passphrase"); return; }
-      document.getElementById('gate').hidden = true;
-      document.getElementById('app').hidden = false;
-      render();
-    });
+  // Setup UI: if no hash stored, let owner set one
+  const gate = document.getElementById('gate');
+  const app  = document.getElementById('app');
 
-    function render(){
-      const wl = loadEntries('waitlist');
-      const sp = loadEntries('sponsors');
-      renderTable('tbl-wl', wl);
-      renderTable('tbl-sp', sp);
-      document.getElementById('exp-wl').onclick = () => downloadCSV(`waitlist-${new Date().toISOString().slice(0,10)}.csv`, wl);
-      document.getElementById('exp-sp').onclick = () => downloadCSV(`sponsors-${new Date().toISOString().slice(0,10)}.csv`, sp);
-      document.getElementById('clear').onclick = () => {
-        if(confirm("Clear all local entries on this device?")){
-          localStorage.removeItem("wds_waitlist_entries_v1");
-          localStorage.removeItem("wds_sponsor_entries_v1");
-          render();
-        }
-      };
-    }
+  const setupRow = document.createElement('div');
+  setupRow.innerHTML = `
+    <p class="note">No owner passphrase set yet. Create one now.</p>
+    <input id="newpw" type="password" placeholder="New passphrase" />
+    <button id="setpw" class="btn btn-primary">Set passphrase</button>
+  `;
 
-    function renderTable(id, rows){
-      const el = document.getElementById(id);
-      if(!rows.length){ el.innerHTML = "<tr><td>No entries yet</td></tr>"; return; }
-      const headers = Object.keys(rows[0]);
-      const head = "<thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead>";
-      const body = "<tbody>"+rows.map(r=>"<tr>"+headers.map(h=>`<td>${r[h] ?? ""}</td>`).join("")+"</tr>").join("")+"</tbody>";
-      el.innerHTML = head + body;
-    }
-  </script>
+  if(!localStorage.getItem(KEY)){
+    gate.appendChild(setupRow);
+    document.getElementById('setpw').onclick = async () => {
+      const pw = document.getElementById('newpw').value.trim();
+      if(!pw) return alert("Enter a passphrase");
+      localStorage.setItem(KEY, await sha256Hex(pw));
+      alert("Passphrase set. Use it to unlock below.");
+      setupRow.remove();
+    };
+  }
+
+  document.getElementById('go').addEventListener('click', async () => {
+    const inputHex = await sha256Hex(document.getElementById('pw').value);
+    const savedHex = localStorage.getItem(KEY);
+    if(!savedHex){ return alert("No passphrase set yet."); }
+    if(inputHex !== savedHex){ alert("Wrong passphrase"); return; }
+    gate.hidden = true; app.hidden = false; render();
+  });
+
+  function render(){
+    const wl = loadEntries('waitlist');
+    const sp = loadEntries('sponsors');
+    renderTable('tbl-wl', wl);
+    renderTable('tbl-sp', sp);
+    document.getElementById('exp-wl').onclick = () => downloadCSV(`waitlist-${new Date().toISOString().slice(0,10)}.csv`, wl);
+    document.getElementById('exp-sp').onclick = () => downloadCSV(`sponsors-${new Date().toISOString().slice(0,10)}.csv`, sp);
+    document.getElementById('clear').onclick = () => {
+      if(confirm("Clear all local entries on this device?")){
+        localStorage.removeItem("wds_waitlist_entries_v1");
+        localStorage.removeItem("wds_sponsor_entries_v1");
+        render();
+      }
+    };
+  }
+
+  function renderTable(id, rows){
+    const el = document.getElementById(id);
+    if(!rows.length){ el.innerHTML = "<tr><td>No entries yet</td></tr>"; return; }
+    const headers = Object.keys(rows[0]);
+    el.innerHTML =
+      "<thead><tr>"+headers.map(h=>`<th>${h}</th>`).join("")+"</tr></thead>"+
+      "<tbody>"+rows.map(r=>"<tr>"+headers.map(h=>`<td>${r[h]??""}</td>`).join("")+"</tr>").join("")+"</tbody>";
+  }
+</script>
+
 </body>
 </html>
