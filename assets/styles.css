@@ -55,6 +55,20 @@ a{color:inherit;text-decoration:none}
 .magnet-wrap{display:inline-block;position:relative;perspective:600px}
 .magnet{will-change:transform}
 
+.btn-outline{
+  color:var(--clr-text, #e6f3ff);
+  background:transparent;
+  border:2px solid rgba(230,243,255,.28);
+  box-shadow: none;
+}
+.btn-outline:hover{
+  transform:translateY(-2px);
+  filter:saturate(1.07);
+  border-color: rgba(230,243,255,.55);
+}
+.btn-outline:active{ transform:translateY(0) }
+
+
 /* ===== Hero (includes FALLBACK BACKGROUND so it never looks blank) ===== */
 .hero{
   position:relative;color:var(--white);padding:140px 0 130px;overflow:hidden;
