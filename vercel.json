@@ -1,9 +1,11 @@
 {
+  "version": 2,
   "functions": {
-    "assets/api/submit.js": { "runtime": "nodejs18.x" }
+    "api/submit.js": {
+      "runtime": "nodejs18.x"
+    }
   },
   "routes": [
-    { "src": "/api/submit", "dest": "assets/api/submit.js" }
+    { "src": "/api/submit", "dest": "api/submit.js" }
   ]
 }
-
