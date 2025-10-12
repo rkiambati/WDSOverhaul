@@ -6,52 +6,57 @@
   <title>Overhaul — Join Waitlist</title>
   <link rel="stylesheet" href="/styles.css" />
   <style>
-    .page {max-width: 720px; margin: 64px auto; padding: 0 16px;}
-    .card {background: #0b0f14; border: 1px solid #1f2937; border-radius: 16px; padding: 20px;}
-    .field {display:flex; flex-direction:column; gap:6px;}
-    .field label {font-weight:600}
-    .actions {display:flex; gap:12px; flex-wrap:wrap; margin-top:12px}
-    .note {font-size: 0.9rem; opacity: 0.8}
+    .section {padding: 96px 0;}
+    .wrap {max-width: 760px; margin: 0 auto; padding: 0 16px;}
+    .glass {background: rgba(8,16,24,.6); border:1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 20px; backdrop-filter: blur(8px);}
+    .field {display:flex; flex-direction:column; gap:6px; margin:10px 0;}
+    .note {opacity:.8; font-size:.95rem}
   </style>
 </head>
 <body>
-  <div class="page">
-    <h1>Join the Overhaul waitlist</h1>
-    <form id="waitlist-form" class="card" novalidate>
-      <div class="field">
-        <label for="wl-name">Name</label>
-        <input id="wl-name" name="name" required />
-      </div>
-      <div class="field">
-        <label for="wl-email">Email</label>
-        <input id="wl-email" name="email" type="email" required />
-      </div>
-      <div class="field">
-        <label for="wl-role">Role</label>
-        <select id="wl-role" name="role" required>
-          <option value="">Select...</option>
-          <option>Student</option><option>Sponsor</option>
-          <option>Mentor</option><option>Volunteer</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="wl-note">Note (optional)</label>
-        <textarea id="wl-note" name="note" rows="4"></textarea>
-      </div>
+  <main class="section">
+    <div class="wrap">
+      <h1 class="center">Join the Overhaul waitlist</h1>
+      <p class="note center">We will email important dates and openings. This form does not send data to a server.</p>
 
-      <!-- honeypot -->
-      <input type="text" id="city" name="city" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
+      <form id="waitlist-form" class="glass" novalidate>
+        <div class="field">
+          <label for="wl-name">Name</label>
+          <input id="wl-name" name="name" required />
+        </div>
+        <div class="field">
+          <label for="wl-email">Email</label>
+          <input id="wl-email" name="email" type="email" required />
+        </div>
+        <div class="field">
+          <label for="wl-role">Role</label>
+          <select id="wl-role" name="role" required>
+            <option value="">Select...</option>
+            <option>Student</option><option>Sponsor</option>
+            <option>Mentor</option><option>Volunteer</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="wl-note">Note (optional)</label>
+          <textarea id="wl-note" name="note" rows="4"></textarea>
+        </div>
 
-      <div class="actions">
-        <button class="btn btn-primary" type="submit">Save</button>
-        <button class="btn" type="button" id="export-wl">Export CSV</button>
-        <a class="btn" href="/admin.html" target="_blank" rel="noopener">Owner view</a>
-      </div>
-      <p id="wl-status" class="note" role="status"></p>
-    </form>
-  </div>
+        <!-- honeypot -->
+        <input type="text" id="city" name="city" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+          <button class="btn btn-primary" type="submit"><span>Save</span></button>
+          <a class="btn btn-outline" href="/" rel="noopener"><span>Back to site</span></a>
+        </div>
+        <p id="wl-status" class="note" role="status"></p>
+      </form>
+
+      <!-- Owner hint: no visible links. Press Shift + O to open admin in a new tab. -->
+    </div>
+  </main>
 
   <script src="/assets/js/forms.js"></script>
+  <script src="/main.js"></script>
   <script>
     const form = document.getElementById('waitlist-form');
     const statusEl = document.getElementById('wl-status');
@@ -66,21 +71,20 @@
         return;
       }
 
-      const row = {
+      saveEntry('waitlist', {
         name: fd.get('name'),
         email: fd.get('email'),
         role: fd.get('role'),
         note: fd.get('note') || ""
-      };
+      });
 
-      saveEntry('waitlist', row);
-      statusEl.textContent = "Saved locally. Use Export CSV to download.";
+      statusEl.textContent = "Saved on this device. Thank you.";
       form.reset();
     });
 
-    document.getElementById('export-wl').addEventListener('click', () => {
-      const rows = loadEntries('waitlist');
-      downloadCSV(`waitlist-${new Date().toISOString().slice(0,10)}.csv`, rows);
+    // Owner shortcut
+    window.addEventListener('keydown', e => {
+      if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html', '_blank', 'noopener');
     });
   </script>
 </body>
