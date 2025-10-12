@@ -16,13 +16,13 @@
     .note{opacity:.8;font-size:.95rem}
   </style>
 </head>
-<body>
+<body class="page--dark">
   <main class="section">
     <div class="wrap">
-      <h1>Sponsor Overhaul</h1>
-      <p class="note">Share a few details. This saves locally on your device. View the package on the right.</p>
+      <h1 class="center">Sponsor Overhaul</h1>
+      <p class="note center">Share a few details. Saved locally on your device. View the package on the right.</p>
 
-      <div class="grid">
+      <div class="grid grid-2">
         <form id="sponsor-form" class="glass" novalidate>
           <div class="field"><label for="org">Organization</label><input id="org" name="org" required /></div>
           <div class="field"><label for="name">Contact name</label><input id="name" name="name" required /></div>
@@ -48,22 +48,16 @@
             <label><input type="checkbox" name="interests" value="Prizes"> Prizes</label>
           </fieldset>
 
-          <!-- honeypot -->
           <input type="text" id="company" name="company" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
-
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
-            <span class="magnet-wrap">
-              <button type="submit" class="btn btn-primary shimmer magnet">Save</button>
-            </span>
-            <span class="magnet-wrap">
-              <a href="/" class="btn btn-outline shimmer magnet">Back to site</a>
-            </span>
+            <span class="magnet-wrap"><button type="submit" class="btn btn-primary shimmer magnet">Save</button></span>
+            <span class="magnet-wrap"><a href="/" class="btn btn-outline shimmer magnet">Back to site</a></span>
           </div>
           <p id="sponsor-status" class="note" role="status"></p>
         </form>
 
         <div class="glass">
-          <h2>Sponsorship package</h2>
+          <h2 class="center">Sponsorship package</h2>
           <div class="pdf-wrap">
             <object data="/assets/Overhaul-Sponsor-Package.pdf" type="application/pdf" width="100%" height="100%">
               <p>PDF preview unsupported. <a href="/assets/Overhaul-Sponsor-Package.pdf" target="_blank" rel="noopener">Download the sponsor package</a>.</p>
@@ -79,36 +73,23 @@
   <script>
     const form = document.getElementById('sponsor-form');
     const statusEl = document.getElementById('sponsor-status');
-
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const fd = new FormData(form);
       if (fd.get('company')) return;
-
       if (!fd.get('org') || !fd.get('name') || !fd.get('email')) {
-        statusEl.textContent = "Please complete organization, name, and email.";
-        return;
+        statusEl.textContent = "Please complete organization, name, and email."; return;
       }
-
       saveEntry('sponsors', {
-        org: fd.get('org'),
-        name: fd.get('name'),
-        email: fd.get('email'),
-        phone: fd.get('phone') || "",
-        subject: fd.get('subject') || "",
-        message: fd.get('message') || "",
-        budget: fd.get('budget') || "",
+        org: fd.get('org'), name: fd.get('name'), email: fd.get('email'),
+        phone: fd.get('phone') || "", subject: fd.get('subject') || "",
+        message: fd.get('message') || "", budget: fd.get('budget') || "",
         interests: fd.getAll('interests').join('; ')
       });
-
-      statusEl.textContent = "Saved on this device. Thank you.";
-      form.reset();
+      statusEl.textContent = "Saved on this device. Thank you."; form.reset();
     });
-
-    // hidden owner shortcut
-    window.addEventListener('keydown', e => {
-      if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener');
-    });
+    window.addEventListener('keydown', e => { if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener'); });
   </script>
 </body>
+
 </html>
