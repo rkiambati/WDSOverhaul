@@ -1,9 +1,10 @@
-/<!--
+<!--
 WDS Externals Hackathon – annotated pass
 Author notes (Reich):
 If something breaks, check the console first, then network panel for /api calls.
 This HTML file now includes section-by-section comments that map to main.js behaviors and styles.css classes.
 Use the IDs and data- attributes as integration points; avoid renaming without updating main.js.
+Last touched: 2025-10-20 19:00
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -11,8 +12,8 @@ Use the IDs and data- attributes as integration points; avoid renaming without u
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WDS Externals Hackathon</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/main.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="main.js"></script>
 </head>
 
 <body>
@@ -26,18 +27,18 @@ Use the IDs and data- attributes as integration points; avoid renaming without u
         <a href="#sponsors">Sponsors</a>
         <a href="#faq">FAQ</a>
       </nav>
+      <!-- Progress bar restored and forced above hero via z-index -->
       <div class="progress-bar" aria-hidden="true"></div>
     </div>
   </header>
 
-  <!-- Hero: NIGHT THEME. Stars (single brand color), subtle moon glow, teal hills -->
+  <!-- Hero: NIGHT THEME. Stars (single brand color), subtle moon glow, horizon lowered so it never blocks sky -->
   <section class="hero night">
     <div class="hero-bg">
-      <div class="stars" aria-hidden="true">
-        <!-- Filled by JS with <span> stars -->
-      </div>
+      <div class="stars" aria-hidden="true"><!-- Filled by JS --></div>
       <div class="moon"></div>
-      <div class="hills"></div>
+      <!-- Lower horizon so stars/moon stay clear -->
+      <div class="hills" aria-hidden="true"></div>
     </div>
 
     <div class="hero-inner">
@@ -65,6 +66,7 @@ Use the IDs and data- attributes as integration points; avoid renaming without u
           </div>
         </div>
 
+        <!-- Demo tiles to echo Figma density without stealing focus -->
         <div class="grid grid-3 demo-cards">
           <div class="card px" aria-hidden="true"></div>
           <div class="card px" aria-hidden="true"></div>
@@ -76,17 +78,39 @@ Use the IDs and data- attributes as integration points; avoid renaming without u
     </div>
   </section>
 
-  <section id="testimonials" class="section dark">
+  <!-- Pond / Testimonials: Figma lily-pad silhouette, night lighting -->
+  <section id="testimonials" class="section pond-section">
+    <div class="pond-bg" aria-hidden="true">
+      <!-- Large layered water blobs to match Figma silhouette -->
+      <div class="water w1"></div>
+      <div class="water w2"></div>
+
+      <!-- Lily pads (positions roughly matched to Figma) -->
+      <div class="lily l-left px"></div>
+      <div class="lily l-right px"></div>
+
+      <!-- Gentle moon reflection far right -->
+      <div class="reflection"></div>
+
+      <!-- Bubbles (CSS handles float) -->
+      <span class="bubble b1"></span>
+      <span class="bubble b2"></span>
+      <span class="bubble b3"></span>
+      <span class="bubble b4"></span>
+      <span class="bubble b5"></span>
+    </div>
+
     <div class="container">
       <h2>What people say</h2>
-      <div id="testimonials-list" class="grid grid-3">
+      <div id="testimonials-list" class="grid grid-2">
         <!-- main.js will hydrate from content.json -->
       </div>
     </div>
   </section>
 
-  <!-- Sponsors CTA: vignette behind CTA, consistent logo rail -->
-  <section id="sponsors" class="section sponsors-textured">
+  <!-- Sponsors CTA: figma hill curve, night tint + vignette behind CTA, consistent logo rail -->
+  <section id="sponsors" class="section sponsors-hill">
+    <div class="hill" aria-hidden="true"></div>
     <div class="container center">
       <h2>Sponsor the hackathon</h2>
       <p>Support devs on campus and recruit early.</p>
@@ -103,31 +127,20 @@ Use the IDs and data- attributes as integration points; avoid renaming without u
     </div>
   </section>
 
-  <!-- FAQ: buttery expand/collapse handled by data-accordion buttons in main.js -->
-  <section id="faq" class="section">
+  <!-- FAQ: keep Figma curve but dim to dusk so it doesn't fight the night hero -->
+  <section id="faq" class="section faq-dusk">
+    <div class="faq-sky" aria-hidden="true"></div>
     <div class="container">
       <h2>FAQ</h2>
       <div class="faq">
-        <button class="faq-q" data-accordion aria-expanded="false">
-          Who can join?
-        </button>
-        <div class="faq-a" hidden>
-          Anyone at Western who wants to build and learn.
-        </div>
+        <button class="faq-q" data-accordion aria-expanded="false">What is a hackathon?</button>
+        <div class="faq-a" hidden>Hands-on weekend to learn and build.</div>
 
-        <button class="faq-q" data-accordion aria-expanded="false">
-          What do I need to know?
-        </button>
-        <div class="faq-a" hidden>
-          Basic HTML/CSS/JS helps, curiosity is required.
-        </div>
+        <button class="faq-q" data-accordion aria-expanded="false">Do I need to know how to code?</button>
+        <div class="faq-a" hidden>Beginner friendly. Curiosity is required.</div>
 
-        <button class="faq-q" data-accordion aria-expanded="false">
-          Do I need a team?
-        </button>
-        <div class="faq-a" hidden>
-          You can join solo, we will match you if you want.
-        </div>
+        <button class="faq-q" data-accordion aria-expanded="false">Do I need a team?</button>
+        <div class="faq-a" hidden>You can join solo. We’ll match you on request.</div>
       </div>
     </div>
   </section>
