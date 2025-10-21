@@ -267,6 +267,19 @@ async function loadContent(){
 }
 loadContent();
 
+// Quick admin shortcut: press Shift + A to open admin.html
+(function adminShortcut(){
+  let down = new Set();
+  window.addEventListener('keydown', (e) => {
+    down.add(e.key.toLowerCase());
+    if (e.shiftKey && down.has('a')) {
+      window.location.href = 'admin.html';
+    }
+  });
+  window.addEventListener('keyup', (e) => down.delete(e.key.toLowerCase()));
+})();
+
+
 /* ===============================
    Resize safety
    =============================== */
