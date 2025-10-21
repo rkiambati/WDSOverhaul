@@ -12,33 +12,32 @@ Last touched: 2025-10-20 19:00
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WDS Externals Hackathon</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/main.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="main.js"></script>
 </head>
 
 <body>
-  <!-- Site header: sticky glass with progress bar; see styles.css `.site-header` and main.js onScroll -->
+  <!-- Header: glass + full-bleed progress + better nav -->
   <header class="site-header">
     <div class="nav-wrap">
-      <!-- Primary nav: anchors support a11y focus jump via main.js -->
+      <a class="brand" href="index.html"><span class="brand-mark">WDS</span></a>
       <nav class="nav">
         <a href="#about">About</a>
         <a href="#testimonials">Testimonials</a>
         <a href="#sponsors">Sponsors</a>
         <a href="#faq">FAQ</a>
       </nav>
-      <!-- Progress bar restored and forced above hero via z-index -->
-      <div class="progress-bar" aria-hidden="true"></div>
     </div>
+    <!-- full-width gradient progress bar -->
+    <div class="progress-bar" aria-hidden="true"></div>
   </header>
 
-  <!-- Hero: NIGHT THEME. Stars (single brand color), subtle moon glow, horizon lowered so it never blocks sky -->
+  <!-- HERO (night) -->
   <section class="hero night">
     <div class="hero-bg">
-      <div class="stars" aria-hidden="true"><!-- Filled by JS --></div>
+      <div class="stars" aria-hidden="true"></div>
       <div class="moon"></div>
-      <!-- Lower horizon so stars/moon stay clear -->
-      <div class="hills" aria-hidden="true"></div>
+      <div class="hills"></div>
     </div>
 
     <div class="hero-inner">
@@ -48,9 +47,12 @@ Last touched: 2025-10-20 19:00
         <a class="btn btn-primary magnet" href="waitlist.html">Join the waitlist</a>
       </div>
     </div>
+
+    <!-- Figma-style curve into next section -->
+    <div class="curve curve-bottom" aria-hidden="true"></div>
   </section>
 
-  <!-- About: background blobs + small proof badges; parallax nudge mirrors hero -->
+  <!-- ABOUT -->
   <section id="about" class="section about-textured">
     <div class="container">
       <div class="grid grid-2">
@@ -66,7 +68,6 @@ Last touched: 2025-10-20 19:00
           </div>
         </div>
 
-        <!-- Demo tiles to echo Figma density without stealing focus -->
         <div class="grid grid-3 demo-cards">
           <div class="card px" aria-hidden="true"></div>
           <div class="card px" aria-hidden="true"></div>
@@ -76,80 +77,78 @@ Last touched: 2025-10-20 19:00
         </div>
       </div>
     </div>
+    <div class="curve curve-bottom" aria-hidden="true"></div>
   </section>
 
-  <!-- Pond / Testimonials: Figma lily-pad silhouette, night lighting -->
-  <section id="testimonials" class="section pond-section">
-    <div class="pond-bg" aria-hidden="true">
-      <!-- Large layered water blobs to match Figma silhouette -->
-      <div class="water w1"></div>
-      <div class="water w2"></div>
-
-      <!-- Lily pads (positions roughly matched to Figma) -->
-      <div class="lily l-left px"></div>
-      <div class="lily l-right px"></div>
-
-      <!-- Gentle moon reflection far right -->
-      <div class="reflection"></div>
-
-      <!-- Bubbles (CSS handles float) -->
-      <span class="bubble b1"></span>
-      <span class="bubble b2"></span>
-      <span class="bubble b3"></span>
-      <span class="bubble b4"></span>
-      <span class="bubble b5"></span>
-    </div>
-
+  <!-- TESTIMONIALS (pond with lily pads) -->
+  <section id="testimonials" class="section pond">
     <div class="container">
       <h2>What people say</h2>
-      <div id="testimonials-list" class="grid grid-2">
-        <!-- main.js will hydrate from content.json -->
+      <div id="testimonials-list" class="grid grid-3">
+        <!-- hydrated by JS -->
       </div>
     </div>
+
+    <!-- Decorative lily pads / bubbles (purely visual) -->
+    <div class="pond-ornaments" aria-hidden="true">
+      <div class="pad px" style="left:8%;  bottom:6%;  --pad:180px;">
+        <span class="ripple"></span>
+        <span class="wedge"></span>
+      </div>
+      <div class="pad px" style="left:84%; bottom:8%;  --pad:150px;">
+        <span class="ripple"></span>
+        <span class="wedge"></span>
+      </div>
+      <div class="pad px" style="left:20%; bottom:22%; --pad:110px;">
+        <span class="ripple"></span>
+        <span class="wedge"></span>
+      </div>
+
+      <span class="bubble" style="left:36%; bottom:18%;" ></span>
+      <span class="bubble" style="left:42%; bottom:14%;" ></span>
+      <span class="bubble" style="left:66%; bottom:16%;" ></span>
+      <span class="bubble" style="left:72%; bottom:12%;" ></span>
+    </div>
+
+    <div class="curve curve-bottom" aria-hidden="true"></div>
   </section>
 
-  <!-- Sponsors CTA: figma hill curve, night tint + vignette behind CTA, consistent logo rail -->
-  <section id="sponsors" class="section sponsors-hill">
-    <div class="hill" aria-hidden="true"></div>
+  <!-- SPONSORS -->
+  <section id="sponsors" class="section sponsors-textured">
     <div class="container center">
       <h2>Sponsor the hackathon</h2>
       <p>Support devs on campus and recruit early.</p>
-
       <div class="vignette">
         <div class="magnet-wrap">
           <a class="btn btn-secondary magnet" href="sponsor.html">Sponsor interest</a>
         </div>
       </div>
 
-      <div id="sponsor-logos" class="logo-row" aria-live="polite">
-        <!-- main.js will render logos from content.json -->
-      </div>
+      <div id="sponsor-logos" class="logo-row" aria-live="polite"></div>
     </div>
+    <div class="curve curve-bottom" aria-hidden="true"></div>
   </section>
 
-  <!-- FAQ: keep Figma curve but dim to dusk so it doesn't fight the night hero -->
-  <section id="faq" class="section faq-dusk">
-    <div class="faq-sky" aria-hidden="true"></div>
+  <!-- FAQ -->
+  <section id="faq" class="section sky-dusk">
     <div class="container">
       <h2>FAQ</h2>
       <div class="faq">
         <button class="faq-q" data-accordion aria-expanded="false">What is a hackathon?</button>
-        <div class="faq-a" hidden>Hands-on weekend to learn and build.</div>
+        <div class="faq-a" hidden><p>Build things with friends, fast.</p></div>
 
         <button class="faq-q" data-accordion aria-expanded="false">Do I need to know how to code?</button>
-        <div class="faq-a" hidden>Beginner friendly. Curiosity is required.</div>
+        <div class="faq-a" hidden><p>Nope. Curiosity is enough.</p></div>
 
         <button class="faq-q" data-accordion aria-expanded="false">Do I need a team?</button>
-        <div class="faq-a" hidden>You can join solo. We’ll match you on request.</div>
+        <div class="faq-a" hidden><p>Solo is fine; we can match you.</p></div>
       </div>
     </div>
+    <div class="curve curve-bottom footer-curve" aria-hidden="true"></div>
   </section>
 
-  <!-- Footer: minimal content; keep legal and contact here -->
   <footer class="footer">
-    <div class="container">
-      <p class="note">Western Developer Society — Externals</p>
-    </div>
+    <div class="container"><p class="note">Western Developer Society — Externals</p></div>
   </footer>
 </body>
 </html>
