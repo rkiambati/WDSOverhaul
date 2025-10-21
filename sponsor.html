@@ -1,106 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Overhaul — Sponsor Us</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <style>
-    .section{padding:72px 0}
-    .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
-    .grid{display:grid;gap:18px}
-    @media (min-width:900px){.grid{grid-template-columns:1fr 1fr}}
-    .glass{background:rgba(8,16,24,.6);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;backdrop-filter:blur(8px)}
-    .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
-    .pdf-wrap{height:72vh;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
-    .note{opacity:.8;font-size:.95rem}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sponsor Overhaul — WDS</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="main.js"></script>
 </head>
-<body class="page--dark">
-  <main class="section">
-    <div class="wrap">
-      <h1 class="center">Sponsor Overhaul</h1>
-      <p class="note center">Share a few details. Saved locally on your device. View the package on the right.</p>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html"><span class="brand-mark">WDS</span></a>
+      <nav class="nav">
+        <a href="index.html#about">About</a>
+        <a href="index.html#testimonials">Testimonials</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+    </div>
+    <div class="progress-bar" aria-hidden="true"></div>
+  </header>
 
-      <div class="grid grid-2">
-        <form id="sponsor-form" class="glass" novalidate>
-          <div class="field"><label for="org">Organization</label><input id="org" name="org" required /></div>
-          <div class="field"><label for="name">Contact name</label><input id="name" name="name" required /></div>
-          <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /></div>
-          <div class="field"><label for="phone">Phone (optional)</label><input id="phone" name="phone" /></div>
-          <div class="field"><label for="subject">Email subject</label><input id="subject" name="subject" placeholder="Sponsorship inquiry" /></div>
-          <div class="field"><label for="message">Message body</label><textarea id="message" name="message" rows="5" placeholder="Tell us what you have in mind"></textarea></div>
-          <div class="field">
-            <label for="budget">Budget range</label>
-            <select id="budget" name="budget">
-              <option value="">Select...</option>
-              <option>Under $500</option><option>$500–$1,000</option>
-              <option>$1,000–$2,500</option><option>$2,500–$5,000</option>
-              <option>$5,000+</option>
-            </select>
-          </div>
-          <fieldset class="field">
-            <legend>Interests</legend>
-            <label><input type="checkbox" name="interests" value="Cash"> Cash</label>
-            <label><input type="checkbox" name="interests" value="In-kind"> In-kind</label>
-            <label><input type="checkbox" name="interests" value="Judging"> Judging</label>
-            <label><input type="checkbox" name="interests" value="Venue"> Venue</label>
-            <label><input type="checkbox" name="interests" value="Prizes"> Prizes</label>
-          </fieldset>
+  <!-- Page hero -->
+  <section class="page-hero night-slim">
+    <div class="page-sky-stars" aria-hidden="true"></div>
+    <div class="page-moon" aria-hidden="true"></div>
 
-          <input type="text" id="company" name="company" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
-            <span class="magnet-wrap"><button type="submit" class="btn btn-primary shimmer magnet">Save</button></span>
-            <span class="magnet-wrap"><a href="/" class="btn btn-outline shimmer magnet">Back to site</a></span>
-          </div>
-          <p id="sponsor-status" class="note" role="status"></p>
-        </form>
-
-        <div class="glass">
-          <h2 class="center">Sponsorship package</h2>
-          <div class="pdf-wrap">
-            <object data="/assets/Overhaul-Sponsor-Package.pdf" type="application/pdf" width="100%" height="100%">
-              <p>PDF preview unsupported. <a href="/assets/Overhaul-Sponsor-Package.pdf" target="_blank" rel="noopener">Download the sponsor package</a>.</p>
-            </object>
-          </div>
-        </div>
+    <div class="container hero-center">
+      <h1>Partner with Overhaul</h1>
+      <p class="subtitle">Support builders on campus and recruit early. Zero fluff — all signal.</p>
+      <div class="magnet-wrap">
+        <a class="btn btn-primary magnet" href="#sponsor-form">Get sponsor info</a>
       </div>
     </div>
-  </main>
+  </section>
 
-  <script src="/assets/forms.js"></script>
-  <script src="assets/main.js"></script>
+  <!-- Form -->
+  <section class="section">
+    <div class="container form-wrap">
+      <div class="form-card">
+        <h2 class="form-title">Sponsor interest</h2>
+        <p class="form-kicker">Tell us a bit about your team — we’ll follow up with our sponsor kit.</p>
+
+        <form id="sponsor-form" class="form-grid" autocomplete="on">
+          <div class="form-row">
+            <label>Full name
+              <input class="input" type="text" name="name" required placeholder="Alex Chen" />
+            </label>
+            <label>Work email
+              <input class="input" type="email" name="email" required placeholder="alex@company.com" />
+            </label>
+          </div>
+
+          <div class="form-row">
+            <label>Company
+              <input class="input" type="text" name="company" required placeholder="Acme, Inc." />
+            </label>
+            <label>Role / Team
+              <input class="input" type="text" name="role" placeholder="Talent / University / Eng" />
+            </label>
+          </div>
+
+          <div class="form-row">
+            <label>Budget range
+              <select class="input" name="budget" required>
+                <option value="" disabled selected>Select a range</option>
+                <option>Under $1,000</option>
+                <option>$1,000–$2,500</option>
+                <option>$2,500–$5,000</option>
+                <option>$5,000+</option>
+              </select>
+            </label>
+            <label>Hiring focus
+              <input class="input" type="text" name="hiring" placeholder="Frontend, Backend, Design…" />
+            </label>
+          </div>
+
+          <label>Anything else?
+            <textarea class="input" name="message" rows="4" placeholder="What would make this partnership a win for you?"></textarea>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" name="consent" required />
+            <span>I agree to be contacted about sponsorship.</span>
+          </label>
+
+          <div class="actions">
+            <div class="magnet-wrap">
+              <button class="btn btn-secondary magnet" type="submit">Send sponsor interest</button>
+            </div>
+            <a class="link-muted" href="mailto:wcychen946@gmail.com">Prefer email? wcychen946@gmail.com</a>
+          </div>
+
+          <p class="tiny-note">
+            We only store the fields you submit here — <strong>no IP addresses or browser data.</strong>
+          </p>
+          <p id="sponsor-success" class="form-success" hidden>Thanks! We’ll get back to you shortly with the sponsor kit.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <script>
-    const form = document.getElementById('sponsor-form');
-    const statusEl = document.getElementById('sponsor-status');
-    form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(form);
-  if (fd.get('company')) return; // honeypot
-  if (!fd.get('org') || !fd.get('name') || !fd.get('email')) {
-    statusEl.textContent = "Please complete organization, name, and email."; return;
-  }
-  statusEl.textContent = "Saving…";
-try{
-  await postEntry('sponsor', {
-    org: fd.get('org'),
-    name: fd.get('name'),
-    email: fd.get('email'),
-    phone: fd.get('phone') || "",
-    subject: fd.get('subject') || "",
-    message: fd.get('message') || "",
-    budget: fd.get('budget') || "",
-    interests: fd.getAll('interests').join('; '),
-    honey: fd.get('company') || ""
-  });
-  statusEl.textContent = "Saved. Thank you!";
-  form.reset();
-}catch(err){
-  statusEl.textContent = "Could not save: " + err.message;
-}
-});
-    window.addEventListener('keydown', e => { if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener'); });
+    document.getElementById('sponsor-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = Object.fromEntries(new FormData(form).entries());
+      try {
+        if (window.submitSponsor) {
+          await window.submitSponsor(data);
+        }
+        form.reset();
+        document.getElementById('sponsor-success').hidden = false;
+      } catch (err) {
+        console.error('Sponsor submit failed:', err);
+        document.getElementById('sponsor-success').textContent = 'Something went wrong. Try again or email us.';
+        document.getElementById('sponsor-success').hidden = false;
+      }
+    });
   </script>
 </body>
-
 </html>
