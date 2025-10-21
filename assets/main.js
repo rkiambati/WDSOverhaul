@@ -1,178 +1,168 @@
-(function () {
-  // Let CSS know JS is active (for progressive enhancement reveals)
-  document.documentElement.classList.add('js');
+/**
+WDS Externals Hackathon – annotated pass
+Author notes (Reich): 
+If something breaks, check the console first, then network panel for /api calls.
+Front-of-site interactions: parallax, magnetic CTAs, FAQ accordion, scroll progress.
+Last touched: 2025-10-20 19:00
+*/
 
-  const prefersReduced =
-    window.matchMedia &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.documentElement.classList.add('js');
 
-  // ---- Cache DOM refs FIRST (avoid TDZ + order bugs) ----
-  const header = document.getElementById('header');
-  const progressBar = document.querySelector('.progress span');
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // Hero layers
-  const sun = document.querySelector('.sun');
-  const hill1 = document.querySelector('.hill-1');
-  const hill2 = document.querySelector('.hill-2');
+/* Scroll progress bar */
+const progressBar = $('.progress-bar');
+function onScroll() {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  if (progressBar) progressBar.style.width = pct + '%';
+}
+window.addEventListener('scroll', onScroll);
+onScroll();
 
-  // Parallax tiles (About section)
-  let pxEls = Array.from(document.querySelectorAll('.px'));
-
-  // ===== Smooth section reveal (with fallback) =====
-  const revealEls = document.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('in');
-            obs.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    revealEls.forEach((el) => obs.observe(el));
-  } else {
-    // Old browsers: just show everything
-    revealEls.forEach((el) => el.classList.add('in'));
+/* Night stars: single brand color, gentle twinkle */
+function spawnStars(){
+  const host = $('.stars');
+  if (!host) return;
+  const n = 18; // tasteful count
+  const frag = document.createDocumentFragment();
+  for (let i=0;i<n;i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*60 + '%';
+    s.style.width = s.style.height = (4 + Math.random()*4) + 'px';
+    s.style.animationDelay = (Math.random()*2.2).toFixed(2) + 's';
+    s.style.opacity = (0.45 + Math.random()*0.45).toFixed(2);
+    frag.appendChild(s);
   }
+  host.appendChild(frag);
+}
+spawnStars();
 
-  // ===== Header glass tweaks + scroll progress =====
-  function onScroll() {
-    const y = window.scrollY || 0;
+/* Parallax for hero and tiles + badges */
+function parallaxTiles() {
+  const tiles = $$('.px');
+  const y = window.scrollY || 0;
+  tiles.forEach((t, i) => {
+    const nudge = Math.sin((y + i * 60) / 420) * 3.5; // slightly reduced for subtlety
+    t.style.transform = `translateY(${nudge}px)`;
+  });
 
-    if (header) header.classList.toggle('scrolled', y > 6);
+  const moon = $('.moon');
+  const hills = $('.hills');
+  if (moon) moon.style.transform = `translateY(${y * 0.05}px)`;
+  if (hills) hills.style.transform = `translateY(${y * 0.02}px)`;
+}
+window.addEventListener('scroll', parallaxTiles);
+parallaxTiles();
 
-    const h = document.documentElement.scrollHeight - window.innerHeight;
-    if (progressBar) progressBar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+/* ===== Magnetic buttons ===== */
+// Magnetic CTA hover effect; keep radius/strength tuned for laptop trackpads.
+function setupMagnet(el, strength = 18, radius = 120){
+  const wrap = el.closest('.magnet-wrap') || el.parentElement;
+  if (!wrap) return;
 
-    if (!prefersReduced) {
-      parallaxTiles();
-      parallaxHero();
-    }
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  // ===== Magnetic CTAs (hero + sponsors) =====
-  setupMagnet('.magnet-wrap', '.magnet');           // Hero button
-  setupMagnet('#sponsors .center', '.magnet-2');    // Sponsors button
-
-  function setupMagnet(selectorWrap, selectorBtn) {
-    const wrap = document.querySelector(selectorWrap);
-    const btn = document.querySelector(selectorBtn);
-    if (!wrap || !btn) return;
-
-    let tx = 0, ty = 0, dx = 0, dy = 0, raf = null;
-    const strength = 0.25; // movement ratio
-    const radius = 140;    // px
-
-    function animate() {
-      tx += (dx - tx) * 0.18;
-      ty += (dy - ty) * 0.18;
-      btn.style.transform = `translate(${tx}px, ${ty}px)`;
-      raf = requestAnimationFrame(animate);
-    }
-    function onMove(e) {
-      const r = wrap.getBoundingClientRect();
-      const mx = e.clientX - (r.left + r.width / 2);
-      const my = e.clientY - (r.top + r.height / 2);
-      const dist = Math.hypot(mx, my);
-      if (dist < radius && !prefersReduced) {
-        dx = mx * strength; dy = my * strength;
-        if (!raf) raf = requestAnimationFrame(animate);
-      } else {
-        dx = dy = 0;
-      }
-    }
-    function onLeave() {
-      dx = dy = 0;
-      if (raf) cancelAnimationFrame(raf), (raf = null);
-      btn.style.transform = 'translate(0,0)';
-    }
-    wrap.addEventListener('pointermove', onMove);
-    wrap.addEventListener('pointerleave', onLeave);
-  }
-
-  // ===== Parallax for tiles (subtle) =====
-  function parallaxTiles() {
-    // Refresh the list lazily in case DOM changed
-    if (!pxEls.length) pxEls = Array.from(document.querySelectorAll('.px'));
-    const vh = window.innerHeight || 1;
-    pxEls.forEach((el) => {
-      const speed = parseFloat(el.dataset.speed || '0.1');
-      const rect = el.getBoundingClientRect();
-      const mid = rect.top + rect.height / 2;
-      const offsetFromCenter = mid - vh / 2; // positive when below center
-      const translate = offsetFromCenter * speed * 0.15; // subtle
-      el.style.transform = `translateY(${translate}px)`;
-    });
-  }
-
-  // ===== Parallax for hero layers (super subtle) =====
-  function parallaxHero() {
-    const y = window.scrollY || 0;
-    if (sun)   sun.style.transform  = `translateY(${y * -0.08}px)`;
-    if (hill1) hill1.style.transform = `translateY(${y * 0.06}px)`;
-    if (hill2) hill2.style.transform = `translateY(${y * 0.12}px)`;
-  }
-
-  // ===== FAQ buttery animation =====
-  function toggleFAQ(item) {
-    const content = item.querySelector('.faq-a');
-    if (!content) return;
-
-    const isOpen = item.classList.contains('open');
-    if (isOpen) {
-      const start = content.scrollHeight;
-      content.style.height = start + 'px';
-      requestAnimationFrame(() => (content.style.height = '0px'));
-      content.addEventListener('transitionend', function handler(ev) {
-        if (ev.propertyName !== 'height') return;
-        item.classList.remove('open');
-        content.removeEventListener('transitionend', handler);
-      });
+  wrap.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
+    const dist = Math.hypot(dx, dy);
+    if (dist < radius){
+      const p = 1 - dist / radius;
+      el.style.transform = `translate(${dx * p * (strength/100)}px, ${dy * p * (strength/100)}px)`;
     } else {
-      document.querySelectorAll('.faq-item.open').forEach((o) => {
-        const c = o.querySelector('.faq-a');
-        if (!c) return;
-        c.style.height = c.scrollHeight + 'px';
-        requestAnimationFrame(() => (c.style.height = '0px'));
-        o.classList.remove('open');
-      });
-      item.classList.add('open');
-      const end = content.scrollHeight;
-      content.style.height = end + 'px';
-      content.addEventListener('transitionend', function handler(ev) {
-        if (ev.propertyName !== 'height') return;
-        content.style.height = 'auto';
-        content.removeEventListener('transitionend', handler);
-      });
+      el.style.transform = '';
     }
-  }
-  document.querySelectorAll('[data-accordion]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.faq-item');
-      if (item) toggleFAQ(item);
-    });
   });
 
-  // ===== A11y focus on anchor jump =====
-  document.querySelectorAll('.nav-links a').forEach((a) => {
-    a.addEventListener('click', () => {
-      const id = a.getAttribute('href') || '';
-      if (id.startsWith('#')) {
-        const el = document.querySelector(id);
-        if (el) el.setAttribute('tabindex', '-1'), el.focus({ preventScroll: true });
+  wrap.addEventListener('mouseleave', () => {
+    el.style.transform = '';
+  });
+}
+$$('.magnet').forEach(btn => setupMagnet(btn));
+
+/* ===== FAQ buttery animation ===== */
+// a11y: we keep buttons elements, not divs, and only animate height, not display
+function setupFAQ(){
+  const qs = $$('[data-accordion]');
+  qs.forEach(q => {
+    const a = q.nextElementSibling;
+    if (!a) return;
+
+    // ensure hidden initially
+    a.hidden = true;
+    a.style.height = '0px';
+
+    q.addEventListener('click', () => {
+      const open = q.getAttribute('aria-expanded') === 'true';
+      q.setAttribute('aria-expanded', String(!open));
+
+      if (open){
+        a.style.height = a.scrollHeight + 'px'; // set current, then collapse
+        requestAnimationFrame(() => {
+          a.style.height = '0px';
+        });
+        setTimeout(() => { a.hidden = true; }, 220);
+      } else {
+        a.hidden = false;
+        a.style.height = 'auto';
+        const target = a.scrollHeight;
+        a.style.height = '0px';
+        requestAnimationFrame(() => {
+          a.style.height = target + 'px';
+        });
+        setTimeout(() => { a.style.height = 'auto'; }, 240);
       }
     });
   });
+}
+setupFAQ();
 
-  // Kick off initial paint AFTER functions + refs exist
-  onScroll();
+/* Hydrate from content.json */
+async function loadContent(){
+  try{
+    const res = await fetch('content.json', { cache: 'no-store' });
+    const data = await res.json();
 
-  // Waitlist goes down here
-  // document.getElementById('waitlist')?.addEventListener('click', (e)=>{
-  //   e.preventDefault(); location.href = 'https://forms.gle/your-waitlist';
-  // });
-})();
+    // testimonials
+    const tl = $('#testimonials-list');
+    if (tl && Array.isArray(data.testimonials)){
+      tl.innerHTML = data.testimonials.map(t => `
+        <div class="card reveal">
+          <p>${t.quote}</p>
+          <p class="note">— ${t.author}</p>
+        </div>
+      `).join('');
+      revealOnScroll();
+    }
+
+    // sponsors logos
+    const sl = $('#sponsor-logos');
+    if (sl && Array.isArray(data.sponsors)){
+      sl.innerHTML = data.sponsors.map(s => `<img src="${s.logo}" alt="${s.name} logo" loading="lazy">`).join('');
+    }
+  }catch(e){
+    console.error('content load failed', e);
+  }
+}
+loadContent();
+
+/* Reveal on scroll */
+function revealOnScroll(){
+  const els = $$('.reveal');
+  const viewH = window.innerHeight || 800;
+  const y = window.scrollY || 0;
+
+  els.forEach(el => {
+    if (el.classList.contains('visible')) return;
+    const rect = el.getBoundingClientRect();
+    const top = rect.top + y;
+    if (y + viewH > top + 40) el.classList.add('visible');
+  });
+}
+window.addEventListener('scroll', revealOnScroll);
+revealOnScroll();
