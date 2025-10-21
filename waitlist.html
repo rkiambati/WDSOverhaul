@@ -1,78 +1,112 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Overhaul — Join Waitlist</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <style>
-    .section{padding:96px 0}
-    .wrap{max-width:760px;margin:0 auto;padding:0 16px}
-    .glass{background:rgba(8,16,24,.6);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;backdrop-filter:blur(8px)}
-    .field{display:flex;flex-direction:column;gap:6px;margin:10px 0}
-    .note{opacity:.8;font-size:.95rem}
-    .center{text-align:center}
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Join the Waitlist — WDS Overhaul</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="main.js"></script>
 </head>
-<body class="page--dark">
-  <main class="section">
-    <div class="wrap" style="max-width:760px">
-      <h1 class="center">Join the Overhaul waitlist</h1>
-      <p class="note center">We’ll email key dates and openings. Saved locally on your device.</p>
-
-      <form id="waitlist-form" class="glass" novalidate>
-        <div class="field"><label for="wl-name">Name</label><input id="wl-name" name="name" required /></div>
-        <div class="field"><label for="wl-email">Email</label><input id="wl-email" name="email" type="email" required /></div>
-        <div class="field">
-          <label for="wl-role">Role</label>
-          <select id="wl-role" name="role" required>
-            <option value="">Select...</option>
-            <option>Student</option><option>Sponsor</option>
-            <option>Mentor</option><option>Volunteer</option>
-          </select>
-        </div>
-        <div class="field"><label for="wl-note">Note (optional)</label><textarea id="wl-note" name="note" rows="4"></textarea></div>
-        <input type="text" id="city" name="city" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" />
-        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
-          <span class="magnet-wrap"><button type="submit" class="btn btn-primary shimmer magnet">Save</button></span>
-          <span class="magnet-wrap"><a href="/" class="btn btn-outline shimmer magnet">Back to site</a></span>
-        </div>
-        <p id="wl-status" class="note" role="status"></p>
-      </form>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html"><span class="brand-mark">WDS</span></a>
+      <nav class="nav">
+        <a href="index.html#about">About</a>
+        <a href="index.html#testimonials">Testimonials</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
     </div>
-  </main>
+    <div class="progress-bar" aria-hidden="true"></div>
+  </header>
 
-  <script src="/assets/forms.js"></script>
-  <script src="assets/main.js"></script>
+  <!-- Page hero -->
+  <section class="page-hero night-slim">
+    <div class="page-sky-stars" aria-hidden="true"></div>
+    <div class="page-moon" aria-hidden="true"></div>
+
+    <div class="container hero-center">
+      <h1>Join the waitlist</h1>
+      <p class="subtitle">Get early access to applications, prompts, and updates.</p>
+      <div class="magnet-wrap">
+        <a class="btn btn-primary magnet" href="#waitlist-form">Sign up</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form -->
+  <section class="section">
+    <div class="container form-wrap">
+      <div class="form-card">
+        <h2 class="form-title">Your details</h2>
+
+        <form id="waitlist-form" class="form-grid" autocomplete="on">
+          <div class="form-row">
+            <label>Full name
+              <input class="input" type="text" name="name" required placeholder="Jordan Lee" />
+            </label>
+            <label>Email
+              <input class="input" type="email" name="email" required placeholder="you@example.com" />
+            </label>
+          </div>
+
+          <div class="form-row">
+            <label>School / Org
+              <input class="input" type="text" name="school" placeholder="Western / Club / Company" />
+            </label>
+            <label>Discipline
+              <select class="input" name="discipline" required>
+                <option value="" disabled selected>Select one</option>
+                <option>Software</option>
+                <option>Design</option>
+                <option>Product</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+
+          <label>Anything we should know?
+            <textarea class="input" name="notes" rows="4" placeholder="Interests, past projects, accessibility needs…"></textarea>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" name="consent" required />
+            <span>Send me Overhaul updates. I can unsubscribe anytime.</span>
+          </label>
+
+          <div class="actions">
+            <div class="magnet-wrap">
+              <button class="btn btn-secondary magnet" type="submit">Join waitlist</button>
+            </div>
+            <span class="link-muted">No spam. Just event news.</span>
+          </div>
+
+          <p class="tiny-note">
+            We only store the fields you submit here — <strong>no IP addresses or browser data.</strong>
+          </p>
+          <p id="waitlist-success" class="form-success" hidden>You’re on the list! Watch your inbox for updates.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
   <script>
-    const form = document.getElementById('waitlist-form');
-    const statusEl = document.getElementById('wl-status');
-    form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(form);
-  if (fd.get('city')) return; // honeypot
-  if (!fd.get('name') || !fd.get('email') || !fd.get('role')) {
-    statusEl.textContent = "Please complete name, email, and role."; return;
-  }
-  statusEl.textContent = "Saving…";
-try{
-  await postEntry('waitlist', {
-    name: fd.get('name'),
-    email: fd.get('email'),
-    role: fd.get('role'),
-    note: fd.get('note') || "",
-    honey: fd.get('city') || ""
-  });
-  statusEl.textContent = "Saved. Thanks!";
-  form.reset();
-}catch(err){
-  statusEl.textContent = "Could not save: " + err.message;
-}
-
-});
-    // hidden owner shortcut
-    window.addEventListener('keydown', e => { if (e.shiftKey && e.key.toLowerCase() === 'o') window.open('/admin.html','_blank','noopener'); });
+    document.getElementById('waitlist-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = Object.fromEntries(new FormData(form).entries());
+      try {
+        if (window.submitWaitlist) {
+          await window.submitWaitlist(data);
+        }
+        form.reset();
+        document.getElementById('waitlist-success').hidden = false;
+      } catch (err) {
+        console.error('Waitlist submit failed:', err);
+        document.getElementById('waitlist-success').textContent = 'Something went wrong. Try again later.';
+        document.getElementById('waitlist-success').hidden = false;
+      }
+    });
   </script>
 </body>
-
 </html>
