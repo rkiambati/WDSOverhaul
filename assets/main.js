@@ -2,7 +2,6 @@
 WDS Externals Hackathon — Night theme interactions
 Progress bar, stars, parallax, FAQ, reveal, pond micro-effects,
 magnetic buttons, and content hydration with smart fallbacks.
-Last touched: 2025-10-20
 */
 
 document.documentElement.classList.add('js');
@@ -19,7 +18,6 @@ function updateProgress() {
   const h = document.documentElement;
   const max = h.scrollHeight - h.clientHeight;
   const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
-  // width controlled via scaleX to keep the gradient intact
   progressBar.style.transform = `scaleX(${pct / 100})`;
 }
 window.addEventListener('scroll', updateProgress, { passive: true });
@@ -32,12 +30,12 @@ function spawnStars() {
   const host = $('.stars');
   if (!host) return;
 
-  const COUNT = 34; // a few more stars per your request
+  const COUNT = 34;
   const frag = document.createDocumentFragment();
   for (let i = 0; i < COUNT; i++) {
     const s = document.createElement('span');
     s.style.left = Math.random() * 100 + '%';
-    s.style.top  = Math.random() * 55 + '%'; // upper portion of hero
+    s.style.top  = Math.random() * 55 + '%';
     const size = 3 + Math.random() * 4;
     s.style.width = s.style.height = size + 'px';
     s.style.animationDelay = (Math.random() * 2.2).toFixed(2) + 's';
@@ -78,7 +76,7 @@ spawnStars();
 function parallaxOnScroll() {
   const y = window.scrollY || 0;
   const moon  = $('.moon');
-  const hills = $('.hills'); // safe even if height is 0
+  const hills = $('.hills');
   if (moon)  moon.style.transform  = `translateY(${y * 0.05}px)`;
   if (hills) hills.style.transform = `translateY(${y * 0.02}px)`;
 
@@ -170,7 +168,7 @@ window.addEventListener('scroll', revealOnScroll, { passive: true });
 revealOnScroll();
 
 /* ===============================
-   Pond micro-effects (bubbles float, ripples pulse)
+   Pond micro-effects (bubbles + ripples)
    =============================== */
 (function initPond() {
   const bubbles = $$('.bubble');
@@ -202,50 +200,35 @@ revealOnScroll();
 
 /* ===============================
    Content loader (testimonials + sponsors)
-   - Testimonials: show up to 3; auto-fill with short, friendly filler quotes.
+   - Shows up to 3 testimonials.
+   - If fetch fails or data is empty, uses filler quotes so it still looks full.
    =============================== */
 async function loadContent(){
+  const tl = $('#testimonials-list');
+  if (!tl) {
+    console.warn('[WDS] #testimonials-list not found in DOM.');
+    return;
+  }
+
+  const TARGET = 3;
+  const fillers = [
+    { author: 'Past Hacker', quote: 'Super welcoming. I built more in 48 hours than all semester.', avatar: '' },
+    { author: 'UI Designer', quote: 'Tight prompts, zero fluff. Great mentors.', avatar: '' },
+    { author: 'Team Lead',   quote: 'Fast feedback loops and a real portfolio piece.', avatar: '' },
+  ];
+
   try{
     const res = await fetch('content.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    // Testimonials (3 cards + filler if needed)
-    const tl = $('#testimonials-list');
-    if (tl) {
-      const incoming = Array.isArray(data.testimonials) ? data.testimonials : [];
-      const TARGET = 3;
-      const fillers = [
-        { author: 'Past Hacker', quote: 'Super welcoming. I built more in 48 hours than all semester.', avatar: '' },
-        { author: 'UI Designer', quote: 'Tight prompts, zero fluff. Great mentors.', avatar: '' },
-        { author: 'Team Lead',   quote: 'Fast feedback loops and a real portfolio piece.', avatar: '' },
-      ];
-      const list = [...incoming, ...fillers].slice(0, TARGET);
+    const incoming = Array.isArray(data.testimonials) ? data.testimonials : [];
+    const list = [...incoming, ...fillers].slice(0, TARGET);
 
-      tl.innerHTML = list.map(t => {
-        const hasAvatar = Boolean(t.avatar);
-        const hasQuote  = Boolean(t.quote);
-        return `
-          <div class="card testimonial reveal">
-            <div class="t-head">
-              ${hasAvatar
-                ? `<img class="avatar" src="${t.avatar}" alt="${t.author || 'Hacker'} avatar" loading="lazy">`
-                : `<div class="avatar skel" aria-hidden="true"></div>`}
-              <div class="meta">
-                <div class="name">${t.author || 'Hacker Name'}</div>
-                <div class="role">Participant</div>
-              </div>
-            </div>
-            ${hasQuote
-              ? `<p class="quote">“${t.quote}”</p>`
-              : `<div class="skel" style="height:14px;width:85%;"></div>
-                 <div class="skel" style="height:14px;width:65%;margin-top:8px;"></div>`}
-          </div>
-        `;
-      }).join('');
-      revealOnScroll();
-    }
+    tl.innerHTML = list.map(t => testimonialCard(t)).join('');
+    revealOnScroll();
 
-    // Sponsors logos
+    // Sponsors
     const sl = $('#sponsor-logos');
     if (sl && Array.isArray(data.sponsors)) {
       sl.innerHTML = data.sponsors
@@ -253,26 +236,33 @@ async function loadContent(){
         .join('');
     }
   }catch(err){
-    console.error('content load failed', err);
+    console.warn('[WDS] Using fallback testimonials (fetch likely blocked by file://).', err);
+    // Fallback: use fillers so real text appears even offline
+    tl.innerHTML = fillers.slice(0, TARGET).map(t => testimonialCard(t)).join('');
+    revealOnScroll();
+  }
 
-    // Fallback: 3 skeleton testimonial cards so section still looks full
-    const tl = $('#testimonials-list');
-    if (tl) {
-      tl.innerHTML = Array.from({ length: 3 }).map(() => `
-        <div class="card testimonial reveal">
-          <div class="t-head">
-            <div class="avatar skel" aria-hidden="true"></div>
-            <div class="meta" style="flex:1">
-              <div class="skel" style="height:14px;width:40%;"></div>
-              <div class="skel" style="height:12px;width:30%;margin-top:8px;"></div>
-            </div>
+  function testimonialCard(t){
+    const hasAvatar = Boolean(t.avatar);
+    const author = t.author || 'Hacker Name';
+    const quote  = t.quote  || '';
+    return `
+      <div class="card testimonial reveal">
+        <div class="t-head">
+          ${hasAvatar
+            ? `<img class="avatar" src="${t.avatar}" alt="${author} avatar" loading="lazy">`
+            : `<div class="avatar skel" aria-hidden="true"></div>`}
+          <div class="meta">
+            <div class="name">${author}</div>
+            <div class="role">Participant</div>
           </div>
-          <div class="skel" style="height:14px;width:85%;"></div>
-          <div class="skel" style="height:14px;width:65%;margin-top:8px;"></div>
         </div>
-      `).join('');
-      revealOnScroll();
-    }
+        ${quote
+          ? `<p class="quote">“${quote}”</p>`
+          : `<div class="skel" style="height:14px;width:85%;"></div>
+             <div class="skel" style="height:14px;width:65%;margin-top:8px;"></div>`}
+      </div>
+    `;
   }
 }
 loadContent();
