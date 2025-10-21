@@ -185,3 +185,64 @@ p{margin:0 0 14px;font-size:var(--fz-body)}
 .avatar{
   width:96px; height:96px;
 }
+
+/* ---------- Shared page hero for subpages ---------- */
+.page-hero{
+  position:relative; overflow:hidden; padding:96px 0 72px;
+  background: linear-gradient(#2D479E, #294e86 50%, #0D5C63);
+}
+.night-slim .page-moon{
+  position:absolute; right:10%; top:-40px; width:220px; height:220px; border-radius:50%;
+  background: radial-gradient(circle at 45% 45%, rgba(255,255,255,.95), rgba(255,255,255,.7) 35%, transparent 70%),
+              radial-gradient(80% 50% at 50% 75%, rgba(255,255,255,.22), transparent 70%);
+  pointer-events:none; filter: blur(.3px);
+}
+.page-sky-stars, .page-sky-stars::before, .page-sky-stars::after{
+  position:absolute; inset:0; content:"";
+  background-image:
+    radial-gradient(3px 3px at 10% 20%, #FFD42E 95%, transparent),
+    radial-gradient(3px 3px at 40% 30%, #FFD42E 95%, transparent),
+    radial-gradient(3px 3px at 65% 25%, #FFD42E 95%, transparent),
+    radial-gradient(3px 3px at 85% 40%, #FFD42E 95%, transparent),
+    radial-gradient(3px 3px at 20% 60%, #FFD42E 95%, transparent);
+  opacity:.7; pointer-events:none;
+}
+.hero-center{ text-align:center }
+.hero-center .subtitle{ color:var(--text-dim) }
+
+/* ---------- Glass form ---------- */
+.form-wrap{ display:flex; justify-content:center }
+.form-card{
+  width:100%; max-width:860px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px; padding: 24px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+.form-title{ margin-bottom:6px }
+.form-kicker{ color:var(--text-dim); margin-bottom:18px }
+.form-grid{ display:flex; flex-direction:column; gap:14px }
+.form-row{ display:grid; grid-template-columns:1fr; gap:14px }
+@media (min-width: 780px){ .form-row{ grid-template-columns:1fr 1fr } }
+
+.input{
+  width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.14);
+  background: rgba(5,10,20,.45); color:var(--text);
+  outline:none; transition:border .15s ease, background .15s ease;
+}
+.input::placeholder{ color:rgba(234,245,255,.55) }
+.input:focus{ border-color: rgba(155, 231, 255, .65); background: rgba(5,10,20,.6) }
+
+.check{ display:flex; align-items:center; gap:10px; margin-top:6px; user-select:none }
+.check input{ width:18px; height:18px }
+
+.actions{ display:flex; align-items:center; gap:14px; margin-top:8px; flex-wrap:wrap }
+.link-muted{ color:var(--text-dim); text-decoration:none }
+.link-muted:hover{ text-decoration:underline }
+
+.tiny-note{ margin-top:8px; color:var(--text-dim); font-size:13px }
+.form-success{
+  margin-top:10px; padding:10px 12px; border-radius:10px;
+  background:rgba(155,231,255,.15); border:1px solid rgba(155,231,255,.3);
+}
