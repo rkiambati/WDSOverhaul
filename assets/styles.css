@@ -7,268 +7,234 @@ Reduced-motion is respected. Keep animations subtle and purposeful.
 Last touched: 2025-10-20 19:00
 */
 
+/*
+Tokens + night palette
+Last touched: 2025-10-20
+*/
 :root{
-  /* Palette locked to Figma board */
-  --accent: #FFD42E;      /* primary CTA + stars */
-  --accent-2: #F8444F;    /* secondary CTA/pop */
-  --sky-deep: #2D479E;    /* night upper sky */
-  --sky-mid: #294e86;     /* transition band */
-  --teal: #0D5C63;        /* teal / water / deep shapes */
-  --grass: #B0D1B2;       /* grass / badges */
-  --text-dark: #012C3D;   /* body on light */
-
-  --bg: #0b1220;
-  --text: #eaf5ff;
-  --text-dim: #b2c4d7;
+  --accent: #FFD42E;
+  --accent-2: #F8444F;
+  --sky-deep: #2D479E;
+  --teal: #0D5C63;
+  --grass: #B0D1B2;
+  --text: #EAF5FF;
+  --text-dim: #B2C4D7;
 
   --radius: 18px;
-  --shadow: 0 10px 30px rgba(0,0,0,.35);
-
   --container: 1100px;
 
-  --fz-xl: clamp(32px, 6vw, 56px);
+  --fz-xl: clamp(28px, 5vw, 48px);
   --fz-h2: clamp(22px, 3vw, 32px);
   --fz-h3: clamp(18px, 2.2vw, 22px);
   --fz-body: 16px;
 }
 
-*{ box-sizing: border-box; }
-html{ scroll-behavior: smooth; }
+*{ box-sizing:border-box }
+html{ scroll-behavior:smooth }
 body{
   margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  color: var(--text);
-  background: radial-gradient(1200px 1200px at 70% -200px, #172235 0, transparent 60%), var(--bg);
-  line-height: 1.6;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+  color:var(--text);
+  background:#0a1120;
+  line-height:1.6;
 }
 
-/* ===== Base ===== */
-h1,h2,h3{ margin: 0 0 10px; line-height: 1.25; }
-h1{ font-size: var(--fz-xl); }
-h2{ font-size: var(--fz-h2); }
-h3{ font-size: var(--fz-h3); }
-p{ margin: 0 0 14px; font-size: var(--fz-body); }
-.container{ max-width: var(--container); margin: 0 auto; padding: 0 18px; }
-.section{ padding: 64px 0; }
-.section.dark{ background: #0a0f1a; }
-
+/* base */
+h1,h2,h3{ margin:0 0 10px; line-height:1.25 }
+h1{ font-size:var(--fz-xl) }
+h2{ font-size:var(--fz-h2) }
+h3{ font-size:var(--fz-h3) }
+p{ margin:0 0 14px; font-size:var(--fz-body) }
+.container{ max-width:var(--container); margin:0 auto; padding:0 18px }
+.section{ padding:64px 0 }
+.center{ text-align:center }
+.grid{ display:grid; gap:18px }
+.grid-2{ grid-template-columns:1fr }
+.grid-3{ grid-template-columns:1fr }
+@media (min-width:900px){
+  .grid-2{ grid-template-columns:1fr 1fr }
+  .grid-3{ grid-template-columns:1fr 1fr 1fr }
+}
 .card{
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.08);
-  border-radius: 18px;
-  padding: 20px;
-  backdrop-filter: blur(8px);
+  border-radius: var(--radius);
+  padding:20px; backdrop-filter: blur(8px);
 }
-.grid{ display:grid; gap:18px; }
-.grid-2{ grid-template-columns: 1fr; }
-.grid-3{ grid-template-columns: 1fr; }
-@media (min-width: 900px){
-  .grid-2{ grid-template-columns: 1fr 1fr; }
-  .grid-3{ grid-template-columns: 1fr 1fr 1fr; }
-}
-.center{ text-align:center; }
-.note{ opacity:.8; font-size:.95rem }
+.note{ opacity:.85 }
 
-/* Inputs */
-input, select, textarea{
-  background: #0f1720; color: #eaf5ff;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 10px; padding: 10px 12px; width: 100%;
-  outline: none;
-}
-input:focus, select:focus, textarea:focus{
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255, 209, 102, .15);
-}
-label{ display:block; margin: 10px 0; }
-
-/* ===== Header (glass + progress) ===== */
+/* ================= Header / Nav ================= */
 .site-header{
-  position: sticky; top: 0; z-index: 50; /* above hero */
-  background: rgba(11, 18, 32, .6);
+  position:sticky; top:0; z-index:1000;
+  backdrop-filter: blur(10px);
+  background: rgba(10,17,32,.45);
   border-bottom: 1px solid rgba(255,255,255,.08);
-  backdrop-filter: blur(8px);
 }
-.nav-wrap{ max-width: var(--container); margin: 0 auto; padding: 10px 18px; }
+.nav-wrap{
+  max-width:var(--container); margin:0 auto; padding:10px 18px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.brand .brand-mark{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px;height:28px;border-radius:8px;
+  background:#13233a;color:#9bd7ff;font-weight:800;letter-spacing:.5px;
+}
 .nav a{
-  color: var(--text); text-decoration: none; margin-right: 14px;
-  padding: 8px 10px; border-radius: 8px;
+  position:relative; display:inline-block;
+  color:var(--text); text-decoration:none;
+  margin-left:18px; padding:8px 2px;
+  opacity:.9;
 }
-.nav a:hover, .nav a[aria-current="page"]{ background: rgba(255,255,255,.06); }
-/* Restored visibility: progress bar sits under nav but above hero */
+.nav a:after{
+  content:""; position:absolute; left:0; right:0; bottom:0;
+  height:2px; transform:scaleX(0); transform-origin:left;
+  background: linear-gradient(90deg, #7ee8fa, #80ff72, #ffd42e);
+  transition: transform .2s ease;
+  border-radius:2px;
+}
+.nav a:hover:after, .nav a[aria-current="page"]:after{ transform:scaleX(1) }
+
+/* Full-width multi-color progress bar */
 .progress-bar{
-  height: 3px; width: 0%;
-  background: linear-gradient(90deg, var(--accent), #c7f464);
-  border-radius: 2px; margin-top: 10px;
-  position: relative; z-index: 1;
+  position:relative;
+  width:100vw; height:3px;
+  background: linear-gradient(90deg, #7ee8fa, #80ff72, #ffd42e, #f8444f);
+  background-size: 200% 100%;
+  animation: flow 10s linear infinite;
+  transform-origin:left; /* width is set by JS */
+  clip-path: inset(0 0 0 0);
 }
+@keyframes flow{ 0%{background-position:0 0} 100%{background-position:-200% 0} }
 
-/* ===== Buttons (magnetic-ready) ===== */
-.btn{
-  display: inline-block; padding: 12px 18px;
-  border-radius: 12px; text-decoration: none;
-  color: #0e1422; background: var(--accent);
-  box-shadow: var(--shadow); transform: translateZ(0);
-  transition: transform .18s ease; will-change: transform;
-}
-.btn:hover{ transform: translateY(-2px); }
-.btn-secondary{ background: #9be7ff; color: var(--text-dark); }
-.magnet-wrap{ display:inline-block; }
-
-/* ===== Hero (Night) ===== */
-.hero{ position: relative; padding: 96px 0 84px; overflow:hidden; }
-.hero.night{
-  background: linear-gradient(var(--sky-deep), var(--sky-mid) 45%, var(--teal) 45%, #0a3a40 100%);
-}
-.hero-bg{ position:absolute; inset:0; pointer-events:none; }
+/* ================= Hero ================= */
+.hero{ position:relative; padding:96px 0 120px; overflow:hidden }
+.hero.night{ background: linear-gradient(var(--sky-deep), #294e86 45%, var(--teal)); }
+.hero-bg{ position:absolute; inset:0; pointer-events:none }
 .moon{
   position:absolute; width:260px; height:260px; border-radius:50%;
-  background: radial-gradient(circle at 45% 45%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.75) 35%, transparent 70%);
-  top: -22px; right: 9%;
-  opacity: .9; filter: blur(.2px);
-  z-index: 1;
+  right:10%; top:-30px;
+  background: radial-gradient(circle at 45% 45%, rgba(255,255,255,.95), rgba(255,255,255,.7) 35%, transparent 70%),
+              radial-gradient(80% 50% at 50% 75%, rgba(255,255,255,.22), transparent 70%);
+  filter:saturate(.9) blur(.2px);
 }
-.stars{ position:absolute; inset:0; z-index: 1; }
+.hills{
+  position:absolute; left:0; right:0; bottom:0; height:180px;
+  background: linear-gradient(#0c5b60, #083f44);
+  opacity:.9;
+}
+.stars{ position:absolute; inset:0 }
 .stars span{
-  position:absolute; width:6px; height:6px; border-radius:2px;
+  position:absolute; width:6px;height:6px;border-radius:2px;
   background: var(--accent); opacity:.8;
   box-shadow: 0 0 12px rgba(255,212,46,.55);
   animation: twinkle 3.4s ease-in-out infinite;
 }
 @keyframes twinkle{ 0%,100%{transform:scale(1);opacity:.8} 50%{transform:scale(.85);opacity:.45} }
-/* Lowered horizon so it never blocks stars/moon */
-.hills{
-  position:absolute; left:0; right:0; bottom:-10px; height: 160px;
-  background:
-    radial-gradient(70% 120px at 20% 100%, rgba(0,0,0,.12) 0, transparent 70%),
-    radial-gradient(60% 140px at 70% 100%, rgba(0,0,0,.12) 0, transparent 70%),
-    linear-gradient(var(--teal), #0a3a40);
-  z-index: 0;
-}
-.hero-inner{ position: relative; z-index: 2; text-align:center; }
-.subtitle{ color: var(--text-dim); }
+.hero-inner{ position:relative; z-index:1; text-align:center }
+.subtitle{ color:var(--text-dim) }
 
-/* ===== About + Parallax tiles + badges ===== */
-.about-textured{
-  position: relative;
+/* Figma-like curve dividers (top→bottom) */
+.curve{
+  position:absolute; left:0; right:0; height:120px;
   background:
-    radial-gradient(420px 260px at -10% 10%, rgba(176, 209, 178, .15) 0, transparent 70%),
-    radial-gradient(520px 320px at 110% 40%, rgba(13, 92, 99, .12) 0, transparent 70%);
+    radial-gradient(220% 140px at 50% 0, rgba(0,0,0,.25) 0, transparent 70%),
+    radial-gradient(140% 120px at 50% 0, rgba(13,92,99,.35) 0, transparent 70%);
+  pointer-events:none;
 }
-.badges{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+.curve-bottom{ bottom:-2px }
+
+/* ================= About ================= */
+.about-textured{
+  position:relative;
+  background:
+    radial-gradient(420px 260px at -10% 10%, rgba(176,209,178,.12), transparent 70%),
+    radial-gradient(520px 320px at 110% 40%, rgba(13,92,99,.12), transparent 70%);
+}
+.badges{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px }
 .badge{
-  background: var(--grass); color: var(--text-dark);
-  border-radius: 10px; padding: 8px 12px; font-weight: 600;
+  background: var(--grass); color:#012C3D; font-weight:600;
+  border-radius:10px; padding:8px 12px;
   box-shadow: 0 2px 10px rgba(0,0,0,.15);
 }
-.demo-cards .card{ min-height: 120px; }
+.demo-cards .card{ min-height:120px }
 
-/* ===== POND / TESTIMONIALS ===== */
-.pond-section{
-  position: relative; overflow:hidden;
-  background: linear-gradient(#0b2530, var(--teal));
+/* ================= Pond (testimonials) ================= */
+.pond{
+  position:relative; overflow:hidden;
+  background: linear-gradient(#0d5c63, #043c43);
 }
-.pond-bg{ position:absolute; inset:0; pointer-events:none; }
-.water{
-  position:absolute; left:0; right:0; height: 48%;
-  background: radial-gradient(1200px 400px at 60% 20%, rgba(0,0,0,.25), transparent 70%);
-}
-.water.w1{ top: 0; }
-.water.w2{ bottom: -8%; transform: skewY(-2deg); opacity:.5; }
-
-/* Lily pads (night tint) */
-.lily{
-  position:absolute; width: 200px; height: 200px; border-radius: 50%;
-  background: radial-gradient(120px 120px at 35% 35%, rgba(255,255,255,.08), transparent 60%), #3a6d5f;
-  box-shadow: 0 8px 28px rgba(0,0,0,.35);
-}
-.lily::after{ /* notch */
-  content:""; position:absolute; width: 0; height: 0;
-  border-left: 40px solid transparent;
-  border-right: 0 solid transparent;
-  border-top: 60px solid #3a6d5f;
-  left: 55%; top: 40%; transform: rotate(-25deg);
-}
-.l-left{ left: 6%; top: 14%; }
-.l-right{ right: 10%; top: 30%; width: 160px; height: 160px; }
-.lily::before{ /* ripple */
-  content:""; position:absolute; inset: -6px; border-radius:50%;
-  background: radial-gradient(closest-side, rgba(255,255,255,.12), transparent 70%);
-  animation: ripple 3.2s ease-in-out infinite;
-}
-@keyframes ripple{ 0%,100%{opacity:.08} 50%{opacity:.18} }
-
-/* Bubbles */
-.bubble{
-  position:absolute; width: 14px; height: 14px; border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.85), rgba(255,255,255,.35) 60%, rgba(255,255,255,.18) 100%);
-  box-shadow: inset 0 -2px 4px rgba(0,0,0,.35);
-  animation: float 6s ease-in-out infinite;
-}
-@keyframes float{
-  0%{ transform: translateY(0) translateX(0); opacity:.6 }
-  50%{ transform: translateY(-26px) translateX(6px); opacity:.9 }
-  100%{ transform: translateY(0) translateX(0); opacity:.6 }
-}
-.b1{ left: 18%; top: 38%; animation-delay:.2s }
-.b2{ left: 22%; top: 46%; animation-delay:.9s }
-.b3{ right: 28%; top: 28%; animation-delay:1.6s }
-.b4{ right: 22%; top: 42%; animation-delay:2.2s }
-.b5{ right: 35%; top: 50%; animation-delay:.5s }
-
-/* Moon reflection (very subtle) */
-.reflection{
-  position:absolute; right: 6%; top: 10%;
-  width: 220px; height: 420px; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255,255,255,.08), transparent 70%);
-  filter: blur(8px); opacity:.25;
-}
-
-/* Testimonials text contrast over pond */
-#testimonials h2{ color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
-#testimonials .card{ background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); }
-
-/* ===== Sponsors (Figma hill curve) ===== */
-.sponsors-hill{ position: relative; overflow:hidden; }
-.sponsors-hill .hill{
-  position:absolute; left:0; right:0; top:0; height: 100%;
+.pond h2{ text-align:center; margin-bottom:16px }
+.pond-ornaments{ position:absolute; inset:0; pointer-events:none }
+.pad{
+  position:absolute; width:var(--pad,160px); height:var(--pad,160px);
+  border-radius:50%;
   background:
-    radial-gradient(900px 260px at 50% 0%, rgba(176, 209, 178, .18) 0, transparent 70%),
-    linear-gradient(#5a9a7b 0%, #377d69 35%, #1b544f 100%);
-  clip-path: path("M0,180 C300,120 480,140 740,110 L740,520 L0,520 Z"); /* simple curve */
-  opacity:.85;
+    radial-gradient(55% 55% at 40% 35%, rgba(255,255,255,.12), transparent 60%),
+    radial-gradient(60% 60% at 60% 70%, rgba(0,0,0,.25), transparent 70%),
+    #3a6d5f;
+  box-shadow: 0 18px 38px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.12);
 }
-.vignette{ display:inline-block; padding: 18px 26px; border-radius: 20px;
+.pad .wedge{
+  position:absolute; width:44%; height:44%; right:22%; top:30%;
+  background: linear-gradient(135deg, rgba(0,0,0,.45), rgba(0,0,0,0) 60%);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  filter: blur(.2px);
+  opacity:.7;
+}
+.pad .ripple{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:120%; height:60%; border-radius:60%/40%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.12), transparent 60%);
+  opacity:.08;
+}
+.bubble{
+  position:absolute; width:12px; height:12px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #fff, #d0e2ea 45%, #9fb7c0 70%);
+  box-shadow: inset 0 0 5px rgba(255,255,255,.4), 0 6px 12px rgba(0,0,0,.35);
+}
+
+/* ================= Sponsors ================= */
+.sponsors-textured{
+  position:relative; text-align:center;
+  background:
+    radial-gradient(520px 320px at 10% 30%, rgba(13,92,99,.10), transparent 70%),
+    radial-gradient(540px 300px at 85% 80%, rgba(176,209,178,.12), transparent 70%);
+}
+.vignette{
+  display:inline-block; padding:18px 26px; border-radius:20px;
   background: radial-gradient(220px 120px at 50% 50%, rgba(13,92,99,.18), transparent 70%);
 }
-.logo-row{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top: 16px; }
-.logo-row img{ height:40px; object-fit:contain; opacity:.95; filter: saturate(1.05); }
+.logo-row{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-top:14px }
+.logo-row img{ height:40px; object-fit:contain; opacity:.95; filter:saturate(1.05) }
 
-/* ===== FAQ dusk curve ===== */
-.faq-dusk{ position: relative; overflow:hidden; background: #0d2f4b; }
-.faq-sky{
-  position:absolute; inset:0; pointer-events:none;
-  background:
-    radial-gradient(700px 300px at 80% -10%, rgba(255,255,255,.20), transparent 70%),
-    linear-gradient(#1a4f7a 0%, #0f3e61 40%, #0e2f49 100%);
-  opacity:.9;
+/* ================= FAQ (dusk sky) ================= */
+.sky-dusk{
+  background: linear-gradient(#184d7e, #0b3458 60%, #082943);
 }
-
-/* ===== FAQ structure ===== */
-.faq{ max-width: 800px; margin: 0 auto; position: relative; z-index:1; }
+.faq{ max-width: 900px; margin: 0 auto; }
 .faq-q{
-  width:100%; text-align:left; background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.08); color: var(--text);
-  border-radius: 12px; padding: 12px 14px; margin: 10px 0; cursor: pointer;
+  width:100%; text-align:left;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  color:var(--text); border-radius:12px;
+  padding:12px 14px; margin:10px 0; cursor:pointer;
 }
-.faq-a{ overflow: hidden; transition: height .22s ease; will-change: height; padding: 0 2px; }
+.faq-a{ overflow:hidden; transition:height .22s ease; will-change:height; padding:0 2px }
 
-/* ===== Reveal on scroll ===== */
-.js .reveal{ opacity:0; transform: translateY(10px); transition: all .25s ease; }
-.js .reveal.visible{ opacity:1; transform: none; }
+/* ================= Buttons, reveal, form pages ================= */
+.btn{
+  display:inline-block; padding:12px 18px; border-radius:12px; text-decoration:none;
+  color:#0e1422; background:var(--accent); box-shadow:0 10px 30px rgba(0,0,0,.35);
+  transition: transform .18s ease;
+}
+.btn:hover{ transform: translateY(-2px) }
+.btn-secondary{ background:#9be7ff; color:#012C3D }
+.magnet-wrap{ display:inline-block }
 
-/* ===== Form pages ===== */
-.page .section{ padding-top: 36px; }
-.form.card{ max-width: 640px; margin: 0 auto; }
+.js .reveal{ opacity:0; transform:translateY(10px); transition: all .25s ease }
+.js .reveal.visible{ opacity:1; transform:none }
 
-.footer{ padding: 24px 0; border-top: 1px solid rgba(255,255,255,.08); }
+.footer{ padding:24px 0; border-top:1px solid rgba(255,255,255,.08) }
+
+/* ================= Utility: table wrap (admin) ================= */
+.table-wrap{ overflow:auto }
