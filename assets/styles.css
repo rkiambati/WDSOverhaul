@@ -4,7 +4,6 @@ Author notes (Reich):
 If something breaks, check the console first, then network panel for /api calls.
 Design tokens up top; adjust vars, not ad-hoc values.
 Reduced-motion is respected. Keep animations subtle and purposeful.
-Last touched: 2025-10-20 19:00
 */
 
 :root{
@@ -44,20 +43,21 @@ p{margin:0 0 14px;font-size:var(--fz-body)}
   background:linear-gradient(90deg,#7ee8fa,#80ff72,#ffd42e);transition:transform .2s ease;border-radius:2px}
 .nav a:hover:after,.nav a[aria-current="page"]:after{transform:scaleX(1)}
 
-/* Full-width progress bar; width via transform scaleX */
+/* Full-width progress bar; width via transform scaleX (set in JS) */
 .progress-bar{height:3px;width:100vw;transform-origin:left;
   background:linear-gradient(90deg,#7ee8fa,#80ff72,#ffd42e,#f8444f);
   background-size:200% 100%;animation:flow 10s linear infinite}
 @keyframes flow{0%{background-position:0 0}100%{background-position:-200% 0}}
 
 /* Hero */
-.hero{position:relative;padding:96px 0 80px;overflow:hidden}
+.hero{position:relative;padding:110px 0 120px;overflow:hidden}
 .hero.night{background:linear-gradient(var(--sky-deep),#294e86 45%,var(--teal))}
 .hero-bg{position:absolute;inset:0;pointer-events:none}
 .moon{position:absolute;width:260px;height:260px;border-radius:50%;right:10%;top:-30px;
   background:radial-gradient(circle at 45% 45%,rgba(255,255,255,.95),rgba(255,255,255,.7) 35%,transparent 70%),
              radial-gradient(80% 50% at 50% 75%,rgba(255,255,255,.22),transparent 70%);filter:saturate(.9) blur(.2px)}
-.hills{position:absolute;left:0;right:0;bottom:0;height:140px;background:linear-gradient(#0c5b60,#083f44);opacity:.85}
+/* Remove the green band under the CTA for more sky */
+.hills{position:absolute;left:0;right:0;bottom:0;height:0}
 .stars{position:absolute;inset:0}
 .stars span{position:absolute;width:6px;height:6px;border-radius:2px;background:var(--accent);opacity:.85;
   box-shadow:0 0 12px rgba(255,212,46,.55);animation:twinkle 3.4s ease-in-out infinite}
@@ -92,8 +92,28 @@ p{margin:0 0 14px;font-size:var(--fz-body)}
   background:radial-gradient(circle at 30% 30%,#fff,#d0e2ea 45%,#9fb7c0 70%);
   box-shadow:inset 0 0 5px rgba(255,255,255,.4),0 6px 12px rgba(0,0,0,.35)}
 
+/* Testimonial card layout w/ larger avatar */
+.testimonial{display:flex;flex-direction:column;gap:12px}
+.t-head{display:flex;align-items:center;gap:12px}
+.avatar{
+  width:84px;height:84px;border-radius:50%;
+  object-fit:cover;
+  box-shadow:0 0 0 3px rgba(255,255,255,.1), 0 10px 20px rgba(0,0,0,.35);
+}
+.name{font-weight:700}
+.role,.quote{opacity:.95}
+
+/* Skeleton placeholders (when content is missing) */
+.skel{position:relative;overflow:hidden;background:rgba(255,255,255,.06);border-radius:10px}
+.skel::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  animation:shimmer 1.6s linear infinite;
+}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
 /* Sponsors */
-.sponsors{background:linear-gradient(#0b1626,#0b1626)}
+.sponsors{background:#0b1626}
 .vignette{display:inline-block;padding:18px 26px;border-radius:20px;
   background:radial-gradient(220px 120px at 50% 50%,rgba(13,92,99,.18),transparent 70%)}
 .logo-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:14px}
@@ -106,11 +126,26 @@ p{margin:0 0 14px;font-size:var(--fz-body)}
   color:var(--text);border-radius:12px;padding:12px 14px;margin:10px 0;cursor:pointer}
 .faq-a{overflow:hidden;transition:height .22s ease;will-change:height;padding:0 2px}
 
-/* Buttons / reveal / footer */
-.btn{display:inline-block;padding:12px 18px;border-radius:12px;text-decoration:none;color:#0e1422;background:var(--accent);
-  box-shadow:0 10px 30px rgba(0,0,0,.35);transition:transform .18s ease}
-.btn:hover{transform:translateY(-2px)} .btn-secondary{background:#9be7ff;color:#012C3D}
-.magnet-wrap{display:inline-block}
+/* Buttons (shine + magnet-ready) */
+.btn{
+  position:relative; display:inline-block; padding:12px 18px; border-radius:12px;
+  text-decoration:none; color:#0e1422; background:var(--accent);
+  box-shadow:0 10px 30px rgba(0,0,0,.35); transition:transform .18s ease;
+  overflow:hidden; isolation:isolate;
+}
+.btn::before{
+  content:""; position:absolute; inset:-40% -20%; transform:translateX(-120%);
+  background:linear-gradient(105deg, transparent 0%, rgba(255,255,255,.35) 50%, transparent 100%);
+  filter:blur(2px); opacity:.0; pointer-events:none;
+}
+.btn:hover{ transform:translateY(-2px) }
+.btn:hover::before{
+  opacity:.9; transform:translateX(120%); transition: transform .6s ease, opacity .3s ease;
+}
+.btn-secondary{ background:#9be7ff; color:#012C3D }
+.magnet-wrap{ display:inline-block }
+
+/* Reveal + Footer */
 .js .reveal{opacity:0;transform:translateY(10px);transition:all .25s ease}
 .js .reveal.visible{opacity:1;transform:none}
 .footer{padding:24px 0;border-top:1px solid rgba(255,255,255,.08)}
