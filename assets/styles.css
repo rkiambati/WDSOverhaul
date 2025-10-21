@@ -149,3 +149,39 @@ p{margin:0 0 14px;font-size:var(--fz-body)}
 .js .reveal{opacity:0;transform:translateY(10px);transition:all .25s ease}
 .js .reveal.visible{opacity:1;transform:none}
 .footer{padding:24px 0;border-top:1px solid rgba(255,255,255,.08)}
+
+/* ---- About section tweaks ---- */
+.about-textured{
+  position:relative;
+  background:
+    radial-gradient(420px 260px at -10% 10%, rgba(176,209,178,.12), transparent 70%),
+    radial-gradient(520px 320px at 110% 40%, rgba(13,92,99,.12), transparent 70%);
+}
+
+/* photo slots */
+.about-photos .card{
+  min-height: 180px;   
+}
+@media (min-width: 900px){
+  .about-photos.grid-2{ grid-template-columns: 1fr 1fr; }
+}
+
+/* tiny white stars layered above About background */
+.about-stars{
+  position:absolute; inset:0; pointer-events:none;
+}
+.about-stars span{
+  position:absolute; width:4px; height:4px; border-radius:2px;
+  background:#fff; opacity:.6;
+  box-shadow:0 0 10px rgba(255,255,255,.25);
+  animation: aboutTwinkle 3.6s ease-in-out infinite;
+}
+@keyframes aboutTwinkle {
+  0%,100%{ transform:scale(1); opacity:.6 }
+  50%{ transform:scale(.85); opacity:.35 }
+}
+
+/* ---- Testimonial avatar  ---- */
+.avatar{
+  width:96px; height:96px;
+}
