@@ -1,178 +1,142 @@
-<!doctype html>
+<!--
+WDS Externals Hackathon – annotated pass
+Author notes (Reich):
+If something breaks, check the console first, then network panel for /api calls.
+This HTML file now includes section-by-section comments that map to main.js behaviors and styles.css classes.
+Use the IDs and data- attributes as integration points; avoid renaming without updating main.js.
+-->
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Overhaul · WDS</title>
-  <meta name="description" content="Overhaul — January 31–February 1, 2025. Bright. Vibrant. Colourful. Minimalistic." />
-  <link rel="icon" href="images/favicon.ico" />
-  <link rel="stylesheet" href="assets/styles.css?v=4" />
-  <!-- Optional self-host fonts -->
-  <link rel="preload" href="assets/fonts/Metropolis-Bold.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/Metropolis-Regular.woff2" as="font" type="font/woff2" crossorigin>
-  <noscript>
-    <style>
-      /* Ensure visibility even if JS is off */
-      .reveal{opacity:1 !important; transform:none !important}
-      .faq-a{height:auto !important}
-    </style>
-  </noscript>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WDS Externals Hackathon</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="main.js"></script>
 </head>
+
 <body>
-  <!-- Sticky Glass Header -->
-  <header class="site-header" id="header">
-    <div class="wrapper nav">
-      <a class="logo" href="#home" aria-label="WDS home">WDS</a>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="#home">Home</a>
+  <!-- Site header: sticky glass with progress bar; see styles.css `.site-header` and main.js onScroll -->
+  <header class="site-header">
+    <div class="nav-wrap">
+      <!-- Primary nav: anchors support a11y focus jump via main.js -->
+      <nav class="nav">
         <a href="#about">About</a>
         <a href="#testimonials">Testimonials</a>
         <a href="#sponsors">Sponsors</a>
         <a href="#faq">FAQ</a>
       </nav>
+      <div class="progress-bar" aria-hidden="true"></div>
     </div>
-    <div class="progress" aria-hidden="true"><span></span></div>
   </header>
 
-  <main id="home">
-    <!-- HERO -->
-    <section class="hero section" aria-label="Hero">
-      <div class="hero-bg" aria-hidden="true">
-        <div class="sun"></div>
-        <div class="hill hill-1"></div>
-        <div class="hill hill-2"></div>
-
-        <!-- extra motion: floating flowers -->
-        <div class="flower is-red f1"></div>
-        <div class="flower is-yellow f2"></div>
-        <div class="flower is-mint f3"></div>
-        <div class="flower is-blue f4"></div>
-        <div class="flower is-red f5"></div>
-        <div class="flower is-yellow f6"></div>
-        <div class="flower is-mint f7"></div>
-        <div class="flower is-blue f8"></div>
-        <div class="flower is-red f9"></div>
+  <!-- Hero: NIGHT THEME. Stars (single brand color), subtle moon glow, teal hills -->
+  <section class="hero night">
+    <div class="hero-bg">
+      <div class="stars" aria-hidden="true">
+        <!-- Filled by JS with <span> stars -->
       </div>
+      <div class="moon"></div>
+      <div class="hills"></div>
+    </div>
 
-      <div class="wrapper hero-inner reveal">
-        <p class="eyebrow">craft at</p>
-        <h1 class="h1">Overhaul</h1>
-        <p class="date body-18">January 31 – February 1, 2025 · In-person event</p>
+    <div class="hero-inner">
+      <h1>Western Developer Society Externals Hackathon</h1>
+      <p class="subtitle">Build with us. Learn fast. Ship something you are proud of.</p>
+      <div class="magnet-wrap">
+        <a class="btn btn-primary magnet" href="waitlist.html">Join the waitlist</a>
+      </div>
+    </div>
+  </section>
 
-        <!-- magnetic CTA -->
+  <!-- About: background blobs + small proof badges; parallax nudge mirrors hero -->
+  <section id="about" class="section about-textured">
+    <div class="container">
+      <div class="grid grid-2">
+        <div>
+          <h2>What is Overhaul</h2>
+          <p>Overhaul is a bright, vibrant, and minimalistic build weekend where hackers, designers, and builders craft useful things together. Zero fluff. All signal.</p>
+          <p>Two days of hands-on learning, workshops, and building with the WDS community. Join the waitlist to get early access to applications and updates.</p>
+          <div class="badges">
+            <div class="badge px">Workshops</div>
+            <div class="badge px">Mentors</div>
+            <div class="badge px">Real prompts</div>
+            <div class="badge px">Portfolio-ready</div>
+          </div>
+        </div>
+
+        <div class="grid grid-3 demo-cards">
+          <div class="card px" aria-hidden="true"></div>
+          <div class="card px" aria-hidden="true"></div>
+          <div class="card px" aria-hidden="true"></div>
+          <div class="card px" aria-hidden="true"></div>
+          <div class="card px" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="section dark">
+    <div class="container">
+      <h2>What people say</h2>
+      <div id="testimonials-list" class="grid grid-3">
+        <!-- main.js will hydrate from content.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Sponsors CTA: vignette behind CTA, consistent logo rail -->
+  <section id="sponsors" class="section sponsors-textured">
+    <div class="container center">
+      <h2>Sponsor the hackathon</h2>
+      <p>Support devs on campus and recruit early.</p>
+
+      <div class="vignette">
         <div class="magnet-wrap">
-          <span class="magnet-wrap">
-            <a href="/waitlist.html" target="_blank" rel="noopener"
-               class="btn btn-primary shimmer magnet">
-                Join Waitlist
-            </a>
-          </span>
+          <a class="btn btn-secondary magnet" href="sponsor.html">Sponsor interest</a>
         </div>
       </div>
-    </section>
 
-    <!-- WHAT IS OVERHAUL -->
-    <section id="about" class="section about" aria-label="What is Overhaul">
-      <div class="wrapper about-grid">
-        <div class="about-copy reveal">
-          <h2 class="h2">What is Overhaul</h2>
-          <p class="body-18">
-            Overhaul is a bright, vibrant, and minimalistic build weekend where hackers,
-            designers, and builders craft useful things together. Zero fluff. All signal.
-          </p>
-          <p class="body-16 dim">
-            Two days of hands-on learning, workshops, and building with the WDS community.
-            Join the waitlist to get early access to applications and updates.
-          </p>
+      <div id="sponsor-logos" class="logo-row" aria-live="polite">
+        <!-- main.js will render logos from content.json -->
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ: buttery expand/collapse handled by data-accordion buttons in main.js -->
+  <section id="faq" class="section">
+    <div class="container">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <button class="faq-q" data-accordion aria-expanded="false">
+          Who can join?
+        </button>
+        <div class="faq-a" hidden>
+          Anyone at Western who wants to build and learn.
         </div>
 
-        <!-- subtle parallax tiles -->
-        <div class="tiles">
-          <div class="tile px reveal" data-speed="0.10" aria-hidden="true"></div>
-          <div class="tile px reveal" data-speed="-0.06" style="--reveal-delay:.05s" aria-hidden="true"></div>
-          <div class="tile wide px reveal" data-speed="0.14" style="--reveal-delay:.1s" aria-hidden="true"></div>
-          <div class="tile px reveal" data-speed="-0.08" style="--reveal-delay:.15s" aria-hidden="true"></div>
+        <button class="faq-q" data-accordion aria-expanded="false">
+          What do I need to know?
+        </button>
+        <div class="faq-a" hidden>
+          Basic HTML/CSS/JS helps, curiosity is required.
+        </div>
+
+        <button class="faq-q" data-accordion aria-expanded="false">
+          Do I need a team?
+        </button>
+        <div class="faq-a" hidden>
+          You can join solo, we will match you if you want.
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- TESTIMONIALS -->
-    <section id="testimonials" class="section testimonials" aria-label="Testimonials">
-      <div class="wrapper">
-        <h2 class="h2 light reveal">Testimonials</h2>
-        <div id="testimonials-list" class="t-list">
-          <article class="t-card reveal">
-            <h3 class="h3">Hacker Name (pronouns)</h3>
-            <p class="body-16">“Loved the pace and the people. Walked away with a project and friends.”</p>
-          </article>
-          <article class="t-card reveal" style="--reveal-delay:.05s">
-            <h3 class="h3">Hacker Name (pronouns)</h3>
-            <p class="body-16">“Workshops were actually useful. Felt like building, not lectures.”</p>
-          </article>
-        </div>
-      </div>
-      <div class="pond" aria-hidden="true">
-        <span class="bubble b1"></span>
-        <span class="bubble b2"></span>
-        <span class="bubble b3"></span>
-      </div>
-    </section>
-
-    <!-- SPONSORS -->
-    <section id="sponsors" class="section sponsors" aria-label="Sponsors">
-      <div class="wrapper center">
-        <h2 class="h2 reveal">Want to Sponsor?</h2>
-        <p class="body-18 dim reveal" style="--reveal-delay:.05s">
-          Sponsors make Overhaul possible. Help students build for impact and connect with top talent.
-        </p>
-        <span class="magnet-wrap">
-          <a href="/sponsor.html" target="_blank" rel="noopener"
-             class="btn btn-outline on-light shimmer magnet">
-              Become a Sponsor
-          </a>
-        </span>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="section faq" aria-label="Frequently Asked Questions">
-      <div class="wrapper">
-        <h2 class="h2 reveal">FAQ</h2>
-        <div id="faq-list" class="faq-list">
-          <div class="faq-item reveal">
-            <button class="faq-q" type="button" data-accordion>
-              <span>What is a hackathon?</span><span class="plus">+</span>
-            </button>
-            <div class="faq-a body-16">
-              A weekend to learn, build, and ship. Teams are optional. Beginners welcome.
-            </div>
-          </div>
-          <div class="faq-item reveal" style="--reveal-delay:.05s">
-            <button class="faq-q" type="button" data-accordion>
-              <span>Do I need coding experience?</span><span class="plus">+</span>
-            </button>
-            <div class="faq-a body-16">
-              No. We have workshops and mentors. Curiosity > resume.
-            </div>
-          </div>
-          <div class="faq-item reveal" style="--reveal-delay:.1s">
-            <button class="faq-q" type="button" data-accordion>
-              <span>Will there be travel reimbursements?</span><span class="plus">+</span>
-            </button>
-            <div class="faq-a body-16">
-              Details announced closer to the event. Join the waitlist for updates.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="wrapper">© WDS Overhaul</div>
+  <!-- Footer: minimal content; keep legal and contact here -->
+  <footer class="footer">
+    <div class="container">
+      <p class="note">Western Developer Society — Externals</p>
+    </div>
   </footer>
-
-  <script src="assets/main.js?v=5" defer></script>
 </body>
 </html>
