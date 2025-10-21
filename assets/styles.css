@@ -1,9 +1,10 @@
 /*
 WDS Externals Hackathon – annotated pass
-Author notes (Reich):
+Author notes (Reich): 
 If something breaks, check the console first, then network panel for /api calls.
-Design tokens up top;
+Design tokens up top; adjust vars, not ad-hoc values.
 Reduced-motion is respected. Keep animations subtle and purposeful.
+Last touched: 2025-10-20 19:00
 */
 
 :root{
@@ -11,13 +12,12 @@ Reduced-motion is respected. Keep animations subtle and purposeful.
   --accent: #FFD42E;      /* primary CTA + stars */
   --accent-2: #F8444F;    /* secondary CTA/pop */
   --sky-deep: #2D479E;    /* night upper sky */
+  --sky-mid: #294e86;     /* transition band */
   --teal: #0D5C63;        /* teal / water / deep shapes */
   --grass: #B0D1B2;       /* grass / badges */
   --text-dark: #012C3D;   /* body on light */
-  --neutral-warm: #654218;
 
   --bg: #0b1220;
-  --bg-2: #0e1626;
   --text: #eaf5ff;
   --text-dim: #b2c4d7;
 
@@ -26,7 +26,7 @@ Reduced-motion is respected. Keep animations subtle and purposeful.
 
   --container: 1100px;
 
-  --fz-xl: clamp(28px, 5vw, 48px);
+  --fz-xl: clamp(32px, 6vw, 56px);
   --fz-h2: clamp(22px, 3vw, 32px);
   --fz-h3: clamp(18px, 2.2vw, 22px);
   --fz-body: 16px;
@@ -43,7 +43,6 @@ body{
 }
 
 /* ===== Base ===== */
-/* Reset + typography + wrappers. Keep the system font fallback. */
 h1,h2,h3{ margin: 0 0 10px; line-height: 1.25; }
 h1{ font-size: var(--fz-xl); }
 h2{ font-size: var(--fz-h2); }
@@ -70,14 +69,11 @@ p{ margin: 0 0 14px; font-size: var(--fz-body); }
 .center{ text-align:center; }
 .note{ opacity:.8; font-size:.95rem }
 
-/* Inputs to match site */
+/* Inputs */
 input, select, textarea{
-  background: #0f1720;
-  color: #eaf5ff;
+  background: #0f1720; color: #eaf5ff;
   border: 1px solid rgba(255,255,255,.12);
-  border-radius: 10px;
-  padding: 10px 12px;
-  width: 100%;
+  border-radius: 10px; padding: 10px 12px; width: 100%;
   outline: none;
 }
 input:focus, select:focus, textarea:focus{
@@ -87,78 +83,69 @@ input:focus, select:focus, textarea:focus{
 label{ display:block; margin: 10px 0; }
 
 /* ===== Header (glass + progress) ===== */
-/* Sticky glass header; scroll progress bar width set in main.js */
 .site-header{
-  position: sticky; top: 0; z-index: 10;
+  position: sticky; top: 0; z-index: 50; /* above hero */
   background: rgba(11, 18, 32, .6);
   border-bottom: 1px solid rgba(255,255,255,.08);
   backdrop-filter: blur(8px);
 }
 .nav-wrap{ max-width: var(--container); margin: 0 auto; padding: 10px 18px; }
 .nav a{
-  color: var(--text);
-  text-decoration: none;
-  margin-right: 14px;
-  padding: 8px 10px;
-  border-radius: 8px;
+  color: var(--text); text-decoration: none; margin-right: 14px;
+  padding: 8px 10px; border-radius: 8px;
 }
-.nav a:hover, .nav a[aria-current="page"]{
-  background: rgba(255,255,255,.06);
-}
+.nav a:hover, .nav a[aria-current="page"]{ background: rgba(255,255,255,.06); }
+/* Restored visibility: progress bar sits under nav but above hero */
 .progress-bar{
   height: 3px; width: 0%;
   background: linear-gradient(90deg, var(--accent), #c7f464);
-  border-radius: 2px;
-  margin-top: 10px;
+  border-radius: 2px; margin-top: 10px;
+  position: relative; z-index: 1;
 }
 
 /* ===== Buttons (magnetic-ready) ===== */
-/* `.magnet` classes work with setupMagnet() in main.js */
 .btn{
-  display: inline-block;
-  padding: 12px 18px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: #0e1422;
-  background: var(--accent);
-  box-shadow: var(--shadow);
-  transform: translateZ(0);
-  transition: transform .18s ease;
-  will-change: transform;
+  display: inline-block; padding: 12px 18px;
+  border-radius: 12px; text-decoration: none;
+  color: #0e1422; background: var(--accent);
+  box-shadow: var(--shadow); transform: translateZ(0);
+  transition: transform .18s ease; will-change: transform;
 }
 .btn:hover{ transform: translateY(-2px); }
-.btn-secondary{ background: #9be7ff; color: #012C3D; }
+.btn-secondary{ background: #9be7ff; color: var(--text-dark); }
 .magnet-wrap{ display:inline-block; }
 
 /* ===== Hero (Night) ===== */
-.hero{ position: relative; padding: 90px 0; overflow:hidden; }
-.hero.night{ background: linear-gradient(var(--sky-deep), var(--teal)); }
+.hero{ position: relative; padding: 96px 0 84px; overflow:hidden; }
+.hero.night{
+  background: linear-gradient(var(--sky-deep), var(--sky-mid) 45%, var(--teal) 45%, #0a3a40 100%);
+}
 .hero-bg{ position:absolute; inset:0; pointer-events:none; }
 .moon{
-  position:absolute; width:240px; height:240px; border-radius:50%;
+  position:absolute; width:260px; height:260px; border-radius:50%;
   background: radial-gradient(circle at 45% 45%, rgba(255,255,255,.95) 0%, rgba(255,255,255,.75) 35%, transparent 70%);
-  top: -30px; right: 10%;
+  top: -22px; right: 9%;
   opacity: .9; filter: blur(.2px);
+  z-index: 1;
 }
-.hills{
-  position:absolute; left:0; right:0; bottom:-20px; height: 220px;
-  background:
-    radial-gradient(70% 140px at 20% 100%, rgba(0,0,0,.12) 0, transparent 70%),
-    radial-gradient(60% 160px at 70% 100%, rgba(0,0,0,.12) 0, transparent 70%),
-    linear-gradient(var(--teal), #0a3a40);
-}
-.stars{ position:absolute; inset:0; }
+.stars{ position:absolute; inset:0; z-index: 1; }
 .stars span{
   position:absolute; width:6px; height:6px; border-radius:2px;
   background: var(--accent); opacity:.8;
   box-shadow: 0 0 12px rgba(255,212,46,.55);
   animation: twinkle 3.4s ease-in-out infinite;
 }
-@keyframes twinkle{
-  0%, 100%{ transform: scale(1); opacity:.8; }
-  50%{ transform: scale(.85); opacity:.45; }
+@keyframes twinkle{ 0%,100%{transform:scale(1);opacity:.8} 50%{transform:scale(.85);opacity:.45} }
+/* Lowered horizon so it never blocks stars/moon */
+.hills{
+  position:absolute; left:0; right:0; bottom:-10px; height: 160px;
+  background:
+    radial-gradient(70% 120px at 20% 100%, rgba(0,0,0,.12) 0, transparent 70%),
+    radial-gradient(60% 140px at 70% 100%, rgba(0,0,0,.12) 0, transparent 70%),
+    linear-gradient(var(--teal), #0a3a40);
+  z-index: 0;
 }
-.hero-inner{ position: relative; z-index: 1; text-align:center; }
+.hero-inner{ position: relative; z-index: 2; text-align:center; }
 .subtitle{ color: var(--text-dim); }
 
 /* ===== About + Parallax tiles + badges ===== */
@@ -170,59 +157,4 @@ label{ display:block; margin: 10px 0; }
 }
 .badges{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
 .badge{
-  background: var(--grass);
-  color: var(--text-dark);
-  border-radius: 10px;
-  padding: 8px 12px;
-  font-weight: 600;
-  box-shadow: 0 2px 10px rgba(0,0,0,.15);
-}
-.demo-cards .card{ min-height: 120px; }
-
-/* ===== Testimonials ===== */
-.logo-row{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
-.logo-row img{ height:40px; object-fit:contain; opacity:.95; filter: saturate(1.05); }
-
-/* ===== Sponsors (vignette + gentle texture) ===== */
-.sponsors-textured{
-  position: relative;
-  background:
-    radial-gradient(520px 320px at 10% 30%, rgba(13, 92, 99, .10) 0, transparent 70%),
-    radial-gradient(540px 300px at 85% 80%, rgba(176, 209, 178, .12) 0, transparent 70%);
-}
-.vignette{
-  display:inline-block;
-  padding: 18px 26px;
-  border-radius: 20px;
-  background: radial-gradient(220px 120px at 50% 50%, rgba(13,92,99,.18), transparent 70%);
-}
-
-/* ===== FAQ ===== */
-.faq{ max-width: 800px; margin: 0 auto; }
-.faq-q{
-  width:100%;
-  text-align:left;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.08);
-  color: var(--text);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin: 10px 0;
-  cursor: pointer;
-}
-.faq-a{
-  overflow: hidden;
-  transition: height .22s ease;
-  will-change: height;
-  padding: 0 2px;
-}
-
-/* ===== Reveal on scroll ===== */
-.js .reveal{ opacity:0; transform: translateY(10px); transition: all .25s ease; }
-.js .reveal.visible{ opacity:1; transform: none; }
-
-/* ===== Form pages ===== */
-.page .section{ padding-top: 36px; }
-.form.card{ max-width: 640px; margin: 0 auto; }
-
-.footer{ padding: 24px 0; border-top: 1px solid rgba(255,255,255,.08); }
+  background: var(--grass); color: v
