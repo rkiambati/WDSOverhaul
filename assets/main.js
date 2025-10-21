@@ -7,7 +7,7 @@ Last touched: 2025-10-20
 document.documentElement.classList.add('js');
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
 
-/* Progress bar (full-bleed; width via scaleX) */
+/* Progress bar */
 const progressBar=$('.progress-bar');
 function updateProgress(){
   if(!progressBar) return;
@@ -17,10 +17,10 @@ function updateProgress(){
 }
 window.addEventListener('scroll',updateProgress,{passive:true}); updateProgress();
 
-/* Starfield */
+/* Stars */
 function spawnStars(){
   const host=$('.stars'); if(!host) return;
-  const COUNT=22, frag=document.createDocumentFragment();
+  const COUNT=26, frag=document.createDocumentFragment();
   for(let i=0;i<COUNT;i++){
     const s=document.createElement('span');
     s.style.left=Math.random()*100+'%';
@@ -37,9 +37,10 @@ spawnStars();
 
 /* Parallax */
 function parallax(){
-  const y=window.scrollY||0, moon=$('.moon'), hills=$('.hills');
-  if(moon)  moon.style.transform = `translateY(${y*0.05}px)`;
-  if(hills) hills.style.transform= `translateY(${y*0.02}px)`;
+  const y=window.scrollY||0;
+  const moon=$('.moon'), hills=$('.hills');
+  if(moon)  moon.style.transform=`translateY(${y*0.05}px)`;
+  if(hills) hills.style.transform=`translateY(${y*0.02}px)`;
   $$('.px').forEach((el,i)=>{
     const nudge=Math.sin((y+i*60)/420)*3.5;
     el.style.transform=`translateY(${nudge}px)`;
@@ -47,43 +48,44 @@ function parallax(){
 }
 window.addEventListener('scroll',parallax,{passive:true}); parallax();
 
-/* Magnetic buttons */
+/* Magnetic buttons (cursor follow) */
 function setupMagnet(el,strength=18,radius=120){
   const wrap=el.closest('.magnet-wrap')||el.parentElement; if(!wrap) return;
   wrap.addEventListener('mousemove',e=>{
     const r=el.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
     const dx=e.clientX-cx, dy=e.clientY-cy, d=Math.hypot(dx,dy);
-    if(d<radius){ const p=1-d/radius; el.style.transform=`translate(${dx*p*(strength/100)}px, ${dy*p*(strength/100)}px)`; }
-    else el.style.transform='';
+    if(d<radius){
+      const p=1-d/radius;
+      el.style.transform=`translate(${dx*p*(strength/100)}px, ${dy*p*(strength/100)}px)`;
+    } else el.style.transform='';
   });
   wrap.addEventListener('mouseleave',()=> el.style.transform='');
 }
 $$('.magnet').forEach(setupMagnet);
 
-/* FAQ accordion */
+/* FAQ */
 (function setupFAQ(){
-  $$
-  ('[data-accordion]').forEach(btn=>{
+  $$('[data-accordion]').forEach(btn=>{
     const panel=btn.nextElementSibling; if(!panel) return;
     panel.hidden=true; panel.style.height='0px';
     btn.addEventListener('click',()=>{
       const open=btn.getAttribute('aria-expanded')==='true';
-      btn.setAttribute('aria-expanded',String(!open));
+      btn.setAttribute('aria-expanded', String(!open));
       if(open){
         panel.style.height=panel.scrollHeight+'px';
         requestAnimationFrame(()=> panel.style.height='0px');
-        setTimeout(()=> panel.hidden=true,220);
+        setTimeout(()=> panel.hidden=true, 220);
       }else{
         panel.hidden=false; panel.style.height='auto';
         const h=panel.scrollHeight; panel.style.height='0px';
         requestAnimationFrame(()=> panel.style.height=h+'px');
-        setTimeout(()=> panel.style.height='auto',240);
+        setTimeout(()=> panel.style.height='auto', 240);
       }
     });
   });
 })();
 
-/* Reveal on scroll */
+/* Reveal */
 function reveal(){
   const els=$$('.reveal'), viewH=window.innerHeight||800, y=window.scrollY||0;
   els.forEach(el=>{
@@ -113,24 +115,75 @@ window.addEventListener('scroll',reveal,{passive:true}); reveal();
   });
 })();
 
-/* Content loader */
+/* Content loader + placeholders to “fill” the page */
 async function loadContent(){
   try{
-    const res=await fetch('content.json',{cache:'no-store'}); const data=await res.json();
+    const res=await fetch('content.json',{cache:'no-store'});
+    const data=await res.json();
+
     const tl=$('#testimonials-list');
-    if(tl && Array.isArray(data.testimonials)){
-      tl.innerHTML=data.testimonials.map(t=>`
-        <div class="card reveal">
-          <p>${t.quote}</p>
-          <p class="note">— ${t.author}</p>
-        </div>`).join('');
+    if(tl){
+      const incoming=Array.isArray(data.testimonials)?data.testimonials:[];
+      // Build up to 6 cards with placeholders
+      const total=6;
+      const placeholders=Array.from({length:Math.max(0,total-incoming.length)},(_,i)=>({
+        quote: '',
+        author: 'Hacker',
+        avatar: '' // blank triggers skeleton
+      }));
+      const list=[...incoming,...placeholders].slice(0,total);
+
+      tl.innerHTML=list.map(t=>{
+        const hasAvatar=Boolean(t.avatar);
+        const hasQuote=Boolean(t.quote);
+        return `
+          <div class="card testimonial reveal">
+            <div class="t-head">
+              ${hasAvatar
+                ? `<img class="avatar" src="${t.avatar}" alt="${t.author || 'Hacker'} avatar" loading="lazy">`
+                : `<div class="avatar skel" aria-hidden="true"></div>`}
+              <div class="meta">
+                <div class="name">${t.author || 'Hacker Name'}</div>
+                <div class="role">Participant</div>
+              </div>
+            </div>
+            ${hasQuote
+              ? `<p class="quote">“${t.quote}”</p>`
+              : `<div class="skel" style="height:14px;width:80%;"></div>
+                 <div class="skel" style="height:14px;width:65%;margin-top:8px;"></div>`}
+          </div>
+        `;
+      }).join('');
+
       reveal();
     }
+
+    // Sponsors logos (unchanged)
     const sl=$('#sponsor-logos');
     if(sl && Array.isArray(data.sponsors)){
       sl.innerHTML=data.sponsors.map(s=>`<img src="${s.logo}" alt="${s.name} logo" loading="lazy">`).join('');
     }
-  }catch(e){ console.error('content load failed',e); }
+  }catch(e){
+    console.error('content load failed',e);
+    // fallback: make 6 skeleton testimonial cards so the section still looks full
+    const tl=$('#testimonials-list');
+    if(tl){
+      tl.innerHTML = Array.from({length:6}).map(()=>`
+        <div class="card testimonial reveal">
+          <div class="t-head">
+            <div class="avatar skel" aria-hidden="true"></div>
+            <div class="meta" style="flex:1">
+              <div class="skel" style="height:14px;width:40%;"></div>
+              <div class="skel" style="height:12px;width:30%;margin-top:8px;"></div>
+            </div>
+          </div>
+          <div class="skel" style="height:14px;width:85%;"></div>
+          <div class="skel" style="height:14px;width:70%;margin-top:8px;"></div>
+        </div>
+      `).join('');
+      reveal();
+    }
+  }
 }
 loadContent();
 
