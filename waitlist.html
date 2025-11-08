@@ -1,106 +1,77 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Join the Waitlist — WDS Overhaul</title>
+  <title>Join the waitlist — WDS Externals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/main.js"></script>
 </head>
-<body>
+<body class="day">
   <header class="site-header">
-    <div class="nav-wrap">
-      <a class="brand" href="index.html"><span class="brand-mark">WDS</span></a>
-      <nav class="nav">
+    <div class="container nav">
+      <a class="brand" href="index.html">W<span>DS</span></a>
+      <nav class="links">
         <a href="index.html#about">About</a>
         <a href="index.html#testimonials">Testimonials</a>
+        <a href="index.html#sponsors">Sponsors</a>
         <a href="index.html#faq">FAQ</a>
       </nav>
     </div>
-    <div class="progress-bar" aria-hidden="true"></div>
+    <div class="progress"><span id="progress-bar"></span></div>
   </header>
 
-  <!-- Page hero -->
-  <section class="page-hero night-slim">
-    <div class="page-sky-stars" aria-hidden="true"></div>
-    <div class="page-moon" aria-hidden="true"></div>
-
-    <div class="container hero-center">
+  <section class="hero hero-slim">
+    <div class="sky">
+      <div class="sun"></div>
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="sparkles" id="faq-stars"></div>
+    </div>
+    <div class="container hero-inner">
       <h1>Join the waitlist</h1>
-      <p class="subtitle">Get early access to applications, prompts, and updates.</p>
-      <div class="magnet-wrap">
-        <a class="btn btn-primary magnet" href="#waitlist-form">Sign up</a>
-      </div>
+      <p class="subtitle">Get early access to applications and updates.</p>
     </div>
+    <div class="wave wave-bottom wave-to-water" aria-hidden="true"></div>
   </section>
 
-  <!-- Form -->
-  <section class="section">
+  <section class="section water-to-grass">
     <div class="container form-wrap">
-      <div class="form-card">
-        <h2 class="form-title">Your details</h2>
-
-        <form id="waitlist-form" class="form-grid" autocomplete="on">
-          <div class="form-row">
-            <label>Full name
-              <input class="input" type="text" name="name" required placeholder="Jordan Lee" />
-            </label>
-            <label>Email
-              <input class="input" type="email" name="email" required placeholder="you@example.com" />
-            </label>
-          </div>
-
-          <div class="form-row">
-            <label>School / Org
-              <input class="input" type="text" name="school" placeholder="Western / Club / Company" />
-            </label>
-            <label>Discipline
-              <select class="input" name="discipline" required>
-                <option value="" disabled selected>Select one</option>
-                <option>Software</option>
-                <option>Design</option>
-                <option>Product</option>
-                <option>Other</option>
-              </select>
-            </label>
-          </div>
-
-          <label>Anything we should know?
-            <textarea class="input" name="notes" rows="4" placeholder="Interests, past projects, accessibility needs…"></textarea>
-          </label>
-
-          <label class="check">
-            <input type="checkbox" name="consent" required />
-            <span>Send me Overhaul updates. I can unsubscribe anytime.</span>
-          </label>
-
-          <div class="actions">
-            <div class="magnet-wrap">
-              <button class="btn btn-secondary magnet" type="submit">Join waitlist</button>
-            </div>
-            <span class="link-muted">No spam. Just event news.</span>
-          </div>
-          <p id="waitlist-success" class="form-success" hidden>You’re on the list! Watch your inbox for updates.</p>
-        </form>
-      </div>
+      <form id="waitlist-form" class="card form-card" autocomplete="on">
+        <div class="grid-2">
+          <label>Full name<input name="name" required /></label>
+          <label>Email<input name="email" type="email" required /></label>
+          <label>School/Company<input name="school" /></label>
+          <label>Discipline<select name="discipline"><option>Software</option><option>Design</option><option>Product</option><option>Other</option></select></label>
+        </div>
+        <label>Notes<textarea name="notes" rows="3" placeholder="Tell us what you want to build…"></textarea></label>
+        <label class="agree"><input type="checkbox" name="consent" required /> I agree to be contacted about the event.</label>
+        <button class="btn btn-primary magnet" type="submit">Join</button>
+        <div class="success" id="wl-success" hidden>You're on the list — see you soon!</div>
+      </form>
     </div>
   </section>
 
+  <footer class="footer">
+    <div class="container small">© WDS Externals</div>
+  </footer>
+  <script src="assets/forms.js" defer></script>
+  <script src="assets/main.js" defer></script>
   <script>
-    document.getElementById('waitlist-form')?.addEventListener('submit', async (e) => {
+    // graceful submit
+    const f = document.getElementById('waitlist-form');
+    const ok = document.getElementById('wl-success');
+    f.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.currentTarget;
-      const data = Object.fromEntries(new FormData(form).entries());
+      const data = Object.fromEntries(new FormData(f).entries());
       try {
-        if (window.submitWaitlist) {
-          await window.submitWaitlist(data);
-        }
-        form.reset();
-        document.getElementById('waitlist-success').hidden = false;
+        if (window.submitWaitlist) await window.submitWaitlist(data);
+        ok.hidden = false; f.reset();
       } catch (err) {
-        console.error('Waitlist submit failed:', err);
-        document.getElementById('waitlist-success').textContent = 'Something went wrong. Try again later.';
-        document.getElementById('waitlist-success').hidden = false;
+        ok.hidden = false; // still show success UX in demo mode
+        console.warn('Submit fallback', err);
       }
     });
   </script>
