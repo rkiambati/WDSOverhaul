@@ -61,20 +61,58 @@
   </footer>
   <script src="assets/forms.js" defer></script>
   <script src="assets/main.js" defer></script>
-  <script>
-    const f = document.getElementById('sponsor-form');
-    const ok = document.getElementById('sp-success');
-    f.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(f).entries());
-      try {
-        if (window.submitSponsor) await window.submitSponsor(data);
-        ok.hidden = false; f.reset();
-      } catch (err) {
-        ok.hidden = false;
-        console.warn('Submit fallback', err);
-      }
+ <script>
+  // Small helper to POST JSON and throw on non-2xx
+  async function postJSON(url, payload){
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify(payload)
     });
-  </script>
+    let j = null; try { j = await r.json(); } catch(e){}
+    if (!r.ok) throw new Error((j && j.error) || `HTTP ${r.status}`);
+    return j || { ok:true };
+  }
+
+  const f  = document.getElementById('sponsor-form');
+  const ok = document.getElementById('sp-success');
+
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Read the form exactly as your HTML names it
+    const fd = new FormData(f);
+    const data = Object.fromEntries(fd.entries());
+
+    // Map current field names -> what the API expects
+    const payload = {
+      kind: "sponsor",
+      data: {
+        org:       (data.company || "").trim(),   // ← backend expects `org`
+        name:      (data.name || "").trim(),
+        email:     (data.email || "").trim(),
+        phone:     (data.phone || "").trim(),
+        subject:   (data.subject || "").trim(),
+        message:   (data.message || "").trim(),
+        budget:    data.budget || "Undisclosed",
+        interests: data.hiring || "",             // reuse Hiring focus as “interests” if you want
+        // optional honeypot if you add one later: honey: data.honey || ""
+      }
+    };
+
+    try {
+      await postJSON("/api/submit", payload);
+      f.reset();
+      ok.hidden = false;
+      // optionally hide again after a moment
+      setTimeout(() => ok.hidden = true, 3500);
+    } catch (err) {
+      // Show the error so you can see what's wrong if any
+      alert("Could not submit (sponsor): " + err.message);
+      console.error(err);
+    }
+  });
+</script>
+
 </body>
 </html>
