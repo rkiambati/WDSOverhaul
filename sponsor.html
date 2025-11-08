@@ -2,117 +2,142 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sponsor interest — WDS Externals</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sponsor — Overhaul</title>
+  <!-- Keep your site styles -->
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
-<body class="day">
-  <header class="site-header">
-    <div class="container nav">
-      <a class="brand" href="index.html">W<span>DS</span></a>
-      <nav class="links">
-        <a href="index.html#about">About</a>
-        <a href="index.html#testimonials">Testimonials</a>
-        <a href="index.html#sponsors">Sponsors</a>
-        <a href="index.html#faq">FAQ</a>
-      </nav>
+<body>
+
+  <header class="section">
+    <div class="container">
+      <h1>Want to Sponsor the Hackathon?</h1>
+      <p class="muted">Tell us a bit about your organization and how you’d like to partner.</p>
     </div>
-    <div class="progress"><span id="progress-bar"></span></div>
   </header>
 
-  <section class="hero hero-slim">
-    <div class="sky">
-      <div class="sun"></div>
-      <div class="cloud c1"></div>
-      <div class="cloud c2"></div>
-      <div class="sparkles" id="faq-stars"></div>
-    </div>
-    <div class="container hero-inner">
-      <h1>Sponsor the hackathon</h1>
-      <p class="subtitle">Support devs on campus and recruit early.</p>
-    </div>
-    <div class="wave wave-bottom wave-to-water" aria-hidden="true"></div>
-  </section>
-
-  <section class="section water-to-grass">
+  <main class="section">
     <div class="container form-wrap">
-      <form id="sponsor-form" class="card form-card">
+      <form id="sponsor-form" class="card form-card" autocomplete="on">
         <div class="grid-2">
-          <label>Name<input name="name" required /></label>
-          <label>Email<input name="email" type="email" required /></label>
-          <label>Company<input name="company" required /></label>
-          <label>Role/Team<input name="role" /></label>
-          <label>Budget<select name="budget"><option>Undisclosed</option><option>&lt; $1k</option><option>$1k–$5k</option><option>$5k–$10k</option><option>$10k+</option></select></label>
-          <label>Hiring focus<select name="hiring"><option>Interns</option><option>New grads</option><option>Both</option><option>Not hiring</option></select></label>
+          <label>Organization
+            <input name="company" required />
+          </label>
+          <label>Contact name
+            <input name="name" required />
+          </label>
+          <label>Email
+            <input name="email" type="email" required />
+          </label>
+          <label>Phone
+            <input name="phone" />
+          </label>
         </div>
-        <label>Message<textarea name="message" rows="3" placeholder="Tell us what you’d like to do with us…"></textarea></label>
-        <label class="agree"><input type="checkbox" name="consent" required /> I agree to be contacted about sponsorship.</label>
-        <button class="btn btn-peach magnet" type="submit">Send</button>
-        <div class="success" id="sp-success" hidden>Thanks — we’ll reach out shortly.</div>
+
+        <div class="grid-2">
+          <label>Subject
+            <input name="subject" placeholder="Sponsorship inquiry" />
+          </label>
+          <label>Budget range
+            <select name="budget">
+              <option value="Undisclosed">Undisclosed</option>
+              <option value="$500–$1,000">$500–$1,000</option>
+              <option value="$1,000–$2,500">$1,000–$2,500</option>
+              <option value="$2,500–$5,000">$2,500–$5,000</option>
+              <option value="$5,000+">$5,000+</option>
+            </select>
+          </label>
+        </div>
+
+        <label>Hiring focus
+          <select name="hiring">
+            <option value="">Not specified</option>
+            <option value="Branding / Visibility">Branding / Visibility</option>
+            <option value="Recruiting">Recruiting</option>
+            <option value="Both">Both</option>
+          </select>
+        </label>
+
+        <label>Message
+          <textarea name="message" rows="4" placeholder="Tell us what you have in mind…"></textarea>
+        </label>
+
+        <!-- optional honeypot (hidden with CSS if you want) -->
+        <input type="text" name="honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" />
+
+        <button class="btn btn-primary magnet" type="submit">Submit sponsor interest</button>
+        <div class="success" id="sp-success" hidden>Thanks! We’ll get back to you shortly.</div>
       </form>
     </div>
-  </section>
+  </main>
 
-  <footer class="footer">
-    <div class="container small">© WDS Externals</div>
-  </footer>
-  <script src="assets/forms.js" defer></script>
-  <script src="assets/main.js" defer></script>
- <script>
-  // Small helper to POST JSON and throw on non-2xx
-  async function postJSON(url, payload){
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify(payload)
-    });
-    let j = null; try { j = await r.json(); } catch(e){}
-    if (!r.ok) throw new Error((j && j.error) || `HTTP ${r.status}`);
-    return j || { ok:true };
-  }
+  <!-- If your site uses a shared main.js, you can keep it linked. Not required for submit logic. -->
+  <!-- <script src="assets/main.js" defer></script> -->
 
-  const f  = document.getElementById('sponsor-form');
-  const ok = document.getElementById('sp-success');
-
-  f.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    // Read the form exactly as your HTML names it
-    const fd = new FormData(f);
-    const data = Object.fromEntries(fd.entries());
-
-    // Map current field names -> what the API expects
-    const payload = {
-      kind: "sponsor",
-      data: {
-        org:       (data.company || "").trim(),   // ← backend expects `org`
-        name:      (data.name || "").trim(),
-        email:     (data.email || "").trim(),
-        phone:     (data.phone || "").trim(),
-        subject:   (data.subject || "").trim(),
-        message:   (data.message || "").trim(),
-        budget:    data.budget || "Undisclosed",
-        interests: data.hiring || "",             // reuse Hiring focus as “interests” if you want
-        // optional honeypot if you add one later: honey: data.honey || ""
-      }
-    };
-
-    try {
-      await postJSON("/api/submit", payload);
-      f.reset();
-      ok.hidden = false;
-      // optionally hide again after a moment
-      setTimeout(() => ok.hidden = true, 3500);
-    } catch (err) {
-      // Show the error so you can see what's wrong if any
-      alert("Could not submit (sponsor): " + err.message);
-      console.error(err);
+  <script>
+    // POST helper
+    async function postJSON(url, payload){
+      const r = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      let j = null; try { j = await r.json(); } catch(e){}
+      if (!r.ok) throw new Error((j && j.error) || `HTTP ${r.status}`);
+      return j || { ok:true };
     }
-  });
-</script>
 
+    const form = document.getElementById('sponsor-form');
+    const okEl = document.getElementById('sp-success');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation(); // avoid double handlers from other scripts
+
+      const fd = new FormData(form);
+      const data = Object.fromEntries(fd.entries());
+
+      // Normalize field names
+      const org       = (data.company || "").trim();  // backend expects `org`
+      const name      = (data.name || "").trim();
+      const email     = (data.email || "").trim();
+      const phone     = (data.phone || "").trim();
+      const subject   = (data.subject || "").trim();
+      const message   = (data.message || "").trim();
+      const budget    = data.budget || "Undisclosed";
+      const interests = data.hiring || "";             // map Hiring → interests
+      const honey     = data.honey || "";              // honeypot (ignored server-side)
+
+      if (!org || !name || !email){
+        alert("Please provide Organization, Contact name, and Email.");
+        return;
+      }
+
+      // Send both the current shape and legacy aliases so either backend accepts it
+      const payload = {
+        // Current/robust shape used by your /api/submit.js
+        kind: "sponsor",
+        data: { org, name, email, phone, subject, message, budget, interests, honey },
+
+        // Legacy aliases (harmless if unused by backend)
+        type: "sponsor",
+        org, name, email, phone, subject, message,
+        company: org,
+        tier: budget,
+        hiring: interests,
+        recruiting: interests
+      };
+
+      try{
+        await postJSON("/api/submit", payload);
+        form.reset();
+        okEl.hidden = false;
+        setTimeout(() => okEl.hidden = true, 3500);
+      }catch(err){
+        console.error("submit ERR", err);
+        alert("Could not submit (sponsor): " + err.message);
+      }
+    }, { capture:true }); // capture to win over any other submit listeners
+  </script>
 </body>
 </html>
