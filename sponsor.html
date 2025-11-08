@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Sponsor — Overhaul</title>
-  <!-- Keep your site styles -->
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
@@ -70,10 +69,6 @@
       </form>
     </div>
   </main>
-
-  <!-- If your site uses a shared main.js, you can keep it linked. Not required for submit logic. -->
-  <!-- <script src="assets/main.js" defer></script> -->
-
   <script>
     // POST helper
     async function postJSON(url, payload){
@@ -115,7 +110,6 @@
 
       // Send both the current shape and legacy aliases so either backend accepts it
       const payload = {
-        // Current/robust shape used by your /api/submit.js
         kind: "sponsor",
         data: { org, name, email, phone, subject, message, budget, interests, honey },
 
