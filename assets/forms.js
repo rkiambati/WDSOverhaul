@@ -1,64 +1,45 @@
-// --- helper: first non-empty value among possible keys
-const pick = (fd, ...keys) => {
-  for (const k of keys) {
-    const v = fd.get(k);
-    if (v != null && String(v).trim() !== '') return String(v).trim();
+
+// Small fetch helper that POSTs JSON and throws on non-2xx
+async function postJSON(url, payload) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`${res.status} ${res.statusText} ${text}`);
   }
-  return '';
+  return res.json().catch(() => ({}));
+}
+
+// Waitlist: map `discipline` → `role` so legacy back-end passes validation
+window.submitWaitlist = async (raw) => {
+  const payload = {
+    type: 'waitlist',
+    name: raw.name?.trim(),
+    email: raw.email?.trim(),
+    school: raw.school?.trim() || '',
+    discipline: raw.discipline || '',
+    role: raw.discipline || '',          // <-- legacy API expects `role`
+    notes: raw.notes?.trim() || '',
+    consent: !!raw.consent,
+  };
+  return postJSON('/api/submit', payload);
 };
 
-// --- WAITLIST --------------------------------------------------------------
-const wlForm = document.getElementById('waitlist-form');
-
-if (wlForm) {
-  wlForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const fd = new FormData(wlForm);
-    const name  = (fd.get('name') || '').trim();
-    const email = (fd.get('email') || '').trim();
-
-    // Map field names -> what the API expects
-    const role  = (fd.get('discipline') || '').trim();  // role expected, discipline provided
-    const note  = (fd.get('notes') || '').trim();       // note expected, notes provided
-
-    // Optional fields (not required by API)
-    const school  = (fd.get('school') || '').trim();
-    const consent = !!fd.get('consent');
-
-    if (!name || !email) {
-      alert('Please provide your name and email.');
-      return;
-    }
-
-    const payload = {
-      kind: 'waitlist',
-      data: {
-        name,
-        email,
-        role,     // mapped from discipline
-        note,     // mapped from notes
-        // extras are fine to send; backend can ignore them
-        school,
-        consent
-      }
-    };
-
-    try {
-      const r = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const j = await r.json().catch(() => null);
-      if (!r.ok) throw new Error((j && j.error) || `HTTP ${r.status}`);
-
-      wlForm.reset();
-      document.getElementById('wl-success')?.removeAttribute('hidden');
-      setTimeout(() => document.getElementById('wl-success')?.setAttribute('hidden', ''), 3500);
-    } catch (err) {
-      alert('Could not submit (waitlist): ' + err.message);
-    }
-  });
-}
+// Sponsor: unchanged
+window.submitSponsor = async (raw) => {
+  const payload = {
+    type: 'sponsor',
+    name: raw.name?.trim(),
+    email: raw.email?.trim(),
+    company: raw.company?.trim(),
+    role: raw.role?.trim() || '',
+    budget: raw.budget || 'Undisclosed',
+    hiring: raw.hiring || 'Both',
+    message: raw.message?.trim() || '',
+    consent: !!raw.consent,
+  };
+  return postJSON('/api/submit', payload);
+};
