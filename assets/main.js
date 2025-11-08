@@ -1,289 +1,224 @@
 /**
-WDS Externals Hackathon — Night theme interactions
-Progress bar, stars, parallax, FAQ, reveal, pond micro-effects,
-magnetic buttons, and content hydration with smart fallbacks.
+ WDS Externals Hackathon — interactions
+ Progress bar, stars/flowers, FAQ, pond bubbles, magnetic buttons, content hydrate.
 */
+/**
+ * WDS Externals — small interactions
+ * - Sticky header glass
+ * - Slow smooth-scrolling for navbar links (with header offset)
+ * - Stars/flowers layers
+ * - Testimonials (now 2)
+ * - Optional sponsor rail hidden
+ * - FAQ accordion (smoother open/close)
+ * - Pond bubbles (kept light)
+ */
+const $  = (s, c=document) => c.querySelector(s);
+const $$ = (s, c=document) => Array.from(c.querySelectorAll(s));
 
-document.documentElement.classList.add('js');
-
-const $  = (sel, root = document) => root.querySelector(sel);
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-/* ===============================
-   Scroll progress bar (full width)
-   =============================== */
-const progressBar = $('.progress-bar');
-function updateProgress() {
-  if (!progressBar) return;
-  const h = document.documentElement;
-  const max = h.scrollHeight - h.clientHeight;
-  const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
-  progressBar.style.transform = `scaleX(${pct / 100})`;
-}
-window.addEventListener('scroll', updateProgress, { passive: true });
-updateProgress();
-
-/* ===============================
-   Night sky: starfield (hero)
-   =============================== */
-function spawnStars() {
-  const host = $('.stars');
-  if (!host) return;
-
-  const COUNT = 34;
-  const frag = document.createDocumentFragment();
-  for (let i = 0; i < COUNT; i++) {
-    const s = document.createElement('span');
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top  = Math.random() * 55 + '%';
-    const size = 3 + Math.random() * 4;
-    s.style.width = s.style.height = size + 'px';
-    s.style.animationDelay = (Math.random() * 2.2).toFixed(2) + 's';
-    s.style.opacity = (0.5 + Math.random() * 0.4).toFixed(2);
-    frag.appendChild(s);
-  }
-  host.innerHTML = '';
-  host.appendChild(frag);
-}
-spawnStars();
-
-/* ===============================
-   About section: subtle white stars
-   =============================== */
-(function spawnAboutStars() {
-  const host = $('.about-stars');
-  if (!host) return;
-
-  const COUNT = 22;
-  const frag = document.createDocumentFragment();
-  for (let i = 0; i < COUNT; i++) {
-    const s = document.createElement('span');
-    s.style.left = Math.random() * 100 + '%';
-    s.style.top  = Math.random() * 100 + '%';
-    const size = 2 + Math.random() * 2;
-    s.style.width = s.style.height = size + 'px';
-    s.style.animationDelay = (Math.random() * 2.8).toFixed(2) + 's';
-    s.style.opacity = (0.35 + Math.random() * 0.35).toFixed(2);
-    frag.appendChild(s);
-  }
-  host.innerHTML = '';
-  host.appendChild(frag);
+/* ===== header glass after scroll ===== */
+(() => {
+  const header = $('.site-header');
+  if (!header) return;
+  const onScroll = () => {
+    if (window.scrollY > 8) header.classList.add('scrolled');
+    else header.classList.remove('scrolled');
+  };
+  onScroll();
+  addEventListener('scroll', onScroll, { passive: true });
 })();
 
-/* ===============================
-   Parallax for hero bits + tiles/badges
-   =============================== */
-function parallaxOnScroll() {
-  const y = window.scrollY || 0;
-  const moon  = $('.moon');
-  const hills = $('.hills');
-  if (moon)  moon.style.transform  = `translateY(${y * 0.05}px)`;
-  if (hills) hills.style.transform = `translateY(${y * 0.02}px)`;
+/* ===== slim top progress bar ===== */
+(() => {
+  const el = $('#progress-bar');
+  if (!el) return;
+  const update = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    el.style.width = (max ? (h.scrollTop / max) : 0) * 100 + '%';
+  };
+  update();
+  addEventListener('scroll', update, { passive: true });
+})();
 
-  $$('.px').forEach((el, i) => {
-    const nudge = Math.sin((y + i * 60) / 420) * 3.5;
-    el.style.transform = `translateY(${nudge}px)`;
-  });
-}
-window.addEventListener('scroll', parallaxOnScroll, { passive: true });
-parallaxOnScroll();
+/* ===== slow, offset smooth-scroll for navbar + any in-page anchor ===== */
+(() => {
+  const header = $('.site-header');
+  const headerH = () => (header ? header.offsetHeight : 0);
 
-/* ===============================
-   Magnetic buttons (cursor follow)
-   =============================== */
-function setupMagnet(el, strength = 18, radius = 120) {
-  const wrap = el.closest('.magnet-wrap') || el.parentElement;
-  if (!wrap) return;
+  function easeInOut(t){ return t<.5 ? 2*t*t : -1+(4-2*t)*t; }
 
-  wrap.addEventListener('mousemove', (e) => {
-    const rect = el.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const dx = e.clientX - cx;
-    const dy = e.clientY - cy;
-    const dist = Math.hypot(dx, dy);
+  function smoothScrollTo(targetY, duration=900){
+    const startY = window.scrollY;
+    const dist = targetY - startY;
+    let t0 = null;
+    function step(ts){
+      if(!t0) t0 = ts;
+      const p = Math.min((ts - t0) / duration, 1);
+      const eased = easeInOut(p);
+      window.scrollTo(0, startY + dist * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
 
-    if (dist < radius) {
-      const p = 1 - dist / radius;
-      el.style.transform = `translate(${dx * p * (strength / 100)}px, ${dy * p * (strength / 100)}px)`;
+  function handleClick(e){
+    const a = e.currentTarget;
+    const href = a.getAttribute('href') || '';
+    if (!href.startsWith('#') || href === '#') return;
+    const target = $(href);
+    if (!target) return;
+    e.preventDefault();
+    // account for sticky header
+    const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - headerH() - 8);
+    smoothScrollTo(y, 950);
+  }
+
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', handleClick));
+})();
+
+/* ===== stars / flowers painters ===== */
+function spawnDots(container, count = 24, color='rgba(255,255,255,0.95)', asFlowers=false){
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < count; i++){
+    const s = document.createElement('i');
+    const size = Math.random() * 2 + 2;
+    s.style.position = 'absolute';
+    s.style.left = (Math.random()*100) + '%';
+    s.style.top  = (Math.random()*100) + '%';
+    s.style.pointerEvents = 'none';
+
+    if (asFlowers){
+      s.style.width = s.style.height = (size + 3) + 'px';
+      s.style.transform = 'rotate(45deg)';
+      s.style.background = color;
+      const petal = document.createElement('i');
+      petal.style.cssText = `position:absolute;inset:0;background:${color};transform:rotate(90deg)`;
+      s.appendChild(petal);
+      s.style.opacity = .9;
     } else {
-      el.style.transform = '';
+      s.style.width = size + 'px';
+      s.style.height = size + 'px';
+      s.style.background = color;
+      s.style.borderRadius = '2px';
+      s.style.boxShadow = `0 0 ${Math.random()*6+4}px ${color}`;
+      s.style.transform = 'rotate(45deg)';
+      s.style.opacity = 0.9;
+    }
+    container.appendChild(s);
+  }
+}
+
+// keep hero subtle stars, sponsors & FAQ stars
+spawnDots($('#hero-sparkles'), 70, 'rgba(255,255,255,0.95)', false);
+spawnDots($('#sponsor-stars'), 30, 'rgba(255,255,255,0.9)', false);
+spawnDots($('#faq-stars'), 28, 'rgba(255,255,255,0.92)', false);
+
+/* ===== magnetic buttons ===== */
+$$('.magnet').forEach(btn => {
+  btn.addEventListener('mousemove', (e) => {
+    const r = btn.getBoundingClientRect();
+    const x = e.clientX - r.left - r.width / 2;
+    const y = e.clientY - r.top  - r.height / 2;
+    btn.style.transform = `translate(${x*0.05}px, ${y*0.12}px)`;
+  });
+  btn.addEventListener('mouseleave', () => btn.style.transform = 'translate(0,0)');
+});
+
+/* ===== FAQ accordion (smoother) ===== */
+$$('.faq-a').forEach(a => { a.hidden = false; a.style.maxHeight = '0px'; a.classList.remove('open'); });
+
+$$('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const a = btn.nextElementSibling;
+    if (!a) return;
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+
+    if (expanded){
+      // close
+      a.style.maxHeight = a.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        a.style.maxHeight = '0px';
+        a.classList.remove('open');
+      });
+    } else {
+      // open
+      a.classList.add('open');
+      requestAnimationFrame(() => {
+        a.style.maxHeight = a.scrollHeight + 'px';
+      });
     }
   });
+});
 
-  wrap.addEventListener('mouseleave', () => {
-    el.style.transform = '';
-  });
-}
-$$('.magnet').forEach(btn => setupMagnet(btn));
-
-/* ===============================
-   FAQ accordion (accessible)
-   =============================== */
-(function setupFAQ(){
-  const triggers = $$('[data-accordion]');
-  triggers.forEach(btn => {
-    const panel = btn.nextElementSibling;
-    if (!panel) return;
-
-    panel.hidden = true;
-    panel.style.height = '0px';
-
-    btn.addEventListener('click', () => {
-      const open = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!open));
-
-      if (open) {
-        panel.style.height = panel.scrollHeight + 'px';
-        requestAnimationFrame(() => { panel.style.height = '0px'; });
-        setTimeout(() => { panel.hidden = true; }, 220);
-      } else {
-        panel.hidden = false;
-        panel.style.height = 'auto';
-        const target = panel.scrollHeight;
-        panel.style.height = '0px';
-        requestAnimationFrame(() => { panel.style.height = target + 'px'; });
-        setTimeout(() => { panel.style.height = 'auto'; }, 240);
-      }
-    });
-  });
-})();
-
-/* ===============================
-   Reveal on scroll (progressive)
-   =============================== */
-function revealOnScroll(){
-  const els = $$('.reveal');
-  const viewH = window.innerHeight || 800;
-  const y = window.scrollY || 0;
-
-  els.forEach(el => {
-    if (el.classList.contains('visible')) return;
-    const rect = el.getBoundingClientRect();
-    const top = rect.top + y;
-    if (y + viewH > top + 40) el.classList.add('visible');
-  });
-}
-window.addEventListener('scroll', revealOnScroll, { passive: true });
-revealOnScroll();
-
-/* ===============================
-   Pond micro-effects (bubbles + ripples)
-   =============================== */
-(function initPond() {
-  const bubbles = $$('.bubble');
-  bubbles.forEach(b => {
-    const amp = 2 + Math.random() * 2.5;
-    const speed = 3000 + Math.random() * 2500;
-    let t0 = performance.now();
-    function tick(t) {
-      const dt = t - t0;
-      const y = Math.sin(dt / speed * 2 * Math.PI) * amp;
-      const x = Math.cos(dt / (speed * 1.2) * 2 * Math.PI) * (amp * 0.4);
-      b.style.transform = `translate(${x}px, ${y}px)`;
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  });
-
-  const ripples = $$('.pad .ripple');
-  ripples.forEach(r => {
-    const base = 0.06 + Math.random() * 0.04;
-    let dir = 1, op = base;
+/* ===== Pond bubbles (kept minimal) ===== */
+(() => {
+  const wrap = $('#bubbles');
+  if (!wrap) return;
+  const W = wrap.clientWidth || window.innerWidth;
+  const H = wrap.clientHeight || 420;
+  const total = 14; // lighter
+  for (let i=0;i<total;i++){
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const x = Math.random() * W;
+    const y = Math.random() * H;
+    b.style.left = x + 'px';
+    b.style.top  = y + 'px';
+    wrap.appendChild(b);
+    let dir = Math.random() > .5 ? 1 : -1;
+    let t = y, x0 = x;
     setInterval(() => {
-      op += dir * 0.02;
-      if (op > base + 0.05 || op < base) dir *= -1;
-      r.style.opacity = op.toFixed(2);
-    }, 180);
-  });
+      t -= .55; if (t < -20) t = H + 20;
+      x0 += dir * .22;
+      b.style.top  = t + 'px';
+      b.style.left = x0 + 'px';
+    }, 60);
+  }
 })();
 
-/* ===============================
-   Content loader (testimonials + sponsors)
-   - Shows up to 3 testimonials.
-   - If fetch fails or data is empty, uses filler quotes so it still looks full.
-   =============================== */
+/* ===== Content hydrate: 2 testimonials, sponsor rail removed ===== */
 async function loadContent(){
-  const tl = $('#testimonials-list');
-  if (!tl) {
-    console.warn('[WDS] #testimonials-list not found in DOM.');
-    return;
+  let data;
+  try {
+    const res = await fetch('content.json', { cache:'no-store' });
+    data = await res.json();
+  } catch {
+    data = {
+      testimonials: [
+        {author:'Jordan L.', quote:'Built more in 48 hours than all semester.'},
+        {author:'Maya P.',   quote:'Tight prompts, zero fluff. Great mentors.'},
+        {author:'Arjun S.',  quote:'(extra) — not shown'},
+        {author:'Priya D.',  quote:'(extra) — not shown'}
+      ],
+      sponsors: []
+    };
   }
 
-  const TARGET = 3;
-  const fillers = [
-    { author: 'Past Hacker', quote: 'Super welcoming. I built more in 48 hours than all semester.', avatar: '' },
-    { author: 'UI Designer', quote: 'Tight prompts, zero fluff. Great mentors.', avatar: '' },
-    { author: 'Team Lead',   quote: 'Fast feedback loops and a real portfolio piece.', avatar: '' },
-  ];
-
-  try{
-    const res = await fetch('content.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-
-    const incoming = Array.isArray(data.testimonials) ? data.testimonials : [];
-    const list = [...incoming, ...fillers].slice(0, TARGET);
-
-    tl.innerHTML = list.map(t => testimonialCard(t)).join('');
-    revealOnScroll();
-
-    // Sponsors
-    const sl = $('#sponsor-logos');
-    if (sl && Array.isArray(data.sponsors)) {
-      sl.innerHTML = data.sponsors
-        .map(s => `<img src="${s.logo}" alt="${s.name} logo" loading="lazy">`)
-        .join('');
-    }
-  }catch(err){
-    console.warn('[WDS] Using fallback testimonials (fetch likely blocked by file://).', err);
-    // Fallback: use fillers so real text appears even offline
-    tl.innerHTML = fillers.slice(0, TARGET).map(t => testimonialCard(t)).join('');
-    revealOnScroll();
-  }
-
-  function testimonialCard(t){
-    const hasAvatar = Boolean(t.avatar);
-    const author = t.author || 'Hacker Name';
-    const quote  = t.quote  || '';
-    return `
-      <div class="card testimonial reveal">
+  // testimonials: render exactly 2
+  const grid = $('#testimonial-grid');
+  if (grid){
+    grid.innerHTML = '';
+    (data.testimonials || []).slice(0,2).forEach(t => {
+      const card = document.createElement('article');
+      card.className = 't-card';
+      card.innerHTML = `
         <div class="t-head">
-          ${hasAvatar
-            ? `<img class="avatar" src="${t.avatar}" alt="${author} avatar" loading="lazy">`
-            : `<div class="avatar skel" aria-hidden="true"></div>`}
-          <div class="meta">
-            <div class="name">${author}</div>
-            <div class="role">Participant</div>
-          </div>
+          <div class="avatar"></div>
+          <div class="t-name">${t.author ?? 'Hacker'}</div>
         </div>
-        ${quote
-          ? `<p class="quote">“${quote}”</p>`
-          : `<div class="skel" style="height:14px;width:85%;"></div>
-             <div class="skel" style="height:14px;width:65%;margin-top:8px;"></div>`}
-      </div>
-    `;
+        <div class="t-quote">“${t.quote ?? 'Great vibes, fast builds.'}”</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  // hide / remove sponsor logo rail for now
+  const rail = $('#logo-rail');
+  if (rail){
+    rail.innerHTML = '';
+    rail.closest('.logos')?.classList.add('hidden');
   }
 }
 loadContent();
-
-// Quick admin shortcut: press Shift + A to open admin.html
-(function adminShortcut(){
-  let down = new Set();
-  window.addEventListener('keydown', (e) => {
-    down.add(e.key.toLowerCase());
-    if (e.shiftKey && down.has('a')) {
-      window.location.href = 'admin.html';
-    }
-  });
-  window.addEventListener('keyup', (e) => down.delete(e.key.toLowerCase()));
-})();
-
-
-/* ===============================
-   Resize safety
-   =============================== */
-window.addEventListener('resize', () => {
-  updateProgress();
-  parallaxOnScroll();
-}, { passive: true });
