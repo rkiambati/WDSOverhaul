@@ -4,9 +4,10 @@ const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG;
 const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || "main";
 const TOKEN  = process.env.GITHUB_TOKEN; // must have Contents: Read & Write
 
+// NOTE: no ua/ip columns anymore
 const HEADERS = {
-  waitlist: "timestamp,name,email,role,note,ua,ip\n",
-  sponsors: "timestamp,org,name,email,phone,subject,message,budget,interests,ua,ip\n",
+  waitlist: "timestamp,name,email,role,note\n",
+  sponsors: "timestamp,org,name,email,phone,subject,message,budget,interests\n",
 };
 
 function setCors(req, res){
@@ -50,8 +51,6 @@ module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error:"Method not allowed" });
 
   try{
-    const ua = req.headers["user-agent"] || "";
-    const ip = (req.headers["x-forwarded-for"] || "").split(",")[0] || req.socket?.remoteAddress || "";
     const { kind, data } = await readJson(req);
     if (!kind || typeof data !== "object") return res.status(400).json({ error:"Bad payload" });
 
@@ -61,18 +60,18 @@ module.exports = async (req, res) => {
       if (honey) return res.status(200).json({ ok:true, bot:true });
       if (!name || !email || !role) return res.status(400).json({ error:"Missing fields" });
       path = "data/waitlist.csv";
-      row  = line([new Date().toISOString(), name, email, role, note || "", ua, ip]);
+      row  = line([new Date().toISOString(), name, email, role, note || ""]);
     } else if (kind === "sponsor"){
       const { org, name, email, phone, subject, message, budget, interests, honey } = data;
       if (honey) return res.status(200).json({ ok:true, bot:true });
       if (!org || !name || !email) return res.status(400).json({ error:"Missing fields" });
       path = "data/sponsors.csv";
-      row  = line([new Date().toISOString(), org, name, email, phone||"", subject||"", message||"", budget||"", interests||"", ua, ip]);
+      row  = line([new Date().toISOString(), org, name, email, phone||"", subject||"", message||"", budget||"", interests||""]);
     } else {
       return res.status(400).json({ error:"Unknown kind" });
     }
 
-    // Read current file (or create with header) then append; retry on SHA conflicts.
+    // Read → append (create with new header if missing)
     let sha = null, current = "";
     const r0 = await ghGet(path);
     if (r0.status === 200){
@@ -85,25 +84,11 @@ module.exports = async (req, res) => {
       return res.status(502).json({ error:`GitHub GET ${r0.status}` });
     }
 
-    for (let tries=0; tries<3; tries++){
-      try{
-        await ghPut(path, current + row, sha);
-        return res.status(200).json({ ok:true });
-      }catch(e){
-        if (String(e).includes("409") && tries < 2){
-          const meta = await (await ghGet(path)).json();
-          sha = meta.sha;
-          current = Buffer.from(meta.content, "base64").toString("utf8");
-          continue;
-        }
-        console.error("WRITE_FAIL", String(e));
-        return res.status(500).json({ error: String(e).slice(0, 400) });
-      }
-    }
+    await ghPut(path, current + row, sha);
+    return res.status(200).json({ ok:true });
+
   }catch(err){
     console.error(err);
     return res.status(500).json({ error: err.message || "Server error" });
   }
 };
-
-
