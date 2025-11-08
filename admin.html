@@ -1,127 +1,338 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Overhaul — Owner</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <style>
-    .page {max-width: 960px; margin: 64px auto; padding: 0 16px;}
-    table {width:100%; border-collapse: collapse;}
-    th, td {border-bottom: 1px solid #1f2937; padding: 8px 6px; text-align: left;}
-    .row {display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px}
-    .card {background:#0b0f14;border:1px solid #1f2937;border-radius:16px;padding:16px}
-     #tbl-wl, #tbl-sp { color:#eaf5ff; }
-  #tbl-wl th, #tbl-sp th { color:#cfe6ff; border-bottom:1px solid rgba(255,255,255,.18); }
-  #tbl-wl td, #tbl-sp td { color:#eaf5ff; border-bottom:1px solid rgba(255,255,255,.10); }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Overhaul — Admin</title>
 
-  /* If links appear in cells */
-  #tbl-wl a, #tbl-sp a { color:#cfe6ff; text-decoration: none; }
-  #tbl-wl a:hover, #tbl-sp a:hover { text-decoration: underline; }
-  </style>
+<!-- Optional: keep your site CSS if you want button tokens, etc. -->
+<link rel="stylesheet" href="assets/styles.css" />
+
+<style>
+  :root{
+    --bg-0:#07131a;
+    --bg-1:#0b1720;
+    --card:#0f1f2aee;
+    --ink:#e9f6ff;
+    --ink-dim:#bcd5e4;
+    --line:rgba(255,255,255,.10);
+    --line-strong:rgba(255,255,255,.18);
+    --acc:#6fd6c5;
+    --warn:#ffb84a;
+    --shadow: 0 6px 28px rgba(0,0,0,.45);
+    --shadow-soft: 0 10px 24px rgba(0,0,0,.25);
+    --radius:16px;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 85% -10%, #113449, transparent 70%),
+      linear-gradient(180deg, #0a2330, #091a24 60%, #08151b);
+  }
+
+  /* Header */
+  .hdr{
+    position:sticky; top:0; z-index:10;
+    backdrop-filter: blur(10px);
+    background: linear-gradient(180deg, rgba(9,27,36,.85), rgba(9,27,36,.65));
+    border-bottom:1px solid var(--line-strong);
+  }
+  .hdr-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:1100px; margin:0 auto; padding:14px 18px;
+  }
+  .brand{font-weight:900; letter-spacing:.3px}
+  .muted{color:var(--ink-dim)}
+
+  /* Layout */
+  .page{max-width:1100px;margin:34px auto 80px;padding:0 18px}
+
+  /* Cards */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:18px;
+  }
+
+  /* Gate */
+  #gate{max-width:520px;margin:22px auto 0;text-align:center}
+  #pw{
+    width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--line-strong);
+    background:#0b202b; color:var(--ink); outline:none;
+  }
+  #pw:focus{border-color:var(--acc); box-shadow:0 0 0 3px rgba(111,214,197,.2)}
+
+  /* Buttons (fallbacks in case your site CSS doesn’t include them) */
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    background:#123244; color:var(--ink); border:1px solid var(--line-strong);
+    border-radius:999px; padding:10px 14px; cursor:pointer;
+  }
+  .btn:hover{filter:brightness(1.05)}
+  .btn-primary{background:#1c806f; border-color:#1c806f}
+  .btn-ghost{background:transparent;border-color:var(--line-strong)}
+  .btn-warning{background:#b36b00;border-color:#b36b00}
+
+  /* Toolbar */
+  .toolbar{
+    position:sticky; top:64px; z-index:9;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    padding:10px; margin:18px 0;
+    background:linear-gradient(180deg, rgba(10,31,41,.85), rgba(10,31,41,.55));
+    border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-soft);
+  }
+  .spacer{flex:1}
+  .search{
+    display:flex; align-items:center; gap:8px; background:#0b202b; border:1px solid var(--line-strong);
+    border-radius:999px; padding:6px 10px;
+  }
+  .search input{
+    background:transparent; border:none; outline:none; color:var(--ink); width:220px;
+  }
+
+  h1{margin:0 0 6px}
+  h2{margin:28px 0 12px}
+
+  /* Tables */
+  .table-wrap{margin-top:10px; overflow:auto; border-radius:12px; border:1px solid var(--line)}
+  table{width:100%; border-collapse:separate; border-spacing:0}
+  thead th{
+    position:sticky; top:0; z-index:1;
+    background:#102633; color:#cfe6ff; text-align:left; font-weight:800;
+    border-bottom:1px solid var(--line-strong); padding:12px 10px; white-space:nowrap; cursor:pointer;
+  }
+  tbody td{
+    border-bottom:1px solid var(--line);
+    padding:10px 10px; color:#eaf5ff; vertical-align:top;
+  }
+  tbody tr:hover{background:rgba(255,255,255,.03)}
+  .sort-ind{opacity:.8; font-size:.85em; margin-left:6px}
+
+  /* Small helpers */
+  .note{color:var(--ink-dim); font-size:.95rem}
+  .count{font-weight:800; color:#d0f1e9}
+  .pill{display:inline-block; background:#0c2a36; border:1px solid var(--line-strong); padding:2px 8px; border-radius:999px; margin-left:8px}
+  .mt{margin-top:16px}
+</style>
 </head>
 <body>
-  <div class="page">
-    <h1>Owner view</h1>
-    <div id="gate" class="card">
-      <p>Enter passphrase to view entries.</p>
-      <input id="pw" type="password" placeholder="Passphrase" />
-      <button id="go" class="btn btn-primary">Unlock</button>
-      <p class="note" style="opacity:.8">Tip: have fun finding the password</p>
-    </div>
 
-    <div id="app" hidden>
-      <div class="row">
-        <button class="btn" id="exp-wl">Export waitlist CSV</button>
-        <button class="btn" id="exp-sp">Export sponsors CSV</button>
-        <button class="btn" id="clear">Clear local data</button>
-      </div>
-
-      <h2>Waitlist</h2>
-      <div class="card">
-        <table id="tbl-wl"></table>
-      </div>
-
-      <h2>Sponsors</h2>
-      <div class="card">
-        <table id="tbl-sp"></table>
-      </div>
-    </div>
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="brand">Overhaul <span class="muted">• Owner</span></div>
+    <div class="muted">Server-backed CSV storage</div>
   </div>
+</header>
 
-<script src="./assets/forms.js"></script>
+<main class="page">
+
+  <!-- Passphrase gate -->
+  <section id="gate" class="card">
+    <h1>Unlock admin</h1>
+    <p class="note">Enter the passphrase to view submissions.</p>
+    <input id="pw" type="password" placeholder="Passphrase" />
+    <div class="mt">
+      <button id="go" class="btn btn-primary">Unlock</button>
+    </div>
+    <p class="note" style="margin-top:10px">Tip: you can rotate this secret anytime on the server.</p>
+  </section>
+
+  <!-- App -->
+  <section id="app" hidden>
+    <div class="toolbar">
+      <button class="btn" id="refresh">Refresh</button>
+      <button class="btn" id="exp-wl">Export waitlist CSV</button>
+      <button class="btn" id="exp-sp">Export sponsors CSV</button>
+      <button class="btn btn-ghost" id="copy-wl">Copy emails (waitlist)</button>
+      <button class="btn btn-ghost" id="copy-sp">Copy emails (sponsors)</button>
+      <span class="spacer"></span>
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" stroke="#bcd5e4" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="q" placeholder="Search rows…" />
+      </div>
+    </div>
+
+    <h2>Waitlist <span id="count-wl" class="pill">0</span></h2>
+    <div class="card table-wrap">
+      <table id="tbl-wl"></table>
+    </div>
+
+    <h2>Sponsors <span id="count-sp" class="pill">0</span></h2>
+    <div class="card table-wrap">
+      <table id="tbl-sp"></table>
+    </div>
+  </section>
+</main>
+
 <script>
-  // Owner view fetches CSV via /api/list with ADMIN_KEY
-  const qs = new URLSearchParams(location.search);
-  let OWNER_KEY = ""; // set after unlocking
+  // ------- Data access -------
 
+  const qs = new URLSearchParams(location.search);
+  let OWNER_KEY = "";
+
+  async function fetchCSV(kind){
+    const r = await fetch(`/api/list?kind=${encodeURIComponent(kind)}&key=${encodeURIComponent(OWNER_KEY)}`, { cache:"no-store" });
+    if (!r.ok) throw new Error(`${kind} ${r.status} ${await r.text()}`);
+    return await r.text();
+  }
   function csvToRows(csv){
-    if (!csv.trim()) return [];
+    if (!csv || !csv.trim()) return [];
     const lines = csv.split(/\r?\n/);
     const rows = [];
     for (const line of lines){
       if (line === "") continue;
+      // parse CSV cells (supports quoted cells with commas)
       const cells = line.match(/("([^"]|"")*"|[^,]*)/g).filter(Boolean)
         .map(s => s.replace(/^"|"$/g,"").replace(/""/g,'"'));
       rows.push(cells);
     }
     return rows;
   }
-  async function fetchCSV(kind){
-    const r = await fetch(`/api/list?kind=${kind}&key=${encodeURIComponent(OWNER_KEY)}`, { cache:"no-store" });
-    if (!r.ok) throw new Error(`${kind} ${r.status} ${await r.text()}`);
-    return await r.text();
-  }
-  function renderTable(id, rows){
-    const el = document.getElementById(id);
-    if (!rows.length || rows.length === 1){ el.innerHTML = "<tr><td>No entries yet</td></tr>"; return; }
-    const head = "<thead><tr>"+rows[0].map(h=>`<th>${h}</th>`).join("")+"</tr></thead>";
-    const body = "<tbody>"+rows.slice(1).map(r=>"<tr>"+r.map(c=>`<td>${c}</td>`).join("")+"</tr>").join("")+"</tbody>";
-    el.innerHTML = head + body;
-  }
 
-  // Gate UI 
-  const gate = document.getElementById('gate');
-  const app  = document.getElementById('app');
-  document.getElementById('go').addEventListener('click', async () => {
-    OWNER_KEY = document.getElementById('pw').value.trim();
-    if (!OWNER_KEY){ alert("Enter passphrase"); return; }
-    try{
-      // quick ping to verify
-      await fetchCSV('waitlist');
-      gate.hidden = true; app.hidden = false;
-      render();
-    }catch(e){ alert("Wrong passphrase or server error"); }
-  });
+  // ------- Rendering helpers -------
 
-  async function render(){
-    try{
-      const wlCSV = await fetchCSV('waitlist');
-      const spCSV = await fetchCSV('sponsor');
-      const wl = csvToRows(wlCSV), sp = csvToRows(spCSV);
-      renderTable('tbl-wl', wl);
-      renderTable('tbl-sp', sp);
+  const state = {
+    wl:{ rows:[], filtered:[], sortCol:0, sortDir:1 },
+    sp:{ rows:[], filtered:[], sortCol:0, sortDir:1 },
+    query:""
+  };
 
-      document.getElementById('exp-wl').onclick = () => downloadCSV('waitlist.csv', wl.map(r=>Object.fromEntries(wl[0].map((h,i)=>[h,r[i]]))).slice(1));
-      document.getElementById('exp-sp').onclick = () => downloadCSV('sponsors.csv', sp.map(r=>Object.fromEntries(sp[0].map((h,i)=>[h,r[i]]))).slice(1));
-      document.getElementById('clear').onclick = () => alert("Server-backed storage: nothing to clear locally.");
-    }catch(e){
-      console.error(e);
-      alert("Could not load data. Check ADMIN_KEY and try again.");
-    }
+  function filterRows(rows, q){
+    if (!q) return rows.slice();
+    const qq = q.toLowerCase();
+    return rows.filter((r,i)=> i===0 || r.some(c => String(c).toLowerCase().includes(qq)));
   }
 
+  function sortRows(rows, col, dir){
+    if (!rows.length) return rows;
+    const head = rows[0];
+    const body = rows.slice(1).sort((a,b)=>{
+      const va = (a[col]??"").toString().toLowerCase();
+      const vb = (b[col]??"").toString().toLowerCase();
+      if (va < vb) return -1*dir;
+      if (va > vb) return  1*dir;
+      return 0;
+    });
+    return [head].concat(body);
+  }
 
-  function downloadCSV(filename, rows){
-    if (!rows.length) return;
-    const headers = Object.keys(rows[0]);
+  function renderTable(targetId, key){
+    const { filtered, sortCol, sortDir } = state[key];
+    const el = document.getElementById(targetId);
+    if (!filtered.length){ el.innerHTML = "<tbody><tr><td>No data</td></tr></tbody>"; return; }
+
+    const head = filtered[0];
+    const ths = head.map((h,i)=> {
+      const active = i===sortCol ? `<span class="sort-ind">${sortDir>0?"▲":"▼"}</span>` : "";
+      return `<th data-key="${key}" data-col="${i}">${h}${active}</th>`;
+    }).join("");
+    const body = filtered.slice(1).map(r => `<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("");
+
+    el.innerHTML = `<thead><tr>${ths}</tr></thead><tbody>${body}</tbody>`;
+  }
+
+  function setCounts(){
+    document.getElementById('count-wl').textContent = Math.max(0, state.wl.filtered.length-1);
+    document.getElementById('count-sp').textContent = Math.max(0, state.sp.filtered.length-1);
+  }
+
+  // ------- Actions -------
+
+  async function loadAll(){
+    const wlCSV = await fetchCSV('waitlist');
+    const spCSV = await fetchCSV('sponsor');
+    state.wl.rows = csvToRows(wlCSV);
+    state.sp.rows = csvToRows(spCSV);
+    applyFilterAndRender();
+  }
+
+  function applyFilterAndRender(){
+    // filter
+    state.wl.filtered = filterRows(state.wl.rows, state.query);
+    state.sp.filtered = filterRows(state.sp.rows, state.query);
+    // sort
+    state.wl.filtered = sortRows(state.wl.filtered, state.wl.sortCol, state.wl.sortDir);
+    state.sp.filtered = sortRows(state.sp.filtered, state.sp.sortCol, state.sp.sortDir);
+    // paint
+    renderTable('tbl-wl','wl');
+    renderTable('tbl-sp','sp');
+    setCounts();
+  }
+
+  function exportCSV(filename, filteredRows){
+    if (!filteredRows.length) return;
+    const headers = filteredRows[0];
     const esc = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
-    const csv = [headers.join(",")].concat(rows.map(r=>headers.map(h=>esc(r[h])).join(","))).join("\n");
+    const csv = [headers.join(",")]
+      .concat(filteredRows.slice(1).map(r=>headers.map((_,i)=>esc(r[i])).join(",")))
+      .join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = filename; a.click();
     URL.revokeObjectURL(url);
   }
+
+  function copyEmails(filteredRows){
+    if (!filteredRows.length) return;
+    const head = filteredRows[0].map(h=>h.toLowerCase());
+    const idx = head.findIndex(h => h.includes("email"));
+    if (idx === -1){ alert("No Email column found."); return; }
+    const list = filteredRows.slice(1).map(r=>r[idx]).filter(Boolean).join(", ");
+    navigator.clipboard.writeText(list).then(()=> {
+      alert("Emails copied to clipboard.");
+    });
+  }
+
+  // ------- UI wiring -------
+
+  // Unlock
+  document.getElementById('go').addEventListener('click', async () => {
+    OWNER_KEY = document.getElementById('pw').value.trim();
+    if (!OWNER_KEY){ alert("Enter passphrase"); return; }
+    try{
+      await fetchCSV('waitlist'); // ping
+      document.getElementById('gate').hidden = true;
+      document.getElementById('app').hidden  = false;
+      await loadAll();
+    }catch(e){
+      console.error(e);
+      alert("Wrong passphrase or server error.");
+    }
+  });
+
+  // Search
+  document.getElementById('q').addEventListener('input', (e)=>{
+    state.query = e.target.value;
+    applyFilterAndRender();
+  });
+
+  // Refresh
+  document.getElementById('refresh').addEventListener('click', loadAll);
+
+  // Exports
+  document.getElementById('exp-wl').addEventListener('click', ()=> exportCSV('waitlist.csv', state.wl.filtered));
+  document.getElementById('exp-sp').addEventListener('click', ()=> exportCSV('sponsors.csv', state.sp.filtered));
+
+  // Copy emails
+  document.getElementById('copy-wl').addEventListener('click', ()=> copyEmails(state.wl.filtered));
+  document.getElementById('copy-sp').addEventListener('click', ()=> copyEmails(state.sp.filtered));
+
+  // Sort on header click
+  document.addEventListener('click', (e)=>{
+    const th = e.target.closest('th[data-col]');
+    if (!th) return;
+    const key = th.getAttribute('data-key');
+    const col = Number(th.getAttribute('data-col'));
+    const k = state[key];
+    k.sortCol = col;
+    k.sortDir = (k.sortDir===1 && k.sortCol===col) ? -1 : 1;
+    applyFilterAndRender();
+  });
 </script>
 
 </body>
