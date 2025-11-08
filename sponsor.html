@@ -2,136 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sponsor — Overhaul</title>
-  <link rel="stylesheet" href="assets/styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sponsor the Hackathon — WDS Overhaul</title>
+
+  <!-- Shared site styles -->
+  <link rel="stylesheet" href="/styles.css" />
+
+  <!-- Stars / clouds / smooth-scroll etc. -->
+  <script defer src="/main.js"></script>
+
+  <!-- Fav + basic meta (optional) -->
+  <meta name="theme-color" content="#0e6e6d" />
 </head>
 <body>
 
-  <header class="section">
-    <div class="container">
-      <h1>Want to Sponsor the Hackathon?</h1>
-      <p class="muted">Tell us a bit about your organization and how you’d like to partner.</p>
+  <!-- Navbar (same markup/classes used on index) -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="/"><span class="brand-badge">W</span> <span class="brand-name">DS</span></a>
+      <nav class="nav-links">
+        <a href="/#about">About</a>
+        <a href="/#testimonials">Testimonials</a>
+        <a href="/#sponsors">Sponsors</a>
+        <a href="/#faq">FAQ</a>
+        <a href="/admin.html">Admin</a>
+      </nav>
     </div>
   </header>
 
-  <main class="section">
-    <div class="container form-wrap">
+  <!-- Top “pond” band for continuity, then a wave into the green sponsor section -->
+  <section class="section pond" style="padding:40px 0 0;">
+    <canvas id="stars-sponsor-top" class="stars" aria-hidden="true"></canvas>
+    <div class="wave wave-bottom wave-to-grass" aria-hidden="true"></div>
+  </section>
+
+  <!-- Sponsor section — same green gradient as “What is Overhaul” -->
+  <section class="section water-to-grass" id="sponsor-section">
+    <div class="container">
+      <h1 class="h1" style="text-align:center; margin-bottom:6px;">Want to Sponsor the Hackathon?</h1>
+      <p class="subhead" style="text-align:center; opacity:.85; margin-bottom:22px;">
+        Tell us a bit about your organization and how you’d like to partner.
+      </p>
+
+      <!-- optional subtle stars behind the form -->
+      <canvas id="stars-sponsor" class="stars" aria-hidden="true"></canvas>
+
       <form id="sponsor-form" class="card form-card" autocomplete="on">
         <div class="grid-2">
           <label>Organization
-            <input name="company" required />
+            <input name="org" required />
           </label>
           <label>Contact name
-            <input name="name" required />
+            <input name="contact" />
           </label>
+
           <label>Email
             <input name="email" type="email" required />
           </label>
           <label>Phone
             <input name="phone" />
           </label>
-        </div>
 
-        <div class="grid-2">
           <label>Subject
             <input name="subject" placeholder="Sponsorship inquiry" />
           </label>
           <label>Budget range
             <select name="budget">
-              <option value="Undisclosed">Undisclosed</option>
-              <option value="$500–$1,000">$500–$1,000</option>
-              <option value="$1,000–$2,500">$1,000–$2,500</option>
-              <option value="$2,500–$5,000">$2,500–$5,000</option>
-              <option value="$5,000+">$5,000+</option>
+              <option>Undisclosed</option>
+              <option>$500 – $1,000</option>
+              <option>$1,000 – $2,500</option>
+              <option>$2,500 – $5,000</option>
+              <option>$5,000+</option>
             </select>
+          </label>
+
+          <label class="grid-span-2">Hiring focus
+            <select name="hire">
+              <option>Not specified</option>
+              <option>Software</option>
+              <option>Design</option>
+              <option>Product</option>
+              <option>Hardware</option>
+            </select>
+          </label>
+
+          <label class="grid-span-2">Message
+            <textarea name="message" rows="6" placeholder="Tell us what you have in mind…"></textarea>
           </label>
         </div>
 
-        <label>Hiring focus
-          <select name="hiring">
-            <option value="">Not specified</option>
-            <option value="Branding / Visibility">Branding / Visibility</option>
-            <option value="Recruiting">Recruiting</option>
-            <option value="Both">Both</option>
-          </select>
-        </label>
+        <div style="display:flex;justify-content:center;margin-top:8px;">
+          <button class="btn btn-primary magnet" type="submit">Submit sponsor interest</button>
+        </div>
 
-        <label>Message
-          <textarea name="message" rows="4" placeholder="Tell us what you have in mind…"></textarea>
-        </label>
-
-        <!-- optional honeypot (hidden with CSS if you want) -->
-        <input type="text" name="honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0" />
-
-        <button class="btn btn-primary magnet" type="submit">Submit sponsor interest</button>
-        <div class="success" id="sp-success" hidden>Thanks! We’ll get back to you shortly.</div>
+        <div class="success" id="sponsor-success" hidden>
+          Thanks — we got your message! We’ll follow up soon.
+        </div>
       </form>
     </div>
-  </main>
+
+    <!-- graceful wave out to “water” band at the bottom -->
+    <div class="wave wave-bottom wave-to-water" aria-hidden="true"></div>
+  </section>
+
+  <!-- Bottom water band just for visual closure -->
+  <section class="section" style="background:linear-gradient(180deg,#0e6e6d,#0d5c63); padding:24px 0;">
+    <canvas id="stars-sponsor-bottom" class="stars" aria-hidden="true"></canvas>
+  </section>
+
+  <!-- Inline submit handler (front-end only, no IP/UA) -->
   <script>
-    // POST helper
-    async function postJSON(url, payload){
-      const r = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify(payload)
+    (function () {
+      const form = document.getElementById('sponsor-form');
+      const ok = document.getElementById('sponsor-success');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const payload = Object.fromEntries(fd.entries());
+
+        try {
+          const res = await fetch('/api/submit?sponsor', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+          });
+
+          const text = await res.text();
+          if (!res.ok) throw new Error(text || 'Submit failed');
+
+          ok.hidden = false;
+          form.reset();
+          // Hide success after a moment
+          setTimeout(() => (ok.hidden = true), 5000);
+        } catch (err) {
+          alert('Could not submit (sponsor): ' + err.message);
+        }
       });
-      let j = null; try { j = await r.json(); } catch(e){}
-      if (!r.ok) throw new Error((j && j.error) || `HTTP ${r.status}`);
-      return j || { ok:true };
-    }
-
-    const form = document.getElementById('sponsor-form');
-    const okEl = document.getElementById('sp-success');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      e.stopImmediatePropagation(); // avoid double handlers from other scripts
-
-      const fd = new FormData(form);
-      const data = Object.fromEntries(fd.entries());
-
-      // Normalize field names
-      const org       = (data.company || "").trim();  // backend expects `org`
-      const name      = (data.name || "").trim();
-      const email     = (data.email || "").trim();
-      const phone     = (data.phone || "").trim();
-      const subject   = (data.subject || "").trim();
-      const message   = (data.message || "").trim();
-      const budget    = data.budget || "Undisclosed";
-      const interests = data.hiring || "";             // map Hiring → interests
-      const honey     = data.honey || "";              // honeypot (ignored server-side)
-
-      if (!org || !name || !email){
-        alert("Please provide Organization, Contact name, and Email.");
-        return;
-      }
-
-      // Send both the current shape and legacy aliases so either backend accepts it
-      const payload = {
-        kind: "sponsor",
-        data: { org, name, email, phone, subject, message, budget, interests, honey },
-
-        // Legacy aliases (harmless if unused by backend)
-        type: "sponsor",
-        org, name, email, phone, subject, message,
-        company: org,
-        tier: budget,
-        hiring: interests,
-        recruiting: interests
-      };
-
-      try{
-        await postJSON("/api/submit", payload);
-        form.reset();
-        okEl.hidden = false;
-        setTimeout(() => okEl.hidden = true, 3500);
-      }catch(err){
-        console.error("submit ERR", err);
-        alert("Could not submit (sponsor): " + err.message);
-      }
-    }, { capture:true }); // capture to win over any other submit listeners
+    })();
   </script>
+
 </body>
 </html>
