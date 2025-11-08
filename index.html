@@ -6,137 +6,148 @@ This HTML file now includes section-by-section comments that map to main.js beha
 Use the IDs and data- attributes as integration points; avoid renaming without updating main.js.
 Last touched: 2025-10-20 19:00
 -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WDS Externals Hackathon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/main.js"></script>
 </head>
-
-<body>
-  <!-- Header: glass + full-bleed progress + clean nav -->
+<body class="day">
+  <!-- Sticky nav -->
   <header class="site-header">
-    <div class="nav-wrap">
-      <a class="brand" href="index.html"><span class="brand-mark">WDS</span></a>
-      <nav class="nav">
+    <div class="container nav">
+      <a class="brand" href="#" aria-label="WDS">W<span>DS</span></a>
+      <nav class="links">
         <a href="#about">About</a>
         <a href="#testimonials">Testimonials</a>
         <a href="#sponsors">Sponsors</a>
         <a href="#faq">FAQ</a>
+        <a class="admin" href="admin.html">Admin</a>
       </nav>
     </div>
-    <div class="progress-bar" aria-hidden="true"></div>
+    <div class="progress"><span id="progress-bar"></span></div>
   </header>
 
-  <!-- Hero (night) -->
-  <section class="hero night">
-    <div class="hero-bg">
-      <div class="stars" aria-hidden="true"></div>
-      <div class="moon"></div>
-      <div class="hills"></div>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="sky">
+      <div class="sun"></div>
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="sparkles" id="hero-sparkles"></div>
     </div>
-    <div class="hero-inner">
-      <h1>Western Developer Society Externals Hackathon</h1>
+    <div class="container hero-inner">
+      <p class="eyebrow">craft at</p>
+      <h1>Spark</h1>
       <p class="subtitle">Build with us. Learn fast. Ship something you are proud of.</p>
-      <div class="magnet-wrap">
+      <div class="cta-row">
         <a class="btn btn-primary magnet" href="waitlist.html">Join the waitlist</a>
       </div>
     </div>
+    <div class="wave wave-bottom wave-to-water" aria-hidden="true"></div>
   </section>
 
-    <!-- ABOUT -->
-  <section id="about" class="section about-textured">
-    <div class="container">
-      <div class="grid grid-2">
-        <div>
-          <h2>What is Overhaul</h2>
-          <p>Overhaul is a bright, vibrant, and minimalistic build weekend where hackers, designers, and builders craft useful things together.</p>
-          <p>Two days of hands-on learning, workshops, and building with the WDS community. Join the waitlist to get early access to applications and updates.</p>
-          <div class="badges">
-            <div class="badge px">Workshops</div>
-            <div class="badge px">Mentors</div>
-            <div class="badge px">Real prompts</div>
-            <div class="badge px">Portfolio-ready</div>
-          </div>
-        </div>
-
-        <!-- symmetrical 2×2 photo slots -->
-        <div class="demo-cards grid grid-2 about-photos">
-          <div class="card px" aria-hidden="true"></div>
-          <div class="card px" aria-hidden="true"></div>
-          <div class="card px" aria-hidden="true"></div>
-          <div class="card px" aria-hidden="true"></div>
+  <!-- About -->
+  <section id="about" class="section water-to-grass">
+    <div class="container split">
+      <div class="about-media">
+        <!-- Clean 2×2 collage -->
+        <div class="photo-card"></div>
+        <div class="photo-card"></div>
+        <div class="photo-card"></div>
+        <div class="photo-card"></div>
+      </div>
+      <div class="about-copy">
+        <h2>What is Spark</h2>
+        <p>
+          Spark is a bright, vibrant, and minimalistic build weekend where
+          hackers, designers, and builders craft useful things together.
+        </p>
+        <p>
+          Two days of hands-on learning, workshops, and building with the WDS community.
+          Join the waitlist to get early access to applications and updates.
+        </p>
+        <div class="badges">
+          <span class="chip">Workshops</span>
+          <span class="chip">Mentors</span>
+          <span class="chip">Real prompts</span>
+          <span class="chip">Portfolio-ready</span>
         </div>
       </div>
     </div>
-
-    <!-- Subtle white stars just for About -->
-    <div class="about-stars" aria-hidden="true"></div>
+    <div class="about-stars" id="about-stars"></div>
+    <div class="wave wave-bottom wave-to-pond" aria-hidden="true"></div>
   </section>
 
-  <!-- Testimonials (pond) -->
+  <!-- Testimonials Pond -->
   <section id="testimonials" class="section pond">
     <div class="container">
-      <h2>What people say</h2>
-      <div id="testimonials-list" class="grid grid-3">
-        <!-- hydrated by JS -->
-      </div>
-    </div>
+      <h2 class="center">Testimonials</h2>
 
-    <!-- Visual ornaments only -->
-    <div class="pond-ornaments" aria-hidden="true">
-      <div class="pad px" style="left:8%;  bottom:6%;  --pad:180px;">
-        <span class="ripple"></span><span class="wedge"></span>
+      <!-- Decorations -->
+      <div class="pads">
+        <div class="pad" style="--s:150px; --x:8%;  --y:12%;"></div>
+        <div class="pad" style="--s:110px; --x:78%; --y:20%;"></div>
+        <div class="pad" style="--s:140px; --x:15%; --y:70%;"></div>
       </div>
-      <div class="pad px" style="left:84%; bottom:8%;  --pad:150px;">
-        <span class="ripple"></span><span class="wedge"></span>
-      </div>
-      <div class="pad px" style="left:22%; bottom:22%; --pad:110px;">
-        <span class="ripple"></span><span class="wedge"></span>
-      </div>
-      <span class="bubble" style="left:36%; bottom:18%;"></span>
-      <span class="bubble" style="left:42%; bottom:14%;"></span>
-      <span class="bubble" style="left:66%; bottom:16%;"></span>
-      <span class="bubble" style="left:72%; bottom:12%;"></span>
+      <div class="bubbles" id="bubbles"></div>
+
+      <!-- Cards injected by JS -->
+      <div class="t-grid" id="testimonial-grid" aria-live="polite"></div>
     </div>
+    <div class="wave wave-bottom wave-to-grass" aria-hidden="true"></div>
   </section>
 
-  <!-- Sponsors -->
-  <section id="sponsors" class="section sponsors">
+  <!-- Sponsor CTA -->
+  <section id="sponsors" class="section water-to-grass">
+    <div class = "sparkles" id="sponsor-stars"></div>
     <div class="container center">
-      <h2>Sponsor the hackathon</h2>
-      <p>Support devs on campus and recruit early.</p>
-      <div class="vignette">
-        <div class="magnet-wrap">
-          <a class="btn btn-secondary magnet" href="sponsor.html">Sponsor interest</a>
-        </div>
-      </div>
-      <div id="sponsor-logos" class="logo-row" aria-live="polite"></div>
+      <h2>Want to Sponsor?</h2>
+      <p class="max-600">
+        Our sponsors make it possible for us to give our prospective developers, designers, and builders
+        the opportunity to build for social good. Hackers make meaningful connections with our sponsors beyond
+        just the hackathon weekend.
+      </p>
+
+      <!-- Logo rail with caption slot -->
+      <div class="logo-rail" id="logo-rail" aria-label="Sponsors"></div>
+
+      <a class="btn btn-peach magnet" href="sponsor.html" style="margin-top:18px">Sponsor interest</a>
     </div>
+    <div class="wave wave-bottom wave-to-faq" aria-hidden="true"></div>
   </section>
 
   <!-- FAQ -->
-  <section id="faq" class="section sky-dusk">
+  <section id="faq" class="section faq">
+    <div class="sky bg-faq">
+      <div class="cloud c3"></div>
+      <div class="cloud c4"></div>
+      <div class="sparkles" id="faq-stars"></div>
+    </div>
     <div class="container">
-      <h2>FAQ</h2>
-      <div class="faq">
-        <button class="faq-q" data-accordion aria-expanded="false">What is a hackathon?</button>
-        <div class="faq-a" hidden><p>Build things with friends, fast.</p></div>
+      <h2 class="center">FAQ</h2>
+      <div class="faq-list">
+        <button class="faq-q" aria-expanded="false">What is a hackathon?</button>
+        <div class="faq-a" hidden>A weekend event where teams build projects rapidly, learn, and ship.</div>
 
-        <button class="faq-q" data-accordion aria-expanded="false">Do I need to know how to code?</button>
-        <div class="faq-a" hidden><p>Nope. Curiosity is enough.</p></div>
+        <button class="faq-q" aria-expanded="false">Do I need to know how to code?</button>
+        <div class="faq-a" hidden>Nope. Designers, PMs, and beginners are welcome — we’ll guide you.</div>
 
-        <button class="faq-q" data-accordion aria-expanded="false">Do I need a team?</button>
-        <div class="faq-a" hidden><p>Solo is fine; we can match you.</p></div>
+        <button class="faq-q" aria-expanded="false">Do I need a team?</button>
+        <div class="faq-a" hidden>Team formation happens at the event; solo is fine too.</div>
       </div>
     </div>
   </section>
 
   <footer class="footer">
-    <div class="container"><p class="note">Western Developer Society — Externals</p></div>
+    <div class="container small">© Western Developer Society -- 2025</div>
   </footer>
+
+  <script src="assets/main.js" defer></script>
 </body>
 </html>
