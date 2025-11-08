@@ -93,14 +93,28 @@
     <script>
   (function () {
     const form = document.getElementById('sponsor-form');
-    const ok = document.getElementById('sp-success'); // make sure this id matches your success div
+    const ok = document.getElementById('sp-success');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const fd = new FormData(form);
       const data = Object.fromEntries(fd.entries());
-      data.consent = !!data.consent; // normalize checkbox
+
+      // ---- normalize field names to what the API expects ----
+      data.org   = data.org   || data.company || data.organization || data.orgName || '';
+      data.name  = data.name  || data.contact || data.contact_name || '';
+      data.email = data.email || data.contact_email || '';
+
+      // Optional: keep the rest as-is
+      data.consent = !!data.consent;
+
+      // quick client-side check so we don’t hit the API with bad data
+      const missing = ['org','name','email'].filter(k => !data[k]?.trim());
+      if (missing.length) {
+        alert('Please fill: ' + missing.join(', '));
+        return;
+      }
 
       try {
         const res = await fetch('/api/submit', {
@@ -112,17 +126,15 @@
         const text = await res.text();
         if (!res.ok) throw new Error(text || 'Submit failed');
 
-        if (ok) {
-          ok.hidden = false;
-          setTimeout(() => (ok.hidden = true), 5000);
-        }
+        if (ok) { ok.hidden = false; setTimeout(() => (ok.hidden = true), 5000); }
         form.reset();
       } catch (err) {
         alert('Could not submit (sponsor): ' + err.message);
       }
     });
   })();
-</script>
+  </script>
+
 
   </body>
 </html>
