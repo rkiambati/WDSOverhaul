@@ -1,117 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sponsor Overhaul — WDS</title>
+  <title>Sponsor interest — WDS Externals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/main.js"></script>
 </head>
-<body>
-  <!-- Header -->
+<body class="day">
   <header class="site-header">
-    <div class="nav-wrap">
-      <a class="brand" href="index.html"><span class="brand-mark">WDS</span></a>
-      <nav class="nav">
+    <div class="container nav">
+      <a class="brand" href="index.html">W<span>DS</span></a>
+      <nav class="links">
         <a href="index.html#about">About</a>
         <a href="index.html#testimonials">Testimonials</a>
+        <a href="index.html#sponsors">Sponsors</a>
         <a href="index.html#faq">FAQ</a>
       </nav>
     </div>
-    <div class="progress-bar" aria-hidden="true"></div>
+    <div class="progress"><span id="progress-bar"></span></div>
   </header>
 
-  <!-- Page hero -->
-  <section class="page-hero night-slim">
-    <div class="page-sky-stars" aria-hidden="true"></div>
-    <div class="page-moon" aria-hidden="true"></div>
-
-    <div class="container hero-center">
-      <h1>Partner with Overhaul</h1>
-      <p class="subtitle">Support builders on campus and recruit early.</p>
-      <div class="magnet-wrap">
-        <a class="btn btn-primary magnet" href="#sponsor-form">Get sponsor info</a>
-      </div>
+  <section class="hero hero-slim">
+    <div class="sky">
+      <div class="sun"></div>
+      <div class="cloud c1"></div>
+      <div class="cloud c2"></div>
+      <div class="sparkles" id="faq-stars"></div>
     </div>
+    <div class="container hero-inner">
+      <h1>Sponsor the hackathon</h1>
+      <p class="subtitle">Support devs on campus and recruit early.</p>
+    </div>
+    <div class="wave wave-bottom wave-to-water" aria-hidden="true"></div>
   </section>
 
-  <!-- Form -->
-  <section class="section">
+  <section class="section water-to-grass">
     <div class="container form-wrap">
-      <div class="form-card">
-        <h2 class="form-title">Sponsor interest</h2>
-        <p class="form-kicker">Tell us a bit about your team — we’ll follow up with our sponsor kit.</p>
-
-        <form id="sponsor-form" class="form-grid" autocomplete="on">
-          <div class="form-row">
-            <label>Full name
-              <input class="input" type="text" name="name" required placeholder="Alex Chen" />
-            </label>
-            <label>Work email
-              <input class="input" type="email" name="email" required placeholder="alex@company.com" />
-            </label>
-          </div>
-
-          <div class="form-row">
-            <label>Company
-              <input class="input" type="text" name="company" required placeholder="Acme, Inc." />
-            </label>
-            <label>Role / Team
-              <input class="input" type="text" name="role" placeholder="Talent / University / Eng" />
-            </label>
-          </div>
-
-          <div class="form-row">
-            <label>Budget range
-              <select class="input" name="budget" required>
-                <option value="" disabled selected>Select a range</option>
-                <option>Under $1,000</option>
-                <option>$1,000–$2,500</option>
-                <option>$2,500–$5,000</option>
-                <option>$5,000+</option>
-              </select>
-            </label>
-            <label>Hiring focus
-              <input class="input" type="text" name="hiring" placeholder="Frontend, Backend, Design…" />
-            </label>
-          </div>
-
-          <label>Anything else?
-            <textarea class="input" name="message" rows="4" placeholder="What would make this partnership a win for you?"></textarea>
-          </label>
-
-          <label class="check">
-            <input type="checkbox" name="consent" required />
-            <span>I agree to be contacted about sponsorship.</span>
-          </label>
-
-          <div class="actions">
-            <div class="magnet-wrap">
-              <button class="btn btn-secondary magnet" type="submit">Send sponsor interest</button>
-            </div>
-            <a class="link-muted" href="mailto:wcychen946@gmail.com">Prefer email? wcychen946@gmail.com</a>
-          </div>
-          <p id="sponsor-success" class="form-success" hidden>Thanks! We’ll get back to you shortly with the sponsor kit.</p>
-        </form>
-      </div>
+      <form id="sponsor-form" class="card form-card">
+        <div class="grid-2">
+          <label>Name<input name="name" required /></label>
+          <label>Email<input name="email" type="email" required /></label>
+          <label>Company<input name="company" required /></label>
+          <label>Role/Team<input name="role" /></label>
+          <label>Budget<select name="budget"><option>Undisclosed</option><option>&lt; $1k</option><option>$1k–$5k</option><option>$5k–$10k</option><option>$10k+</option></select></label>
+          <label>Hiring focus<select name="hiring"><option>Interns</option><option>New grads</option><option>Both</option><option>Not hiring</option></select></label>
+        </div>
+        <label>Message<textarea name="message" rows="3" placeholder="Tell us what you’d like to do with us…"></textarea></label>
+        <label class="agree"><input type="checkbox" name="consent" required /> I agree to be contacted about sponsorship.</label>
+        <button class="btn btn-peach magnet" type="submit">Send</button>
+        <div class="success" id="sp-success" hidden>Thanks — we’ll reach out shortly.</div>
+      </form>
     </div>
   </section>
 
+  <footer class="footer">
+    <div class="container small">© WDS Externals</div>
+  </footer>
+  <script src="assets/forms.js" defer></script>
+  <script src="assets/main.js" defer></script>
   <script>
-    document.getElementById('sponsor-form')?.addEventListener('submit', async (e) => {
+    const f = document.getElementById('sponsor-form');
+    const ok = document.getElementById('sp-success');
+    f.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const form = e.currentTarget;
-      const data = Object.fromEntries(new FormData(form).entries());
+      const data = Object.fromEntries(new FormData(f).entries());
       try {
-        if (window.submitSponsor) {
-          await window.submitSponsor(data);
-        }
-        form.reset();
-        document.getElementById('sponsor-success').hidden = false;
+        if (window.submitSponsor) await window.submitSponsor(data);
+        ok.hidden = false; f.reset();
       } catch (err) {
-        console.error('Sponsor submit failed:', err);
-        document.getElementById('sponsor-success').textContent = 'Something went wrong. Try again or email us.';
-        document.getElementById('sponsor-success').hidden = false;
+        ok.hidden = false;
+        console.warn('Submit fallback', err);
       }
     });
   </script>
