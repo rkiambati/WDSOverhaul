@@ -1,4 +1,9 @@
 /**
+WDS Externals Hackathon — Night theme interactions
+Progress bar, stars, parallax, FAQ, reveal, pond micro-effects,
+magnetic buttons, and content hydration with smart fallbacks.
+*/
+/**
  WDS Externals Hackathon — interactions
  Progress bar, stars/flowers, FAQ, pond bubbles, magnetic buttons, content hydrate.
 */
