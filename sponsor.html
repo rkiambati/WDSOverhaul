@@ -91,37 +91,38 @@
 
     <!-- Inline submit handler (front-end only, no IP/UA) -->
     <script>
-      (function () {
-        const form = document.getElementById('sponsor-form');
-        const ok = document.getElementById('sp-success'); // <-- fixed id
+  (function () {
+    const form = document.getElementById('sponsor-form');
+    const ok = document.getElementById('sp-success'); // make sure this id matches your success div
 
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const fd = new FormData(form);
-          const payload = Object.fromEntries(fd.entries());
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-          try {
-            // If your API is at the site root use the leading slash.
-            // If it’s relative to this folder, remove the leading slash.
-            const res = await fetch('/api/submit?sponsor', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
+      const fd = new FormData(form);
+      const data = Object.fromEntries(fd.entries());
+      data.consent = !!data.consent; // normalize checkbox
 
-            const text = await res.text();
-            if (!res.ok) throw new Error(text || 'Submit failed');
-
-            if (ok) {
-              ok.hidden = false;
-              setTimeout(() => (ok.hidden = true), 5000);
-            }
-            form.reset();
-          } catch (err) {
-            alert('Could not submit (sponsor): ' + err.message);
-          }
+      try {
+        const res = await fetch('/api/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ kind: 'sponsor', data })
         });
-      })();
-    </script>
+
+        const text = await res.text();
+        if (!res.ok) throw new Error(text || 'Submit failed');
+
+        if (ok) {
+          ok.hidden = false;
+          setTimeout(() => (ok.hidden = true), 5000);
+        }
+        form.reset();
+      } catch (err) {
+        alert('Could not submit (sponsor): ' + err.message);
+      }
+    });
+  })();
+</script>
+
   </body>
 </html>
