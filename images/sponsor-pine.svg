@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">
+  <defs>
+    <linearGradient id="grad-pine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1f5c3a"/>
+      <stop offset="100%" stop-color="#3ecf8e"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="120" rx="20" fill="url(#grad-pine)"/>
+  <path d="M120 30 L150 72 L135 72 L148 90 L120 90 L92 90 L105 72 L90 72 Z" fill="#e8fff4" opacity="0.9"/>
+  <text x="120" y="52" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="700" fill="#e0ffe8" text-anchor="middle">PINECREST</text>
+</svg>

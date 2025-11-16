@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">
+  <defs>
+    <linearGradient id="grad-ripple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#052537"/>
+      <stop offset="100%" stop-color="#0fbcd2"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="120" rx="20" fill="url(#grad-ripple)"/>
+  <path d="M30 80 C60 40, 90 100, 120 60 S 180 80, 210 50" stroke="#7df2ff" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <text x="50%" y="72" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="700" fill="#ffffff" text-anchor="middle">RIPPLE</text>
+</svg>
