@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="120" viewBox="0 0 240 120">
+  <defs>
+    <linearGradient id="grad-orbit" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d1236"/>
+      <stop offset="100%" stop-color="#6c47f3"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="120" rx="20" fill="url(#grad-orbit)"/>
+  <circle cx="70" cy="60" r="26" fill="#ffd66b"/>
+  <ellipse cx="70" cy="60" rx="50" ry="18" fill="none" stroke="#fbd86d" stroke-width="4"/>
+  <text x="135" y="70" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="700" fill="#ffffff">ORBIT</text>
+</svg>
