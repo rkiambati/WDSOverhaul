@@ -51,6 +51,54 @@ Last touched: 2025-10-20 19:00
     </div>
     <div class="wave wave-bottom wave-to-water" aria-hidden="true"></div>
   </section>
+  <script>
+  // small, self-contained "fly sparkles from header -> hero wave" routine
+  (function comets() {
+    const header = document.getElementById('progress-bar');
+    const sparkles = document.getElementById('hero-sparkles');
+    const target = document.querySelector('.hero .wave-to-water');
+    if (!header || !sparkles || !target) return;
+
+    function launchSparkles() {
+      const flyer = document.createElement('div');
+      flyer.className = 'sparkle-fly';
+      // minimal inline styling so this works without changing CSS file
+      Object.assign(flyer.style, {
+        position: 'fixed',
+        left: '0', top: '0',
+        pointerEvents: 'none',
+        zIndex: '9999',
+        transformOrigin: 'center',
+      });
+
+      // reuse whatever is inside #hero-sparkles; fallback to a tiny dot
+      flyer.innerHTML = sparkles.innerHTML || '<span style="display:inline-block;width:6px;height:6px;background:rgba(255,215,0,.95);border-radius:50%"></span>';
+      document.body.appendChild(flyer);
+
+      const from = header.getBoundingClientRect();
+      const to = target.getBoundingClientRect();
+      const startX = from.left + from.width * 0.5;
+      const startY = from.top + from.height * 0.5;
+      const endX = to.left + to.width * 0.5;
+      const endY = to.top + to.height * 0.5;
+
+      // animate using WAAPI: a curved-ish path using a middle keyframe
+      flyer.animate([
+        { transform: `translate(${startX}px, ${startY}px) scale(1)`, opacity: 1 },
+        { transform: `translate(${(startX + endX) / 2}px, ${(startY + endY) / 2 - 60}px) scale(.9)`, opacity: 0.9 },
+        { transform: `translate(${endX}px, ${endY}px) scale(.4)`, opacity: 0 }
+      ], {
+        duration: 1400,
+        easing: 'cubic-bezier(.2,.9,.2,1)',
+        fill: 'forwards'
+      }).onfinish = () => flyer.remove();
+    }
+
+    // small cadence so it feels alive but not annoying
+    setTimeout(launchSparkles, 600);
+    setInterval(launchSparkles, 2300);
+  })();
+  </script>
 
   <!-- About -->
   <section id="about" class="section water-to-grass">
