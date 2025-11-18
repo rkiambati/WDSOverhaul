@@ -133,10 +133,11 @@ body{
 .cloud.c3{left:-6%;top:18%}
 .cloud.c4{right:-6%;top:52%}
 
+/* I made the hero-inner relative to ensure the content is above the decorative elements */
 .hero-inner{
   padding:96px 0 84px;
   position: relative;
-  z-index: 1; /* Ensures content is above decorative elements */
+  z-index: 1;
 }
 .hero-slim .hero-inner{padding:72px 0 110px}
 .eyebrow{letter-spacing:.2em;text-transform:uppercase;font-weight:700;opacity:.9}
