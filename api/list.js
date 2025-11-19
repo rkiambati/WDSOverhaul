@@ -1,17 +1,20 @@
-// /api/list.js — CSV fetcher (with TEMP hardcoded key fallback)
+// /api/list.js — CSV fetcher with demo key + robust fallbacks
 
 /* ====== TEMP DEMO KEY  ==============================================
-   For show & tell. Type this same value on admin.html.
-   REMOVE this after the demo and rely on the ADMIN_KEY env var only.
+   Use for the demo. Type the same value in admin.html.
+   Remove after the demo and rely only on ADMIN_KEY/admin_key env vars.
 ===================================================================== */
-const TEMP_DEMO_KEY = "1234567";
+const TEMP_DEMO_KEY = "WDSdemo2025";
 // ====================================================================
 
-const OWNER  = process.env.GITHUB_OWNER  || process.env.VERCEL_GIT_REPO_OWNER;
-const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG;
-const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || "main";
-const TOKEN  = process.env.GITHUB_TOKEN;
-const ADMIN_KEY = (process.env.ADMIN_KEY && process.env.ADMIN_KEY.trim()) || TEMP_DEMO_KEY;
+// Env detection (support both UPPER and lower names)
+const OWNER  = process.env.GITHUB_OWNER  || process.env.VERCEL_GIT_REPO_OWNER || process.env.github_owner;
+const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG  || process.env.github_repo;
+const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || process.env.github_branch || "main";
+const TOKEN  = process.env.GITHUB_TOKEN  || process.env.github_token;
+
+// Prefer env ADMIN_KEY; if missing, use the demo key
+const ADMIN_KEY = (process.env.ADMIN_KEY || process.env.admin_key || "").trim() || TEMP_DEMO_KEY;
 
 function cors(req, res){
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
@@ -19,48 +22,60 @@ function cors(req, res){
   res.setHeader("Access-Control-Allow-Methods","GET,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers","Content-Type");
 }
+
 function pathFor(kind){
   if (kind === "waitlist") return "data/waitlist.csv";
   if (kind === "sponsor")  return "data/sponsors.csv";
   return null;
 }
+
 function stripUaIp(csv){
-  const lines = csv.split(/\r?\n/);
+  const lines = (csv || "").split(/\r?\n/);
   if (!lines.length) return csv;
   const head = lines[0].toLowerCase();
   if (!head.includes(",ua,ip")) return csv;
 
   const trim = line=>{
     if (!line) return line;
-    const out=[]; let cur="", q=false;
+    const cols=[]; let cur="", q=false;
     for (let i=0;i<line.length;i++){
       const c=line[i];
       if (c === '"' && line[i-1] !== "\\") q=!q;
-      if (c === "," && !q){ out.push(cur); cur=""; } else cur+=c;
+      if (c === "," && !q){ cols.push(cur); cur=""; } else cur+=c;
     }
-    out.push(cur);
-    return out.slice(0, Math.max(out.length-2,0)).join(",");
+    cols.push(cur);
+    // drop last two columns (ua, ip)
+    return cols.slice(0, Math.max(cols.length-2,0)).join(",");
   };
+
   return [trim(lines[0]).replace(/,?ua,?ip$/i,"")]
     .concat(lines.slice(1).map(trim))
     .join("\n");
 }
-async function ghGet(owner, repo, branch, repoPath){
+
+async function ghApiGet(owner, repo, branch, repoPath){
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${repoPath}?ref=${encodeURIComponent(branch)}`;
   const r = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${TOKEN}`,
+      ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}),
       "User-Agent": "wds-overhaul",
       Accept: "application/vnd.github+json",
     }
   });
   if (r.status === 404) return { status:404 };
-  if (!r.ok){
-    const body = await r.text();
-    throw new Error(`GitHub GET ${r.status} ${body}`);
-  }
+  if (!r.ok) return { status:r.status, error: await r.text() };
   const meta = await r.json();
   const csv  = Buffer.from(meta.content, "base64").toString("utf8");
+  return { status:200, content:csv };
+}
+
+async function ghRawGet(owner, repo, branch, repoPath){
+  // For public repos (no token)
+  const raw = `https://raw.githubusercontent.com/${owner}/${repo}/${encodeURIComponent(branch)}/${repoPath}`;
+  const r = await fetch(raw);
+  if (r.status === 404) return { status:404 };
+  if (!r.ok) return { status:r.status, error: await r.text() };
+  const csv = await r.text();
   return { status:200, content:csv };
 }
 
@@ -73,29 +88,26 @@ module.exports = async (req, res) => {
   if (diag === "1"){
     return res.status(200).json({
       ok: true,
-      hasToken: !!TOKEN,
       owner: OWNER || null,
       repo: REPO || null,
       branch: BRANCH || null,
       kind,
-      path: pathFor(kind)
+      path: pathFor(kind),
+      hasToken: !!TOKEN,
+      keyConfigured: !!ADMIN_KEY
     });
   }
 
   try{
-    // 🔐 Accept either real ADMIN_KEY (preferred) or the TEMP fallback
+    // Auth: demo/admin key
     if (!ADMIN_KEY) return res.status(500).json({ error:"No admin key configured" });
     if ((key || "").trim() !== ADMIN_KEY) return res.status(401).json({ error:"Unauthorized" });
 
-    if (!TOKEN) return res.status(500).json({ error:"GITHUB_TOKEN not set" });
-    if (!OWNER || !REPO) return res.status(500).json({ error:"OWNER/REPO not detected; set GITHUB_OWNER and GITHUB_REPO" });
-
+    // Inputs
     const repoPath = pathFor(kind);
     if (!repoPath) return res.status(400).json({ error:"Bad kind" });
-
-    const { status, content } = await ghGet(OWNER, REPO, BRANCH, repoPath);
-
-    if (status === 404){
+    if (!OWNER || !REPO) {
+      // Still allow demo: return empty header so UI loads
       const header =
         kind === "waitlist"
           ? "timestamp,name,email,role,note\n"
@@ -103,7 +115,29 @@ module.exports = async (req, res) => {
       return res.status(200).send(header);
     }
 
-    return res.status(200).send(stripUaIp(content));
+    // 1) Try GitHub API (with token if present)
+    let out = await ghApiGet(OWNER, REPO, BRANCH, repoPath);
+
+    // 2) If API fails (401/403 etc.), try raw URL (public repos)
+    if (out.status !== 200) {
+      out = await ghRawGet(OWNER, REPO, BRANCH, repoPath);
+    }
+
+    // 3) If still not found, return a header so the admin UI shows an empty table
+    if (out.status === 404){
+      const header =
+        kind === "waitlist"
+          ? "timestamp,name,email,role,note\n"
+          : "timestamp,org,name,email,phone,subject,message,budget,interests\n";
+      return res.status(200).send(header);
+    }
+
+    if (out.status !== 200){
+      // Last resort: surface the error
+      return res.status(500).json({ error: out.error || `Git fetch failed (${out.status})` });
+    }
+
+    return res.status(200).send(stripUaIp(out.content));
   }catch(err){
     console.error("[/api/list] error:", err);
     return res.status(500).json({ error: String(err.message || err) });
