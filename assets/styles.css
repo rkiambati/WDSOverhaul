@@ -17,8 +17,8 @@ Reduced-motion is respected. Keep animations subtle and purposeful.
   --ink:    #012C3D;
   --sand:   #654218;
 
-  --bg-sky-1: #4b79d8;       /* top sky */
-  --bg-sky-2: #7bd3e6;       /* bottom sky */
+  --bg-sky-1: #52dafc;       /* top sky (updated to match figma)*/
+  --bg-sky-2: #d7f3fa;       /* bottom sky */
 
   --text: #0e1b2a;
   --text-inv:#ffffff;
@@ -38,7 +38,7 @@ html,body{margin:0;padding:0}
 body{
   font-family:var(--font);
   color:var(--text);
-  background:#0b1523;
+  background:solid transparent;
   line-height:1.55;
 }
 .container{max-width:var(--maxw);padding:0 20px;margin:0 auto}
@@ -51,7 +51,7 @@ body{
 .site-header{
   position:sticky;top:0;z-index:50;
   backdrop-filter:saturate(130%) blur(10px);
-  background:transparent;                 /* transparent on top */
+  background: linear-gradient(180deg,#52dafc , rgba(255, 255, 255, 0.952));
   border-bottom:1px solid transparent;
   transition:background .25s ease,border-color .25s ease, box-shadow .25s ease;
 }
@@ -66,7 +66,7 @@ body{
 }
 .brand{font-weight:800;letter-spacing:.5px;color:#122;
   text-decoration:none;font-size:20px}
-.brand span{color:var(--yellow)}
+.brand span{color: #0b2850} /* wds logo color */
 .links a{
   margin-left:20px;text-decoration:none;color:#123;font-weight:600;
   position:relative;
@@ -114,7 +114,7 @@ body{
 .sun{
   position:absolute;right:10%;top:9%;
   width:380px;height:380px;border-radius:50%;
-  background:radial-gradient(circle at 40% 40%, #ffffff 0 160px, #fff3cf 230px, rgba(255,255,255,0) 70%);
+  background:radial-gradient(circle at 40% 40%, #fffeb6 0 160px, #fffbee 230px, rgba(255,255,255,0) 70%);
   filter:brightness(1.05) saturate(105%) blur(.2px);opacity:.95;
 }
 .cloud{
