@@ -1,79 +1,111 @@
-// /api/list.js — returns CSV contents from GitHub for owner view
+// /api/list.js — CSV fetcher (with TEMP hardcoded key fallback)
+
+/* ====== TEMP DEMO KEY  ==============================================
+   For your show & tell. Type this same value on admin.html.
+   REMOVE this after the demo and rely on the ADMIN_KEY env var only.
+===================================================================== */
+const TEMP_DEMO_KEY = "1234567";
+// ====================================================================
+
 const OWNER  = process.env.GITHUB_OWNER  || process.env.VERCEL_GIT_REPO_OWNER;
 const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG;
 const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || "main";
-const TOKEN  = process.env.GITHUB_TOKEN;        // classic or fine-grained with repo:contents
-const ADMIN_KEY = process.env.ADMIN_KEY;        // passphrase you type on admin page
+const TOKEN  = process.env.GITHUB_TOKEN;
+const ADMIN_KEY = (process.env.ADMIN_KEY && process.env.ADMIN_KEY.trim()) || TEMP_DEMO_KEY;
 
-function setCors(req, res){
+function cors(req, res){
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.setHeader("Vary","Origin");
   res.setHeader("Access-Control-Allow-Methods","GET,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers","Content-Type");
 }
-async function ghGet(path){
-  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
-    headers: { Authorization: `Bearer ${TOKEN}`, "User-Agent":"wds-overhaul" }
-  });
-  if (r.status === 404) return { status: 404 };
-  if (!r.ok) throw new Error(`GitHub GET ${r.status} ${await r.text()}`);
-  const meta = await r.json();
-  const content = Buffer.from(meta.content, "base64").toString("utf8");
-  return { status: 200, content };
+function pathFor(kind){
+  if (kind === "waitlist") return "data/waitlist.csv";
+  if (kind === "sponsor")  return "data/sponsors.csv";
+  return null;
 }
-
-// Strip old ua/ip columns if present
 function stripUaIp(csv){
   const lines = csv.split(/\r?\n/);
   if (!lines.length) return csv;
+  const head = lines[0].toLowerCase();
+  if (!head.includes(",ua,ip")) return csv;
 
-  const header = lines[0].toLowerCase();
-  const looksLikeOld = header.includes(",ua,ip") || header.endsWith(",ua,ip");
-  if (!looksLikeOld) return csv;
-
-  const trim = line => {
+  const trim = line=>{
     if (!line) return line;
-    const parts = []; let cur = "", q = false;
+    const out=[]; let cur="", q=false;
     for (let i=0;i<line.length;i++){
-      const c = line[i];
-      if (c === '"' && line[i-1] !== '\\') q = !q;
-      if (c === ',' && !q) { parts.push(cur); cur = ""; } else cur += c;
+      const c=line[i];
+      if (c === '"' && line[i-1] !== "\\") q=!q;
+      if (c === "," && !q){ out.push(cur); cur=""; } else cur+=c;
     }
-    parts.push(cur);
-    return parts.slice(0, Math.max(parts.length-2, 0)).join(",");
+    out.push(cur);
+    return out.slice(0, Math.max(out.length-2,0)).join(",");
   };
-
-  const cleaned = [ trim(lines[0]).replace(/,?ua,?ip$/i,"") ]
+  return [trim(lines[0]).replace(/,?ua,?ip$/i,"")]
     .concat(lines.slice(1).map(trim))
     .join("\n");
-  return cleaned;
+}
+async function ghGet(owner, repo, branch, repoPath){
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${repoPath}?ref=${encodeURIComponent(branch)}`;
+  const r = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      "User-Agent": "wds-overhaul",
+      Accept: "application/vnd.github+json",
+    }
+  });
+  if (r.status === 404) return { status:404 };
+  if (!r.ok){
+    const body = await r.text();
+    throw new Error(`GitHub GET ${r.status} ${body}`);
+  }
+  const meta = await r.json();
+  const csv  = Buffer.from(meta.content, "base64").toString("utf8");
+  return { status:200, content:csv };
 }
 
 module.exports = async (req, res) => {
-  setCors(req,res);
+  cors(req,res);
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (!TOKEN || !OWNER || !REPO) return res.status(500).json({ error:"Server not configured" });
 
-  const { kind, key } = req.query || {};
-  if (!ADMIN_KEY) return res.status(500).json({ error:"ADMIN_KEY not set" });
-  if (key !== ADMIN_KEY) return res.status(401).json({ error:"Unauthorized" });
+  const { kind, key, diag } = req.query || {};
 
-  let path;
-  if (kind === "waitlist") path = "data/waitlist.csv";
-  else if (kind === "sponsor") path = "data/sponsors.csv";
-  else return res.status(400).json({ error:"Bad kind" });
+  if (diag === "1"){
+    return res.status(200).json({
+      ok: true,
+      hasToken: !!TOKEN,
+      owner: OWNER || null,
+      repo: REPO || null,
+      branch: BRANCH || null,
+      kind,
+      path: pathFor(kind)
+    });
+  }
 
   try{
-    const { status, content } = await ghGet(path);
-    if (status === 404) {
-      const header = kind === "waitlist"
-        ? "timestamp,name,email,role,note\n"
-        : "timestamp,org,name,email,phone,subject,message,budget,interests\n";
+    // 🔐 Accept either real ADMIN_KEY (preferred) or the TEMP fallback
+    if (!ADMIN_KEY) return res.status(500).json({ error:"No admin key configured" });
+    if ((key || "").trim() !== ADMIN_KEY) return res.status(401).json({ error:"Unauthorized" });
+
+    if (!TOKEN) return res.status(500).json({ error:"GITHUB_TOKEN not set" });
+    if (!OWNER || !REPO) return res.status(500).json({ error:"OWNER/REPO not detected; set GITHUB_OWNER and GITHUB_REPO" });
+
+    const repoPath = pathFor(kind);
+    if (!repoPath) return res.status(400).json({ error:"Bad kind" });
+
+    const { status, content } = await ghGet(OWNER, REPO, BRANCH, repoPath);
+
+    if (status === 404){
+      const header =
+        kind === "waitlist"
+          ? "timestamp,name,email,role,note\n"
+          : "timestamp,org,name,email,phone,subject,message,budget,interests\n";
       return res.status(200).send(header);
     }
-    res.status(200).send(stripUaIp(content));
-  }catch(e){
-    console.error(e);
-    res.status(500).json({ error:String(e) });
+
+    return res.status(200).send(stripUaIp(content));
+  }catch(err){
+    console.error("[/api/list] error:", err);
+    return res.status(500).json({ error: String(err.message || err) });
   }
 };
