@@ -1,118 +1,190 @@
-// /api/submit.js — append rows to GitHub CSVs (no IP/UA collection)
-const OWNER  = process.env.GITHUB_OWNER  || process.env.VERCEL_GIT_REPO_OWNER;
-const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG;
-const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || "main";
-const TOKEN  = process.env.GITHUB_TOKEN; 
+// /api/submit.js — append to CSV in repo via GitHub Contents API (no IP/UA)
 
-// Canonical headers (no ua/ip)
-const HEADERS = {
-  waitlist: "timestamp,name,email,role,note\n",
-  sponsors: "timestamp,org,name,email,phone,subject,message,budget,interests\n",
-};
+const OWNER  = process.env.GITHUB_OWNER  || process.env.VERCEL_GIT_REPO_OWNER || process.env.github_owner;
+const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG  || process.env.github_repo;
+const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || process.env.github_branch || "main";
+const TOKEN  = process.env.GITHUB_TOKEN  || process.env.github_token;
 
-function setCors(req, res){
+function cors(req, res){
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.setHeader("Vary", "Origin");
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-}
-const esc = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
-const line = arr => arr.map(esc).join(",") + "\n";
-
-function readJson(req){
-  return new Promise((resolve, reject)=>{
-    let b=""; req.on("data",c=>b+=c);
-    req.on("end", ()=>{ try{ resolve(b?JSON.parse(b):{}); } catch(e){ reject(e); }});
-    req.on("error", reject);
-  });
+  res.setHeader("Access-Control-Allow-Methods","POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers","Content-Type");
 }
 
-async function ghGet(path){
-  return fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?ref=${BRANCH}`, {
-    headers: { Authorization: `Bearer ${TOKEN}`, "User-Agent":"wds-overhaul" }
-  });
+function repoPath(kind){
+  if (kind === "waitlist") return "data/waitlist.csv";
+  if (kind === "sponsor")  return "data/sponsors.csv";
+  return null;
 }
-async function ghPut(path, content, sha){
-  const body = { message:`chore: append ${path} [bot]`, content: Buffer.from(content).toString("base64"), branch: BRANCH };
-  if (sha) body.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
-    method:"PUT",
-    headers:{ Authorization:`Bearer ${TOKEN}`, "User-Agent":"wds-overhaul", "Content-Type":"application/json" },
+
+// headers we’ll create if the file is missing
+const HEADERS = {
+  waitlist: "timestamp,name,email,role,note\n",
+  sponsor:  "timestamp,org,name,email,phone,subject,message,budget,interests\n"
+};
+
+function nowIso(){
+  return new Date().toISOString();
+}
+
+// very small CSV escaper
+function csvCell(v){
+  let s = (v ?? "").toString().replace(/\r?\n/g, " ");
+  if (/[",]/.test(s)) s = '"' + s.replace(/"/g,'""') + '"';
+  return s;
+}
+
+async function getFile(owner, repo, branch, path){
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${encodeURIComponent(branch)}`;
+  const r = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      "User-Agent": "wds-overhaul",
+      Accept: "application/vnd.github+json"
+    }
+  });
+  if (r.status === 404) return { status:404 };
+  if (!r.ok) return { status:r.status, error: await r.text() };
+  const meta = await r.json();
+  return {
+    status: 200,
+    sha: meta.sha,
+    content: Buffer.from(meta.content, "base64").toString("utf8")
+  };
+}
+
+async function putFile(owner, repo, branch, path, content, sha, message){
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+  const body = {
+    message,
+    content: Buffer.from(content, "utf8").toString("base64"),
+    branch,
+    ...(sha ? { sha } : {})
+  };
+  const r = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${TOKEN}`,
+      "User-Agent": "wds-overhaul",
+      Accept: "application/vnd.github+json",
+      "Content-Type":"application/json"
+    },
     body: JSON.stringify(body)
   });
-  const text = await r.text();
-  if (!r.ok) throw new Error(`GitHub PUT ${r.status} ${text}`);
-  try { return JSON.parse(text); } catch { return { ok:true }; }
-}
-
-
-function normalizePayload(body){
-  // Accept either { kind, data } or { type, payload } or a flat body from older forms
-  const kind = body.kind || body.type || body.form || body.section;
-  const data = body.data || body.payload || body;
-
-  if (!kind || typeof data !== "object") return { error:"Bad payload: missing kind/data" };
-
-  if (kind === "waitlist"){
-    const { name, email, role, note, honey } = data;
-    if (honey) return { bot:true, kind, path:"data/waitlist.csv", row:null };
-    if (!name || !email || !role) return { error:"Missing fields for waitlist (name,email,role)" };
-    const row = line([new Date().toISOString(), name, email, role, note || ""]);
-    return { kind, path:"data/waitlist.csv", row };
-  }
-
-  if (kind === "sponsor" || kind === "sponsors"){
-    const { org, name, email, phone, subject, message, budget, interests, honey } = data;
-    if (honey) return { bot:true, kind:"sponsor", path:"data/sponsors.csv", row:null };
-    if (!org || !name || !email) return { error:"Missing fields for sponsor (org,name,email)" };
-    const row = line([new Date().toISOString(), org, name, email, phone||"", subject||"", message||"", budget||"", interests||""]);
-    return { kind:"sponsor", path:"data/sponsors.csv", row };
-  }
-
-  return { error:`Unknown kind: ${kind}` };
+  if (!r.ok) return { status:r.status, error: await r.text() };
+  return { status:200 };
 }
 
 module.exports = async (req, res) => {
-  setCors(req,res);
+  cors(req,res);
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST")   return res.status(405).json({ error:"Method not allowed" });
-  if (!TOKEN || !OWNER || !REPO) return res.status(500).json({ error:"Server not configured (token/owner/repo)" });
+  if (req.method !== "POST")  return res.status(405).json({ error:"POST only" });
 
+  const kind = (req.query.kind || "").trim();
+  const path = repoPath(kind);
+  if (!path) return res.status(400).json({ error:"Bad kind" });
+
+  if (!OWNER || !REPO || !TOKEN){
+    return res.status(500).json({ error:"Server not configured (owner/repo/token missing)" });
+  }
+
+  let data;
   try{
-    const body = await readJson(req);
-    const norm = normalizePayload(body);
-    if (norm.bot)   return res.status(200).json({ ok:true, bot:true });
-    if (norm.error) return res.status(400).json({ error:norm.error });
+    data = req.body && typeof req.body === "object" ? req.body : JSON.parse(req.body || "{}");
+  }catch(e){
+    return res.status(400).json({ error:"Invalid JSON body" });
+  }
 
-    const { path, row } = norm;
-
-    // read current
-    let sha = null, current = "";
-    const r0 = await ghGet(path);
-    if (r0.status === 200){
-      const meta = await r0.json();
-      sha = meta.sha;
-      current = Buffer.from(meta.content, "base64").toString("utf8");
-      // if file exists with old header containing ua/ip, keep header and still append (we removed those cols)
-      if (!current.trim()){
-        current = path.includes("waitlist") ? HEADERS.waitlist : HEADERS.sponsors;
-      } else if (/^(timestamp,).*ua,ip\s*$/im.test(current.split(/\r?\n/)[0])) {
-        // rewrite header to new, keep historical rows as-is
-        const lines = current.split(/\r?\n/);
-        lines[0] = path.includes("waitlist") ? HEADERS.waitlist.trim() : HEADERS.sponsors.trim();
-        current = lines.join("\n");
-      }
-    } else if (r0.status === 404){
-      current = path.includes("waitlist") ? HEADERS.waitlist : HEADERS.sponsors;
-    } else {
-      return res.status(502).json({ error:`GitHub GET ${r0.status}` });
+  // Normalize fields from your forms
+  if (kind === "waitlist"){
+    const name  = (data.name  || "").trim();
+    const email = (data.email || "").trim();
+    const role  = (data.discipline || data.role || "").trim(); // your form uses discipline
+    const note  = (data.notes || data.note || "").trim();
+    if (!name || !email){
+      return res.status(400).json({ error:"Missing fields for waitlist (name,email)" });
     }
 
-    await ghPut(path, current + row, sha);
-    return res.status(200).json({ ok:true });
+    // Build row
+    const row = [
+      csvCell(nowIso()),
+      csvCell(name),
+      csvCell(email),
+      csvCell(role),
+      csvCell(note)
+    ].join(",") + "\n";
 
-  } catch (e){
-    console.error(e);
-    return res.status(500).json({ error:String(e) });
+    try{
+      let file = await getFile(OWNER, REPO, BRANCH, path);
+      let nextContent, sha;
+
+      if (file.status === 404){
+        nextContent = HEADERS.waitlist + row;
+      } else if (file.status === 200){
+        sha = file.sha;
+        nextContent = file.content.endsWith("\n") ? (file.content + row) : (file.content + "\n" + row);
+      } else {
+        return res.status(500).json({ error:file.error || `Fetch failed (${file.status})` });
+      }
+
+      const put = await putFile(OWNER, REPO, BRANCH, path, nextContent, sha, `append waitlist ${name}`);
+      if (put.status !== 200) return res.status(500).json({ error: put.error || "Update failed" });
+
+      return res.status(200).json({ ok:true });
+    }catch(err){
+      return res.status(500).json({ error:String(err.message || err) });
+    }
   }
+
+  if (kind === "sponsor"){
+    // accept org/company; hiring interests can be "hiring" or "interests"
+    const org     = (data.org || data.company || "").trim();
+    const name    = (data.name  || "").trim();
+    const email   = (data.email || "").trim();
+    const phone   = (data.phone || "").trim();
+    const subject = (data.subject || "").trim();
+    const message = (data.message || "").trim();
+    const budget  = (data.budget  || "").trim();
+    const interests = (data.hiring || data.interests || "").trim();
+
+    if (!org || !name || !email){
+      return res.status(400).json({ error:"Missing fields for sponsor (org,name,email)" });
+    }
+
+    const row = [
+      csvCell(nowIso()),
+      csvCell(org),
+      csvCell(name),
+      csvCell(email),
+      csvCell(phone),
+      csvCell(subject),
+      csvCell(message),
+      csvCell(budget),
+      csvCell(interests)
+    ].join(",") + "\n";
+
+    try{
+      let file = await getFile(OWNER, REPO, BRANCH, path);
+      let nextContent, sha;
+
+      if (file.status === 404){
+        nextContent = HEADERS.sponsor + row;
+      } else if (file.status === 200){
+        sha = file.sha;
+        nextContent = file.content.endsWith("\n") ? (file.content + row) : (file.content + "\n" + row);
+      } else {
+        return res.status(500).json({ error:file.error || `Fetch failed (${file.status})` });
+      }
+
+      const put = await putFile(OWNER, REPO, BRANCH, path, nextContent, sha, `append sponsor ${org}`);
+      if (put.status !== 200) return res.status(500).json({ error: put.error || "Update failed" });
+
+      return res.status(200).json({ ok:true });
+    }catch(err){
+      return res.status(500).json({ error:String(err.message || err) });
+    }
+  }
+
+  return res.status(400).json({ error:"Unknown kind" });
 };
