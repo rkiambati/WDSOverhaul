@@ -134,6 +134,7 @@
   <!-- Passphrase gate -->
   <section id="gate" class="card">
     <h1>Unlock admin</h1>
+    <div id="admin-log" class="small" style="margin-top:8px;opacity:.8;"></div>
     <p class="note">Enter the passphrase to enter admin view.</p>
     <input id="pw" type="password" placeholder="Passphrase" />
     <div class="mt">
@@ -170,170 +171,45 @@
 </main>
 
 <script>
-  // ------- Data access -------
-
   const qs = new URLSearchParams(location.search);
-  let OWNER_KEY = "";
+  const pwInput = document.getElementById('pw');
+  const logEl   = document.getElementById('admin-log'); // <div id="admin-log"></div> add this near the password box
+  let KEY = (localStorage.getItem('owner_key') || qs.get('key') || '').trim();
+  if (KEY) pwInput.value = KEY;
 
-  async function fetchCSV(kind){
-    const r = await fetch(`/api/list?kind=${encodeURIComponent(kind)}&key=${encodeURIComponent(OWNER_KEY)}`, { cache:"no-store" });
-    if (!r.ok) throw new Error(`${kind} ${r.status} ${await r.text()}`);
-    return await r.text();
-  }
-  function csvToRows(csv){
-    if (!csv || !csv.trim()) return [];
-    const lines = csv.split(/\r?\n/);
-    const rows = [];
-    for (const line of lines){
-      if (line === "") continue;
-      // parse CSV cells (supports quoted cells with commas)
-      const cells = line.match(/("([^"]|"")*"|[^,]*)/g).filter(Boolean)
-        .map(s => s.replace(/^"|"$/g,"").replace(/""/g,'"'));
-      rows.push(cells);
-    }
-    return rows;
+  function log(msg){ if (logEl) logEl.textContent = msg; }
+
+  async function hit(kind){
+    const url = `/api/list?kind=${encodeURIComponent(kind)}&key=${encodeURIComponent(KEY)}`;
+    const r = await fetch(url, { cache: 'no-store' });
+    const text = await r.text();
+    if (!r.ok) throw new Error(`${r.status} ${text || r.statusText}`);
+    return text;
   }
 
-  // ------- Rendering helpers -------
-
-  const state = {
-    wl:{ rows:[], filtered:[], sortCol:0, sortDir:1 },
-    sp:{ rows:[], filtered:[], sortCol:0, sortDir:1 },
-    query:""
-  };
-
-  function filterRows(rows, q){
-    if (!q) return rows.slice();
-    const qq = q.toLowerCase();
-    return rows.filter((r,i)=> i===0 || r.some(c => String(c).toLowerCase().includes(qq)));
-  }
-
-  function sortRows(rows, col, dir){
-    if (!rows.length) return rows;
-    const head = rows[0];
-    const body = rows.slice(1).sort((a,b)=>{
-      const va = (a[col]??"").toString().toLowerCase();
-      const vb = (b[col]??"").toString().toLowerCase();
-      if (va < vb) return -1*dir;
-      if (va > vb) return  1*dir;
-      return 0;
-    });
-    return [head].concat(body);
-  }
-
-  function renderTable(targetId, key){
-    const { filtered, sortCol, sortDir } = state[key];
-    const el = document.getElementById(targetId);
-    if (!filtered.length){ el.innerHTML = "<tbody><tr><td>No data</td></tr></tbody>"; return; }
-
-    const head = filtered[0];
-    const ths = head.map((h,i)=> {
-      const active = i===sortCol ? `<span class="sort-ind">${sortDir>0?"▲":"▼"}</span>` : "";
-      return `<th data-key="${key}" data-col="${i}">${h}${active}</th>`;
-    }).join("");
-    const body = filtered.slice(1).map(r => `<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("");
-
-    el.innerHTML = `<thead><tr>${ths}</tr></thead><tbody>${body}</tbody>`;
-  }
-
-  function setCounts(){
-    document.getElementById('count-wl').textContent = Math.max(0, state.wl.filtered.length-1);
-    document.getElementById('count-sp').textContent = Math.max(0, state.sp.filtered.length-1);
-  }
-
-  // ------- Actions -------
-
-  async function loadAll(){
-    const wlCSV = await fetchCSV('waitlist');
-    const spCSV = await fetchCSV('sponsor');
-    state.wl.rows = csvToRows(wlCSV);
-    state.sp.rows = csvToRows(spCSV);
-    applyFilterAndRender();
-  }
-
-  function applyFilterAndRender(){
-    // filter
-    state.wl.filtered = filterRows(state.wl.rows, state.query);
-    state.sp.filtered = filterRows(state.sp.rows, state.query);
-    // sort
-    state.wl.filtered = sortRows(state.wl.filtered, state.wl.sortCol, state.wl.sortDir);
-    state.sp.filtered = sortRows(state.sp.filtered, state.sp.sortCol, state.sp.sortDir);
-    // paint
-    renderTable('tbl-wl','wl');
-    renderTable('tbl-sp','sp');
-    setCounts();
-  }
-
-  function exportCSV(filename, filteredRows){
-    if (!filteredRows.length) return;
-    const headers = filteredRows[0];
-    const esc = v => `"${String(v ?? "").replace(/"/g,'""')}"`;
-    const csv = [headers.join(",")]
-      .concat(filteredRows.slice(1).map(r=>headers.map((_,i)=>esc(r[i])).join(",")))
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = filename; a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function copyEmails(filteredRows){
-    if (!filteredRows.length) return;
-    const head = filteredRows[0].map(h=>h.toLowerCase());
-    const idx = head.findIndex(h => h.includes("email"));
-    if (idx === -1){ alert("No Email column found."); return; }
-    const list = filteredRows.slice(1).map(r=>r[idx]).filter(Boolean).join(", ");
-    navigator.clipboard.writeText(list).then(()=> {
-      alert("Emails copied to clipboard.");
-    });
-  }
-
-  // ------- UI wiring -------
-
-  // Unlock
   document.getElementById('go').addEventListener('click', async () => {
-    OWNER_KEY = document.getElementById('pw').value.trim();
-    if (!OWNER_KEY){ alert("Enter passphrase"); return; }
-    try{
-      await fetchCSV('waitlist'); // ping
-      document.getElementById('gate').hidden = true;
-      document.getElementById('app').hidden  = false;
-      await loadAll();
-    }catch(e){
-      console.error(e);
-      alert("Wrong passphrase or server error.");
+    KEY = pwInput.value.trim();            // avoid stray spaces/newlines
+    if (!KEY){ alert('Enter passphrase'); return; }
+    log('Checking key…');
+
+    try {
+      // Try both lists; some deployments use 'sponsor' vs 'sponsors'
+      const wl = await hit('waitlist');    // if this throws, we land in catch
+      let sp;
+      try { sp = await hit('sponsor'); } catch { sp = await hit('sponsors'); }
+
+      // If we got here, key is correct and API is reachable
+      localStorage.setItem('owner_key', KEY);
+      log('Key OK. Loading tables…');
+
+
+    } catch (e) {
+      log(String(e.message || e));
+      alert('Admin login failed: ' + String(e.message || e));
     }
-  });
-
-  // Search
-  document.getElementById('q').addEventListener('input', (e)=>{
-    state.query = e.target.value;
-    applyFilterAndRender();
-  });
-
-  // Refresh
-  document.getElementById('refresh').addEventListener('click', loadAll);
-
-  // Exports
-  document.getElementById('exp-wl').addEventListener('click', ()=> exportCSV('waitlist.csv', state.wl.filtered));
-  document.getElementById('exp-sp').addEventListener('click', ()=> exportCSV('sponsors.csv', state.sp.filtered));
-
-  // Copy emails
-  document.getElementById('copy-wl').addEventListener('click', ()=> copyEmails(state.wl.filtered));
-  document.getElementById('copy-sp').addEventListener('click', ()=> copyEmails(state.sp.filtered));
-
-  // Sort on header click
-  document.addEventListener('click', (e)=>{
-    const th = e.target.closest('th[data-col]');
-    if (!th) return;
-    const key = th.getAttribute('data-key');
-    const col = Number(th.getAttribute('data-col'));
-    const k = state[key];
-    k.sortCol = col;
-    k.sortDir = (k.sortDir===1 && k.sortCol===col) ? -1 : 1;
-    applyFilterAndRender();
   });
 </script>
+
 
 </body>
 </html>
