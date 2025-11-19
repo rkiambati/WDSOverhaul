@@ -88,52 +88,23 @@
     <footer class="footer">
       <div class="container small">© WDS Externals</div>
     </footer>
-
-    <!-- Inline submit handler (front-end only, no IP/UA) -->
-    <script>
-  (function () {
-    const form = document.getElementById('sponsor-form');
-    const ok = document.getElementById('sp-success');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const fd = new FormData(form);
-      const data = Object.fromEntries(fd.entries());
-
-      // ---- normalize field names to what the API expects ----
-      data.org   = data.org   || data.company || data.organization || data.orgName || '';
-      data.name  = data.name  || data.contact || data.contact_name || '';
-      data.email = data.email || data.contact_email || '';
-
-      // Optional: keep the rest as-is
-      data.consent = !!data.consent;
-
-      // quick client-side check so we don’t hit the API with bad data
-      const missing = ['org','name','email'].filter(k => !data[k]?.trim());
-      if (missing.length) {
-        alert('Please fill: ' + missing.join(', '));
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ kind: 'sponsor', data })
-        });
-
-        const text = await res.text();
-        if (!res.ok) throw new Error(text || 'Submit failed');
-
-        if (ok) { ok.hidden = false; setTimeout(() => (ok.hidden = true), 5000); }
-        form.reset();
-      } catch (err) {
-        alert('Could not submit (sponsor): ' + err.message);
-      }
-    });
-  })();
-  </script>
+<script src="assets/forms.js" defer></script>
+<script>
+  // graceful submit using the shared helper
+  const f = document.getElementById('sponsor-form');
+  const ok = document.getElementById('sp-success');
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(f).entries());
+    try {
+      await window.submitSponsor(data);
+      ok.hidden = false; f.reset();
+      setTimeout(() => ok.hidden = true, 5000);
+    } catch (err) {
+      alert('Could not submit (sponsor): ' + err.message);
+    }
+  });
+</script>
 
 
   </body>
