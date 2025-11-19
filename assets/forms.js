@@ -1,70 +1,39 @@
+// Front-end helpers used by waitlist.html and sponsor.html
+// Sends normalized payloads to /api/submit (no IP / UA).
 
-// Small fetch helper that POSTs JSON and throws on non-2xx
-async function postJSON(url, payload) {
+async function postJSON(url, body) {
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(body)
   });
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`${res.status} ${res.statusText} ${text}`);
-  }
-  return res.json().catch(() => ({}));
+  const text = await res.text();
+  if (!res.ok) throw new Error(text || `${res.status}`);
+  return text;
 }
 
-// Waitlist: map `discipline` → `role` so legacy back-end passes validation
-window.submitWaitlist = async (raw) => {
-  const payload = {
-    type: 'waitlist',
-    name: raw.name?.trim(),
-    email: raw.email?.trim(),
-    school: raw.school?.trim() || '',
-    discipline: raw.discipline || '',
-    role: raw.discipline || '',          // <-- legacy API expects `role`
-    notes: raw.notes?.trim() || '',
-    consent: !!raw.consent,
-  };
-  return postJSON('/api/submit', payload);
+// Waitlist form helper
+window.submitWaitlist = async function submitWaitlist(raw) {
+  const data = { ...raw };
+  // normalize optional old fields
+  data.role = data.role || data.discipline || '';
+  data.consent = !!data.consent;
+  await postJSON('/api/submit', { kind: 'waitlist', data });
 };
 
-// --- SPONSOR SUBMIT (with legacy aliases so the old API accepts it) ---
-window.submitSponsor = async (raw) => {
-  const payload = {
-    type: 'sponsor',
-
-    // primary fields
-    name: raw.name?.trim(),
-    email: raw.email?.trim(),
-
-    // current naming
-    company: raw.company?.trim() || '',         // e.g., "Acme"
-    role: raw.role?.trim() || '',               // your title
-    budget: raw.budget || 'Undisclosed',        // Friendly label (e.g., “$1k–$2.5k”)
-    hiring: raw.hiring || 'Both',               // “Yes” / “No” / “Both”
-    message: raw.message?.trim() || '',
-    consent: !!raw.consent,
-
-    // ---- legacy aliases to satisfy older validators/backends ----
-    organization: raw.company?.trim() || '',    // some backends used `organization`
-    org: raw.company?.trim() || '',             // some used `org`
-    tier: raw.budget || 'Undisclosed',          // some used `tier` instead of `budget`
-    recruiting: raw.hiring || 'Both',           // some used `recruiting`
+// Sponsor form helper
+window.submitSponsor = async function submitSponsor(raw) {
+  const d = { ...raw };
+  // normalize to API keys
+  const data = {
+    org:   d.org || d.company || d.organization || '',
+    name:  d.name || d.contact || d.contact_name || '',
+    email: d.email || d.contact_email || '',
+    role: d.role || '',
+    budget: d.budget || 'Undisclosed',
+    hiring: d.hiring || '',
+    message: d.message || '',
+    consent: !!d.consent
   };
-
-  const res = await fetch('/api/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(`${res.status} ${res.statusText} ${text}`);
-  }
-
-  return res.json().catch(() => ({}));
-};
-
-  return postJSON('/api/submit', payload);
+  await postJSON('/api/submit', { kind: 'sponsor', data });
 };
