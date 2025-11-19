@@ -1,7 +1,7 @@
 // /api/list.js — CSV fetcher (with TEMP hardcoded key fallback)
 
 /* ====== TEMP DEMO KEY  ==============================================
-   For your show & tell. Type this same value on admin.html.
+   For show & tell. Type this same value on admin.html.
    REMOVE this after the demo and rely on the ADMIN_KEY env var only.
 ===================================================================== */
 const TEMP_DEMO_KEY = "1234567";
