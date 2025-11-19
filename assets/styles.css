@@ -178,7 +178,7 @@ body{
 
 /* Wave ABOVE Sponsor section – blend into .water-to-grass gradient */
 .wave-to-grass{
-  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'><path fill='%238ec442' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'><path fill='%237fb235' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
 }
 
 
