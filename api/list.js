@@ -2,8 +2,8 @@
 const OWNER  = process.env.GITHUB_OWNER  || process.env.VERCEL_GIT_REPO_OWNER;
 const REPO   = process.env.GITHUB_REPO   || process.env.VERCEL_GIT_REPO_SLUG;
 const BRANCH = process.env.GITHUB_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || "main";
-const TOKEN  = process.env.GITHUB_TOKEN;
-const ADMIN_KEY = process.env.ADMIN_KEY;
+const TOKEN  = process.env.GITHUB_TOKEN;        // classic or fine-grained with repo:contents
+const ADMIN_KEY = process.env.ADMIN_KEY;        // passphrase you type on admin page
 
 function setCors(req, res){
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
@@ -22,22 +22,18 @@ async function ghGet(path){
   return { status: 200, content };
 }
 
-// strips last two columns if they look like ua,ip
+// Strip old ua/ip columns if present
 function stripUaIp(csv){
   const lines = csv.split(/\r?\n/);
   if (!lines.length) return csv;
 
   const header = lines[0].toLowerCase();
-  const looksLikeOld =
-    header.includes(",ua,ip") || header.endsWith(",ua,ip");
-
+  const looksLikeOld = header.includes(",ua,ip") || header.endsWith(",ua,ip");
   if (!looksLikeOld) return csv;
 
   const trim = line => {
     if (!line) return line;
-    // remove last two CSV columns (naive but effective for this case)
-    const parts = [];
-    let cur = "", q = false;
+    const parts = []; let cur = "", q = false;
     for (let i=0;i<line.length;i++){
       const c = line[i];
       if (c === '"' && line[i-1] !== '\\') q = !q;
@@ -50,7 +46,6 @@ function stripUaIp(csv){
   const cleaned = [ trim(lines[0]).replace(/,?ua,?ip$/i,"") ]
     .concat(lines.slice(1).map(trim))
     .join("\n");
-
   return cleaned;
 }
 
@@ -74,9 +69,8 @@ module.exports = async (req, res) => {
       const header = kind === "waitlist"
         ? "timestamp,name,email,role,note\n"
         : "timestamp,org,name,email,phone,subject,message,budget,interests\n";
-      return res.status(200).send(header); // empty CSV with new header
+      return res.status(200).send(header);
     }
-    // never return ua/ip even if older rows have them
     res.status(200).send(stripUaIp(content));
   }catch(e){
     console.error(e);
