@@ -195,6 +195,7 @@ body{
 /* ---------- Section backgrounds ---------- */
 .section{position:relative;padding:80px 0}
 .water-to-grass{background:#8ec442}
+.sponsor-cta-grass{background:#7fb235}
 .pond{background:#135551}
 .grass{background:#8ec442}
 .faq{background:linear-gradient(180deg, #3996c3, #81c7e3); overflow:hidden;}
