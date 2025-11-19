@@ -133,7 +133,12 @@ body{
 .cloud.c3{left:-6%;top:18%}
 .cloud.c4{right:-6%;top:52%}
 
-.hero-inner{padding:96px 0 84px}
+/* I made the hero-inner relative to ensure the content is above the decorative elements */
+.hero-inner{
+  padding:96px 0 84px;
+  position: relative;
+  z-index: 1;
+}
 .hero-slim .hero-inner{padding:72px 0 110px}
 .eyebrow{letter-spacing:.2em;text-transform:uppercase;font-weight:700;opacity:.9}
 .hero h1{font-size:42px;line-height:1.1;margin:.2rem 0 .5rem}
@@ -173,26 +178,26 @@ body{
 
 /* Wave ABOVE Sponsor section – blend into .water-to-grass gradient */
 .wave-to-grass{
-  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'><path fill='%230e6e6d' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'><path fill='%238ec442' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
 }
 
 
 /* → FAQ (top of .faq = #a9cff0) */
 .wave-to-faq{
-  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'><path fill='%23a9cff0' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'><path fill='%233996c3' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
 }
 
 /* → Water (top of .water-to-grass = #0e6e6d) – only if needed */
 .wave-to-water{
-  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'><path fill='%230e6e6d' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
+  background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 90' preserveAspectRatio='none'><path fill='%238ec442' d='M0,40 C240,120 480,0 720,40 C960,80 1200,20 1440,40 L1440,120 L0,120 Z'/></svg>") center/100% 100% no-repeat;
 }
 
 /* ---------- Section backgrounds ---------- */
 .section{position:relative;padding:80px 0}
-.water-to-grass{background:linear-gradient(180deg, #0e6e6d, #0d5c63 46%, #b7d8b9 100%)}
-.pond{background:linear-gradient(180deg, #1b5648, #174b3f 60%, #134035)}
-.grass{background:#b7d8b9}
-.faq{background:linear-gradient(180deg, #a9cff0, #7dc3ec); overflow:hidden;}
+.water-to-grass{background:#8ec442}
+.pond{background:#135551}
+.grass{background:#8ec442}
+.faq{background:linear-gradient(180deg, #3996c3, #81c7e3); overflow:hidden;}
 .footer{padding:28px 0;color:#d9e6f6;background:#082035;text-align:center}
 
 /* Gives the section a bit more space */
@@ -227,6 +232,13 @@ body{
 .chip{
   display:inline-block;background:#e6f4ee;color:#07323b;padding:7px 10px;
   border-radius:999px;margin:4px 6px 0 0;font-weight:600;font-size:.9rem
+}
+
+.about-flowers {
+  position: absolute;
+  inset: 0; /* Covers the entire about section */
+  pointer-events: none; /* Prevents flowers from blocking clicks */
+  z-index: 1; /* Above background, below content */
 }
 
 /* 2×2 collage */
