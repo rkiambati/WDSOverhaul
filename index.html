@@ -11,17 +11,18 @@ Last touched: 2025-10-20 19:00
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WDS Externals Hackathon</title>
+  <title>Spark</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body class="day">
   <!-- Sticky nav -->
   <header class="site-header">
     <div class="container nav">
-      <a class="brand" href="#" aria-label="WDS">< W/<span>DS ></span></a>
+      <img src ="images/WDS LOGO.svg" alt="Spark logo" class="logo" size="40px" height="30px"/>
       <nav class="links">
         <a href="#about">About</a>
         <a href="#testimonials">Testimonials</a>
@@ -37,17 +38,13 @@ Last touched: 2025-10-20 19:00
   <section class="hero">
     <div class="sky">
       <div class="sun"></div>
-      <div class="cloud c1"></div>
-      <div class="cloud c2"></div>
+      <img src="images/header_cloud.png" alt="" aria-hidden="true" style="position: absolute; width: 678px; height: 490px; top: 0px; right: -30px; z-index: 0;">
       <div class="sparkles" id="hero-sparkles"></div>
     </div>
     <div class="container hero-inner" style="padding-bottom: 400px;">
-      <p class="eyebrow">craft at</p>
-      <h1>Spark</h1>
-      <p class="subtitle">Build with us. Learn fast. Ship something you are proud of.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary magnet" href="waitlist.html">Join the waitlist</a>
-      </div>
+      <p class="eyebrow">craft at</p> 
+      <img src="images/Spark.svg" alt="Spark" class="hero-logo" style="position: relative; top: -40px; left: -200px;" />
+      <p class="subtitle">January 31 - February 1, 2025  In person event</p>
     </div>
     <img src="images/mountain-background.png" alt="" class="mountain-divider" aria-hidden="true" style="position: absolute; width: 100%; height: 100%; bottom: 0; left: 0;">
     </section>
@@ -105,21 +102,29 @@ Last touched: 2025-10-20 19:00
     <div class="container split">
       <div class="about-media">
         <!-- Clean 2×2 collage -->
-        <div class="photo-card"></div>
-        <div class="photo-card"></div>
-        <div class="photo-card"></div>
-        <div class="photo-card"></div>
+        <div class="photo-card">
+          <img src="images/DSC_0093.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants working together on projects."/>
+        </div>
+        <div class="photo-card">
+          <img src="images/DSC_1072.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants collaborating on a project."/>
+        </div>
+        <div class="photo-card">
+          <img src="images/DSC_1076.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants presenting their project."/>
+        </div>
+        <div class="photo-card">
+          <img src="images/IMG_4407.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants brainstorming ideas."/>
+        </div>
       </div>
       <div class="about-copy">
         <img src="images/green-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 200px; right: 300px"> 
-        <img src="images/yellow-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 100px; right: 750px">
+
         <img src="images/yellow-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 675px; right: 790px">
         <img src="images/yellow-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 700px; right: 150px">
         <img src="images/red-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 350px; right: 1600px">
         <img src="images/red-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 350px; right: 1600px">
         <img src="images/pink-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 130px; right: 900px">
         <img src="images/pink-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 630px; right: 1650px"> 
-        <h2>What is Spark</h2> 
+        <h2 class="what-is-spark">What is Spark</h2> 
         <p>
           Spark is a bright, vibrant, and minimalistic build weekend where
           hackers, designers, and builders craft useful things together.
@@ -131,44 +136,13 @@ Last touched: 2025-10-20 19:00
       </div>
     </div>
     <div class="about-stars" id="about-stars"></div>
-    <div class="wave wave-bottom wave-to-pond" aria-hidden="true"></div>
-  </section>
-
-  <!-- Testimonials Pond -->
-  <section id="testimonials" class="section pond" style="padding-bottom: 250px;">
-    <div class="container">
-      <h2 class="center" style="color: #ffffff; font-size: 45px;">Testimonials</h2>
-
-      <!-- Decorations -->
-      <img src="images/lilypad.png" alt="" aria-hidden="true" style="position: absolute; width: 200px; height: 200px; top: 150px; left: 275px;">
-      <img src="images/lilypad.png" alt="" aria-hidden="true" style="position: absolute; width: 200px; height: 200px; top: 0; left: 1500px; transform: rotate(180deg);">
-      <img src="images/lilypad.png" alt="" aria-hidden="true" style="position: absolute; width: 200px; height: 200px; top: 300px; left: 1400px; transform: rotate(75deg);">
-      <div class="bubbles" id="bubbles"></div>
-
-      <!-- Cards injected by JS -->
-      <div class="t-grid" id="testimonial-grid" aria-live="polite"></div>
-    </div>
-    <div class="wave wave-bottom wave-to-grass" aria-hidden="true"></div>
   </section>
 
   <!-- Sponsor CTA -->
   <section id="sponsors" class="section sponsor-cta-grass">
+    <img src="images/SparktoSponsor.png" alt="" aria-hidden="true" class="sponsor-hill" style="position: absolute; width: 100%; height: 50%; bottom: 700px; left: 0; z-index: 0;">
     <div class = "sparkles" id="sponsor-stars"></div>
     <div class="container center">
-      <div class="sponsor-carousel" role="region" aria-label="Sponsor logos carousel">
-        <div class="carousel-track">
-          <img src="images/sponsor-helio.svg" alt="Helio Labs logo">
-          <img src="images/sponsor-pine.svg" alt="Pinecrest Ventures logo">
-          <img src="images/sponsor-ripple.svg" alt="Ripple Systems logo">
-          <img src="images/sponsor-orbit.svg" alt="Orbit Industries logo">
-          <img src="images/sponsor-forge.svg" alt="Forge Foundry logo">
-          <img src="images/sponsor-helio.svg" alt="" aria-hidden="true">
-          <img src="images/sponsor-pine.svg" alt="" aria-hidden="true">
-          <img src="images/sponsor-ripple.svg" alt="" aria-hidden="true">
-          <img src="images/sponsor-orbit.svg" alt="" aria-hidden="true">
-          <img src="images/sponsor-forge.svg" alt="" aria-hidden="true">
-        </div>
-      </div>
       <img src="images/pink-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 200px; right: 1300px">
       <img src="images/green-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 600px; right: 300px"> 
       <img src="images/yellow-flower.png" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 120px; right: 750px">
@@ -185,32 +159,34 @@ Last touched: 2025-10-20 19:00
       <!-- Logo rail with caption slot -->
       <div class="logo-rail" id="logo-rail" aria-label="Sponsors"></div>
 
-      <a class="btn btn-peach magnet" href="sponsor.html">Sign Up As a Sponsor</a>
+      <a class="btn btn-peach magnet" href="sponsor.html">Become a Sponsor</a>
     </div>
-    <div class="wave wave-bottom wave-to-faq" aria-hidden="true""></div>
-    <img src="images/faq-top-section.png" alt="" aria-hidden="true" style="position: absolute; width: 100%; height: 100%; top: 600px; left: 0; z-index: 1;">
+    <img src="images/faq-top-section.png" alt="" aria-hidden="true" style="position: absolute; width: 100%; height: 70%; top: 870px; left: 0; z-index: 1;">
   </section>
 
   <!-- FAQ -->
   <section id="faq" class="section faq" style="padding-bottom: 200px; font-size: 20px; color: #ffffff;">
     <div class="sky bg-faq">
-      <div class="cloud c3"></div>
-      <div class="cloud c4"></div>
+      <img src="images/faq_clouds_top_left.png" alt="" aria-hidden="true" style="position: absolute; width: 325px; height: 465px; top: 10px; left: 0px; z-index: 0;">
       <div class="sparkles" id="faq-stars"></div>
+      <img src="images/faq_bottomright.png" alt="" aria-hidden="true" style="position: absolute; width: 380px; height: 450px; bottom: -90px; right: 0px; z-index: 1;">
     </div>
     <div class="container">
       <h2 class="center">FAQ</h2>
-      <div class="faq-list" style="color: #000000;">
+      <div class="faq-list">
         <button class="faq-q" aria-expanded="false" style="z-index: 2;">What is a hackathon?</button>
-        <div class="faq-a" hidden>A weekend event where teams build projects rapidly, learn, and ship.</div>
-
-        <button class="faq-q" aria-expanded="false" style="z-index: 2;">Do I need to know how to code?</button>
-        <div class="faq-a" hidden>Nope. Designers, PMs, and beginners are welcome — we’ll guide you.</div>
-
-        <button class="faq-q" aria-expanded="false" style="z-index: 2;">Do I need a team?</button>
-        <div class="faq-a" hidden>Team formation happens at the event; solo is fine too.</div>
+        <div class="faq-a" hidden>A hackathon is a fast-paced event where people come together to build creative projects usually over 12–36 hours. Participants form teams, brainstorm ideas, and develop solutions using coding, design, and problem-solving. It's a space to learn new skills, meet others in tech, and turn an idea into something real in a short amount of time.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">What is a case competition?</button>
+        <div class="faq-a" hidden>A case competition is an event where teams analyze a real-world business problem and present their solution to judges. Participants research, strategize, and build a clear, persuasive pitch all within a set time limit.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">How does Spark combine a case competition and a hackathon?</button>
+        <div class="faq-a" hidden>Participants will analyze a real-world problem through a case, just like in a case competition, then build their proposed solution as they would in a hackathon, and finally pitch their product to a panel of judges.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">Do I need to come with a team?</button>
+        <div class="faq-a" hidden>You can come solo or with a team. If you already have a team of 3-4 people, you can register with them! If you don't have a team there will be time before hacking to form teams or we can match you up with one before the event.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">Will there be travel reimbursements?</button>
+        <div class="faq-a" hidden>Unfortunately at this time we will not be able to offer travel reimbursements.</div>
       </div>
     </div>
+    <img src="images/faq_hill.png" alt="" aria-hidden="true" class="faq-hill" style="position: absolute; width: 100%; height: 35%; bottom: -150px; left: 0; z-index: 0;">  
   </section>
 
   <footer class="footer">
