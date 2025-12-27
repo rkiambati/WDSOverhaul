@@ -71,7 +71,7 @@ body{
   text-decoration:none;font-size:20px}
 .brand span{color: #0b2850} /* wds logo color */
 .links a{
-  margin-left:20px;text-decoration:none;color:#123;font-weight:600;
+  margin-left:20px;text-decoration:none;color:rgb(255, 255, 255);font-weight:600;
   position:relative;
 }
 .links a:after{
@@ -656,7 +656,7 @@ html { scroll-behavior: smooth; }
     width: 200px;
     height: auto;
     margin-top: 80px;
-    margin-left: 205px;
+    margin-left: 260px;
   }
 
   img.redf-hero{
@@ -724,7 +724,7 @@ html { scroll-behavior: smooth; }
     transform: scale(0.55) translateY(-550px) translateX(-150px) !important;
   }
   .photo-card:nth-child(4) {
-    transform: scale(0.40) translateY(-820px) translateX(-780px) !important;
+    transform: scale(0.40) translateY(-810px) translateX(-780px) !important;
   }
   img.hero-logo{
     left:-216px !important;
@@ -745,7 +745,7 @@ html { scroll-behavior: smooth; }
   }
 
   img.redf-about{
-    right: 193px !important;
+    right: 173px !important;
     bottom: 1295px !important;
     transform: translate(0,0);
     scale: 0.8;
