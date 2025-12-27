@@ -718,7 +718,7 @@ html { scroll-behavior: smooth; }
     transform: scale(0.48) translateY(-370px) translateX(-220px) !important;
   }
   .photo-card:nth-child(2) {
-    transform: scale(0.5) translateY(-300px) translateX(-640px) !important;
+    transform: scale(0.45) translateY(-300px) translateX(-730px) !important;
   }
   .photo-card:nth-child(3) {
     transform: scale(0.55) translateY(-550px) translateX(-150px) !important;
