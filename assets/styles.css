@@ -173,6 +173,12 @@ body{
     radial-gradient(closest-side at 68% 48%, rgba(255,255,255,.96), rgba(255,255,255,.55) 60%, rgba(255,255,255,0) 62%) 100% 22%/58% 72% no-repeat,
     radial-gradient(closest-side at 50% 42%, rgba(255,255,255,.94), rgba(255,255,255,.10) 60%, rgba(255,255,255,0) 62%) 50% 12%/90% 100% no-repeat;
 }
+.eyebrow{
+  left: 5px;
+}
+.subtitle{
+  left: 5px;
+}
 @media (max-width: 640px){
   .cloud.c1{ right:2%; top:26%; transform:scale(.8); }
   .cloud.c2{ right:-10%; top:10%; transform:scale(.75); }
@@ -245,16 +251,16 @@ body{
   width: 600px;
 }
 .about-copy .what-is-spark-1{
-  transform: translateX(-300px) translateY(-130px);
+  transform: translateX(-200px) translateY(-130px);
 }
 .about-copy .what-is-spark-2{
-  transform: translateX(-360px) translateY(-100px);
+  transform: translateX(-260px) translateY(-100px);
 }
 .about-copy .what-is-spark-3{
-  transform: translateX(-160px) translateY(-70px);
+  transform: translateX(-60px) translateY(-70px);
 }
 .about-copy .what-is-spark-4{
-  transform: translateX(-160px) translateY(-30px);
+  transform: translateX(-60px) translateY(-30px);
 }
 
 
@@ -300,7 +306,7 @@ body{
 .photo-card:nth-child(1) {
   height: 250px;
   width: 350px;
-  transform: translateX(-400px) translateY(-50px);
+  transform: translateX(-300px) translateY(-50px);
   justify-self: end; /* This aligns the photo card to the right of its cell */
   align-self: end; /* This aligns the photo card to the bottom of its cell */
 }
@@ -308,19 +314,19 @@ body{
 .photo-card:nth-child(2) {
   height: 350px;
   width: 450px;
-  transform: translateX(-400px) translateY(0px); 
+  transform: translateX(-300px) translateY(0px); 
 }
 
 .photo-card:nth-child(3) {
   height: 250px;
   width: 350px;
-  transform: translateX(-400px) translateY(-30px);
+  transform: translateX(-300px) translateY(-30px);
 }
 
 .photo-card:nth-child(4) {
   height: 300px;
   width: 450px;
-  transform: translateX(-400px) translateY(0px);
+  transform: translateX(-300px) translateY(0px);
 }
 
 /* ---------- Pond visuals ---------- */
@@ -375,7 +381,7 @@ body{
 }
 #sponsors h2{
   margin-bottom:6px;
-  transform: translateY(60px);
+  transform: translateY(20px);
 }
 #sponsors .max-600{
   margin:0 auto 6px;
@@ -653,12 +659,29 @@ html { scroll-behavior: smooth; }
     margin-left: 205px;
   }
 
-  .pinkf-hero{
-    transform: translateX(-500px) translateY(-2000px) !important;
+  img.redf-hero{
+    right: 90px !important;
+    bottom: 60px !important;
+    transform: translate(0,0);
+    scale: 0.6;
   }
-  .redf-hero{
-    transform: translateX(-50px) translateY(-500px) !important;
-    z-index: 3 !important;
+  img.pinkf-hero{
+    right: -10px !important;
+    bottom: 120px !important;
+    transform: translate(0,0);
+    scale: 0.6;
+  }
+  img.orangef-hero{
+    right: 240px !important;
+    bottom: 20px !important;
+    transform: translate(0,0);
+    scale: 0.6;
+  }
+  img.pinkf-hero2{
+    right: 370px !important;
+    bottom: 70px !important;
+    transform: translate(0,0);
+    scale: 0.6;
   }
 
   .mountain-divider{
@@ -679,65 +702,89 @@ html { scroll-behavior: smooth; }
     top: 190px !important;
   }
   .eyebrow{
-    left: -150px !important;
-    top: 45px !important;
+    left: -130px !important;
+    top: 40px !important;
+    font-size: 24px;
   }
   .subtitle{
-    font-size: 12px;
-    left: -55px !important;
-    top: -45px !important;
+    font-size: 16px;
+    max-width: 200px;
+    left:20px !important;
+    top: -35px !important;
+    z-index: 3;
   }
 
   .photo-card:nth-child(1) {
-    transform: scale(0.5) translateY(-270px) translateX(-200px) !important;
+    transform: scale(0.48) translateY(-370px) translateX(-200px) !important;
   }
   .photo-card:nth-child(2) {
-    transform: scale(0.5) translateY(-200px) translateX(-610px) !important;
+    transform: scale(0.5) translateY(-300px) translateX(-630px) !important;
   }
   .photo-card:nth-child(3) {
-    transform: scale(0.55) translateY(-450px) translateX(-130px) !important;
+    transform: scale(0.55) translateY(-550px) translateX(-150px) !important;
   }
   .photo-card:nth-child(4) {
-    transform: scale(0.46) translateY(-615px) translateX(-620px) !important;
+    transform: scale(0.40) translateY(-850px) translateX(-780px) !important;
+  }
+  img.hero-logo{
+    left:-216px !important;
   }
 
-  .greenflower-hero{
-    transform: translateY(-130px) !important;
-    z-index: 2 !important;
-  }
+
 
   .what-is-spark{
     font-size: 40px !important;
-    transform: translateY(-280px) !important;
+    transform: translateY(-380px) !important;
   }
   .about-copy p{
-    font-size: 20px !important;
-    transform: translateY(-300px) !important;
-    max-width: 380px !important;
+    font-size: 25px !important;
+    transform: translateY(-400px) !important;
+    max-width: 360px !important;
     text-justify: inter-word;
     hyphens: auto;
   }
 
+  img.redf-about{
+    right: 193px !important;
+    bottom: 1295px !important;
+    transform: translate(0,0);
+    scale: 0.8;
+    z-index: 3;
+  }
+  img.orangef-about{
+    right: 350px !important;
+    bottom: 160px !important;
+    transform: translate(0,0);
+    z-index: 3;
+  }
+  img.greenf-about{
+    right: 20px !important;
+    bottom: 660px !important;
+    transform: translate(0,0);
+    scale: 0.8;
+    z-index: 3;
+  }
+
   .about-copy .what-is-spark-1{
     font-size: 18px !important;
-    transform: translateY(-250px) !important;
+    transform: translateY(-350px) !important;
   }
   .about-copy .what-is-spark-2{
     font-size: 18px !important;
-    transform: translateY(-240px) !important;
+    transform: translateY(-340px) !important;
   }
   .about-copy .what-is-spark-3{
     font-size: 18px !important;
-    transform: translateY(-190px) !important;
+    transform: translateY(-290px) !important;
   }
   .about-copy .what-is-spark-4{
     font-size: 18px !important;
-    transform: translateY(-150px) !important;
+    transform: translateY(-250px) !important;
   }
 
   .sponsor-hill{
     height:40vw !important;
-    transform: translateY(-410px);
+    transform: translateY(-420px);
   }
 
   #about {
@@ -749,11 +796,38 @@ html { scroll-behavior: smooth; }
   padding-top: 0px; /* Note: I think each section should have this padding */
   }
   .sponsor-faq{
-    transform: translateY(180px);
-    height: 90vw !important;
+    transform: translateY(159px);
+    height: 130vw !important;
   }
-  .sponsors h2{
-    top: 500px !important;
+  #sponsors h2{
+    transform: translateY(-130px) !important;
+  }
+  #sponsors .max-600{
+    transform: translateY(-70px) !important;
+  }
+  #sponsors .btn{
+    bottom: 30px !important;
+  }
+  img.redf-sponsor{
+    right: 20px !important;
+    bottom: 650px !important;
+    transform: translate(0,0);
+  }
+  img.redf-sponsor2{
+    right: 350px !important;
+    bottom: 230px !important;
+    transform: translate(0,0);
+  }
+  img.leaf-sponsor{
+    right: 30px !important;
+    bottom: 230px !important;
+    transform: translate(0,0);
+  }
+  img.leaf-sponsor2{
+    right: 350px !important;
+    bottom: 20px !important;
+    transform: translate(0,0);
+    z-index: 3;
   }
 
   .faq-top-left{
