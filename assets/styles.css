@@ -213,11 +213,11 @@ body{
 .pond{background:#135551}
 .grass{background:#8ec442}
 .faq{background:linear-gradient(180deg, #3996c3, #81c7e3); overflow:hidden;}
-.footer{padding:28px 0;color:#d9e6f6;background:#082035;text-align:center}
+.footer{padding:28px 0;color:#ffffff;background:linear-gradient(180deg, #39280E, #271C0A);text-align:center}
 
 /* Gives the section a bit more space */
 #about {
-  padding-bottom: 180px; /* Note: I think each section should have this padding */
+  padding-bottom: 0px; /* Note: I think each section should have this padding */
 }
 
 /* ---------- About split ---------- */
@@ -229,16 +229,34 @@ body{
   font-size:50px;
   margin:.4rem 0 1rem; 
   margin-left: -60px; /* Shift title left */
-  z-index: 2 ;
+  z-index: 3 ;
 }
 
 .about-copy p
 {
   color: #ffffff;
-  font-size:20px;
-  margin:.4rem 0 1rem;
-  z-index: 2 ;
+  font-size:18px;
+  z-index: 3 ;
+  max-width: 1000px;
+  text-align: justify;
 }
+.about-copy .what-is-spark{
+  transform: translateX(-290px) translateY(-160px);
+  width: 600px;
+}
+.about-copy .what-is-spark-1{
+  transform: translateX(-300px) translateY(-130px);
+}
+.about-copy .what-is-spark-2{
+  transform: translateX(-360px) translateY(-100px);
+}
+.about-copy .what-is-spark-3{
+  transform: translateX(-160px) translateY(-70px);
+}
+.about-copy .what-is-spark-4{
+  transform: translateX(-160px) translateY(-30px);
+}
+
 
 .about-copy p:first-of-type
 {
@@ -271,7 +289,7 @@ body{
   border-radius: 14px;
   border-color: #FFFFFF;
   backdrop-filter: blur(6px);
-  background:#fff;
+  background:transparent;
   border: 10px solid rgba(255,255,255,.3); /* Added a thicker opaque border */
   box-shadow:var(--shadow-soft);
   background-image: linear-gradient(135deg, rgba(0,0,0,.06), rgba(0,0,0,.03));
@@ -280,27 +298,29 @@ body{
 /* I gave each photo card a different height to make the collage more interesting */
 
 .photo-card:nth-child(1) {
-  height: 200px;
-  width: 300px;
-  transform: translateX(-150px);
+  height: 250px;
+  width: 350px;
+  transform: translateX(-400px) translateY(-50px);
   justify-self: end; /* This aligns the photo card to the right of its cell */
   align-self: end; /* This aligns the photo card to the bottom of its cell */
 }
 
 .photo-card:nth-child(2) {
-  height: 250px;
-  width: 350px;
-  transform: translateX(-150px); 
+  height: 350px;
+  width: 450px;
+  transform: translateX(-400px) translateY(0px); 
 }
 
 .photo-card:nth-child(3) {
   height: 250px;
   width: 350px;
+  transform: translateX(-400px) translateY(-30px);
 }
 
 .photo-card:nth-child(4) {
-  height: 200px;
-  width: 250px;
+  height: 300px;
+  width: 450px;
+  transform: translateX(-400px) translateY(0px);
 }
 
 /* ---------- Pond visuals ---------- */
@@ -341,7 +361,7 @@ body{
 
 /* ---------- Sponsor rail ---------- */
 #sponsors.section{
-  padding: 180px 0 340px; /* extra bottom padding for visual balance */
+  padding: 300px 0 120px; /* extra bottom padding for visual balance */
   position: relative;
 }
 
@@ -355,14 +375,17 @@ body{
 }
 #sponsors h2{
   margin-bottom:6px;
+  transform: translateY(60px);
 }
 #sponsors .max-600{
   margin:0 auto 6px;
+  transform: translateY(90px);
 }
 #sponsors .btn{
   margin-top:6px;
-  margin-bottom:36px;
+  margin-bottom:5px;
   padding:12px 28px;
+  bottom: -90px;
 }
 .sponsor-carousel{
   position:relative;
@@ -475,10 +498,11 @@ input:focus,select:focus,textarea:focus{border-color:#6fd6c5;box-shadow:0 0 0 3p
 
 }
 .faq.container{
-  bottom: -900px;
+  bottom: -100px;
 }
 .faq-list{
-  max-width:900px;
+  max-width:800px;
+  bottom: -200px;
   margin:50px auto 0;
   border-top:1px solid rgba(255,255,255,.55);
 }
@@ -541,7 +565,7 @@ input:focus,select:focus,textarea:focus{border-color:#6fd6c5;box-shadow:0 0 0 3p
   .eyebrow,
   .subtitle,
   .hero h1{
-    position:static;
+    position:relative;
     left:auto;
     top:auto;
   }
@@ -557,24 +581,10 @@ input:focus,select:focus,textarea:focus{border-color:#6fd6c5;box-shadow:0 0 0 3p
     font-size:14px;
     margin:0;
   }
-
-  .about-media{ grid-template-columns:1fr 1fr; gap:12px; }
-  .photo-card{
-    width:100% !important;
-    height:140px !important;
-    transform:none !important;
-    justify-self:stretch !important;
-    align-self:stretch !important;
-  }
   .about-copy h2,
   .about-copy p:first-of-type{ margin-left:0; }
 }
 
-@media (max-width: 480px){
-  .about-media{ grid-template-columns:1fr; }
-  .photo-card{ height:160px !important; }
-  .faq-q{ font-size:16px; }
-}
 
 
 /* General smooth scroll as fallback */
@@ -632,4 +642,130 @@ html { scroll-behavior: smooth; }
   position:absolute;
   inset:0;
   pointer-events:none;
+}
+
+@media (max-width: 480px){
+  .hero-logo{
+    position: relative;
+    width: 200px;
+    height: auto;
+    margin-top: 80px;
+    margin-left: 205px;
+  }
+
+  .pinkf-hero{
+    transform: translateX(-500px) translateY(-2000px) !important;
+  }
+  .redf-hero{
+    transform: translateX(-50px) translateY(-500px) !important;
+    z-index: 3 !important;
+  }
+
+  .mountain-divider{
+    position:fixed;
+    height: 60vw !important;
+    width: 100%;
+  }
+  .sun{
+    width: 400px !important;
+    height: 400px !important;
+    top: 120px !important;
+    margin-right: 200px !important;
+  }
+  .header-cloud{
+    width:300px !important;
+    height: 300px !important;
+    right: 50px !important;
+    top: 190px !important;
+  }
+  .eyebrow{
+    left: -150px !important;
+    top: 45px !important;
+  }
+  .subtitle{
+    font-size: 12px;
+    left: -55px !important;
+    top: -45px !important;
+  }
+
+  .photo-card:nth-child(1) {
+    transform: scale(0.5) translateY(-270px) translateX(-200px) !important;
+  }
+  .photo-card:nth-child(2) {
+    transform: scale(0.5) translateY(-200px) translateX(-610px) !important;
+  }
+  .photo-card:nth-child(3) {
+    transform: scale(0.55) translateY(-450px) translateX(-130px) !important;
+  }
+  .photo-card:nth-child(4) {
+    transform: scale(0.46) translateY(-615px) translateX(-620px) !important;
+  }
+
+  .greenflower-hero{
+    transform: translateY(-130px) !important;
+    z-index: 2 !important;
+  }
+
+  .what-is-spark{
+    font-size: 40px !important;
+    transform: translateY(-280px) !important;
+  }
+  .about-copy p{
+    font-size: 20px !important;
+    transform: translateY(-300px) !important;
+    max-width: 380px !important;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+
+  .about-copy .what-is-spark-1{
+    font-size: 18px !important;
+    transform: translateY(-250px) !important;
+  }
+  .about-copy .what-is-spark-2{
+    font-size: 18px !important;
+    transform: translateY(-240px) !important;
+  }
+  .about-copy .what-is-spark-3{
+    font-size: 18px !important;
+    transform: translateY(-190px) !important;
+  }
+  .about-copy .what-is-spark-4{
+    font-size: 18px !important;
+    transform: translateY(-150px) !important;
+  }
+
+  .sponsor-hill{
+    height:40vw !important;
+    transform: translateY(-410px);
+  }
+
+  #about {
+  padding-bottom: 0px; /* Note: I think each section should have this padding */
+  }
+  #sponsors {
+  padding: 0px 0 0px;
+  padding-bottom: 0px;
+  padding-top: 0px; /* Note: I think each section should have this padding */
+  }
+  .sponsor-faq{
+    transform: translateY(180px);
+    height: 90vw !important;
+  }
+  .sponsors h2{
+    top: 500px !important;
+  }
+
+  .faq-top-left{
+    height: 350px !important;
+  }
+
+  .faq-bottom-right{
+    height: 300px !important;
+  }
+  .faq-hill{
+    height: 25vw !important;
+    transform: translateY(-115px) !important;
+  }
+
 }
