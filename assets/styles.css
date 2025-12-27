@@ -715,10 +715,10 @@ html { scroll-behavior: smooth; }
   }
 
   .photo-card:nth-child(1) {
-    transform: scale(0.48) translateY(-370px) translateX(-200px) !important;
+    transform: scale(0.48) translateY(-370px) translateX(-220px) !important;
   }
   .photo-card:nth-child(2) {
-    transform: scale(0.5) translateY(-300px) translateX(-630px) !important;
+    transform: scale(0.5) translateY(-300px) translateX(-640px) !important;
   }
   .photo-card:nth-child(3) {
     transform: scale(0.55) translateY(-550px) translateX(-150px) !important;
