@@ -1,135 +1,213 @@
+<!--
+WDS Externals Hackathon – annotated pass
+Author notes (Reich):
+If something breaks, check the console first, then network panel for /api calls.
+This HTML file now includes section-by-section comments that map to main.js behaviors and styles.css classes.
+Use the IDs and data- attributes as integration points; avoid renaming without updating main.js.
+Last touched: 2025-10-20 19:00
+-->
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Overhaul — Admin</title>
-<link rel="stylesheet" href="assets/styles.css" />
-<style>
-  :root{--bg-0:#07131a;--bg-1:#0b1720;--card:#0f1f2aee;--ink:#e9f6ff;--ink-dim:#bcd5e4;--line:rgba(255,255,255,.10);--line-strong:rgba(255,255,255,.18);--acc:#6fd6c5;--warn:#ffb84a;--shadow:0 6px 28px rgba(0,0,0,.45);--shadow-soft:0 10px 24px rgba(0,0,0,.25);--radius:16px}
-  html,body{height:100%}
-  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif;color:var(--ink);background:radial-gradient(1200px 700px at 85% -10%,#113449,transparent 70%),linear-gradient(180deg,#0a2330,#091a24 60%,#08151b)}
-  .hdr{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);background:linear-gradient(180deg,rgba(9,27,36,.85),rgba(9,27,36,.65));border-bottom:1px solid var(--line-strong)}
-  .hdr-inner{display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:14px 18px}
-  .brand{font-weight:900;letter-spacing:.3px}
-  .muted{color:var(--ink-dim)}
-  .page{max-width:1100px;margin:34px auto 80px;padding:0 18px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-  #gate{max-width:520px;margin:22px auto 0;text-align:center}
-  #pw{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line-strong);background:#0b202b;color:var(--ink);outline:none}
-  #pw:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(111,214,197,.2)}
-  .btn{display:inline-flex;align-items:center;gap:10px;background:#123244;color:var(--ink);border:1px solid var(--line-strong);border-radius:999px;padding:10px 14px;cursor:pointer}
-  .btn:hover{filter:brightness(1.05)}
-  .btn-primary{background:#1c806f;border-color:#1c806f}
-  .btn-ghost{background:transparent;border-color:var(--line-strong)}
-  .toolbar{position:sticky;top:64px;z-index:9;display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:10px;margin:18px 0;background:linear-gradient(180deg,rgba(10,31,41,.85),rgba(10,31,41,.55));border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-soft)}
-  .spacer{flex:1}
-  .search{display:flex;align-items:center;gap:8px;background:#0b202b;border:1px solid var(--line-strong);border-radius:999px;padding:6px 10px}
-  .search input{background:transparent;border:none;outline:none;color:var(--ink);width:220px}
-  h1{margin:0 0 6px} h2{margin:28px 0 12px}
-  .table-wrap{margin-top:10px;overflow:auto;border-radius:12px;border:1px solid var(--line)}
-  table{width:100%;border-collapse:separate;border-spacing:0}
-  thead th{position:sticky;top:0;z-index:1;background:#102633;color:#cfe6ff;text-align:left;font-weight:800;border-bottom:1px solid var(--line-strong);padding:12px 10px;white-space:nowrap;cursor:pointer}
-  tbody td{border-bottom:1px solid var(--line);padding:10px 10px;color:#eaf5ff;vertical-align:top}
-  tbody tr:hover{background:rgba(255,255,255,.03)}
-  .sort-ind{opacity:.8;font-size:.85em;margin-left:6px}
-  .note{color:var(--ink-dim);font-size:.95rem}
-  .pill{display:inline-block;background:#0c2a36;border:1px solid var(--line-strong);padding:2px 8px;border-radius:999px;margin-left:8px}
-  .mt{margin-top:16px}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spark</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css" />
 </head>
-<body>
-<header class="hdr"><div class="hdr-inner"><div class="brand">Overhaul <span class="muted">• Owner</span></div><div class="muted">Server-backed CSV storage</div></div></header>
+<body class="day">
+  <!-- Sticky nav -->
+  <header class="site-header">
+    <div class="container nav">
+      <img src ="images/WDS LOGO.svg" alt="Spark logo" class="logo" size="40px" height="30px"/>
+      <nav class="links">
+        <a href="#about">About</a>
+        <a href="#sponsors">Sponsors</a>
+        <a href="#faq">FAQ</a>
+        <a class="admin" href="admin.html">Admin</a>
+      </nav>
+    </div>
+    <div class="progress"><span id="progress-bar"></span></div>
+  </header>
 
-<main class="page">
-  <section id="gate" class="card">
-    <h1>Unlock admin</h1>
-    <p class="note">Enter the passphrase to enter admin view.</p>
-    <input id="pw" type="password" placeholder="Passphrase" />
-    <div class="mt"><button id="go" class="btn btn-primary">Unlock</button></div>
-    <p class="note" style="margin-top:10px">Tip: 67</p>
-  </section>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="sky">
+      <div class="sun"></div>
+      <img src="images/header_cloud.png" alt="" class ="header-cloud" aria-hidden="true" style="position: absolute; width: 678px; height: 490px; top: 0px; right: -30px; z-index: 0;">
+      <div class="sparkles" id="hero-sparkles"></div>
+    </div>
+    <div class="container hero-inner" style="padding-bottom: 400px;">
+      <p class="eyebrow">craft at</p> 
+      <img src="images/Spark.svg" alt="Spark" class="hero-logo" style="position: relative; top: -40px; left: -200px;" />
+      <p class="subtitle">January 31 - February 1, 2025  In person event</p>
+    </div>
+    <img src="images/mountain-background.png" alt="" class="mountain-divider" aria-hidden="true" style="position: absolute; width: 100%; height: 100%; bottom: 0; left: 0;">
+    <img src="images/pink-flower.png" class="pinkf-hero" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 270px; right: 1800px"> 
+    <img src="images/orange-flower.svg" class="orangef-hero" alt="" aria-hidden="true" style="position: absolute; width: 45px; height: 45px; bottom: 230px; right: 550px"> 
+    <img src="images/red-flower.png" class="redf-hero" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 70px; right: 1380px"> 
+    <img src="images/pink-flower.png" class="pinkf-hero2" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 390px; right: 20px"> 
+    </section>
+  <script>
+  // small, self-contained "fly sparkles from header -> hero wave" routine
+  (function comets() {
+    const header = document.getElementById('progress-bar');
+    const sparkles = document.getElementById('hero-sparkles');
+    const target = document.querySelector('.hero .wave-to-water');
+    if (!header || !sparkles || !target) return;
 
-  <section id="app" hidden>
-    <div class="toolbar">
-      <button class="btn" id="refresh">Refresh</button>
-      <button class="btn" id="exp-wl">Export waitlist CSV</button>
-      <button class="btn" id="exp-sp">Export sponsors CSV</button>
-      <button class="btn btn-ghost" id="copy-wl">Copy emails (waitlist)</button>
-      <button class="btn btn-ghost" id="copy-sp">Copy emails (sponsors)</button>
-      <span class="spacer"></span>
-      <div class="search">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.3-4.3M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" stroke="#bcd5e4" stroke-width="2" stroke-linecap="round"/></svg>
-        <input id="q" placeholder="Search rows…" />
+    function launchSparkles() {
+      const flyer = document.createElement('div');
+      flyer.className = 'sparkle-fly';
+      // minimal inline styling so this works without changing CSS file
+      Object.assign(flyer.style, {
+        position: 'fixed',
+        left: '0', top: '0',
+        pointerEvents: 'none',
+        zIndex: '9999',
+        transformOrigin: 'center',
+      });
+
+      // reuse whatever is inside #hero-sparkles; fallback to a tiny dot
+      flyer.innerHTML = sparkles.innerHTML || '<span style="display:inline-block;width:6px;height:6px;background:rgba(255,215,0,.95);border-radius:50%"></span>';
+      document.body.appendChild(flyer);
+
+      const from = header.getBoundingClientRect();
+      const to = target.getBoundingClientRect();
+      const startX = from.left + from.width * 0.5;
+      const startY = from.top + from.height * 0.5;
+      const endX = to.left + to.width * 0.5;
+      const endY = to.top + to.height * 0.5;
+
+      // animate using WAAPI: a curved-ish path using a middle keyframe
+      flyer.animate([
+        { transform: `translate(${startX}px, ${startY}px) scale(1)`, opacity: 1 },
+        { transform: `translate(${(startX + endX) / 2}px, ${(startY + endY) / 2 - 60}px) scale(.9)`, opacity: 0.9 },
+        { transform: `translate(${endX}px, ${endY}px) scale(.4)`, opacity: 0 }
+      ], {
+        duration: 1400,
+        easing: 'cubic-bezier(.2,.9,.2,1)',
+        fill: 'forwards'
+      }).onfinish = () => flyer.remove();
+    }
+
+    // small cadence so it feels alive but not annoying
+    setTimeout(launchSparkles, 600);
+    setInterval(launchSparkles, 2300);
+  })();
+  </script>
+
+  <!-- About -->
+  <section id="about" class="section water-to-grass">
+    <img src="images/red-flower.png" class="redf-about" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 500px; right: 250px"> 
+    <img src="images/orange-flower.svg" class="orangef-about" alt="" aria-hidden="true" style="position: absolute; width: 45px; height: 45px; bottom: 275px; right: 1045px; z-index: 3;"> 
+    <img src="images/green-flower.png" class="greenf-about" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 20px; right: 1700px; z-index: 2;"> 
+
+    <div class="container split">
+      <div class="about-media">
+        <!-- Clean 2×2 collage -->
+        <div class="photo-card">
+          <img src="images/DSC_0093.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants working together on projects."/>
+        </div>
+        <div class="photo-card">
+          <img src="images/DSC_1072.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants collaborating on a project."/>
+        </div>
+        <div class="photo-card">
+          <img src="images/DSC_1076.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants presenting their project."/>
+        </div>
+        <div class="photo-card">
+          <img src="images/IMG_4407.JPG" style ="width: 100%; height: 100%; object-fit: cover; border-radius: 14px;" alt="WDS Spark event participants brainstorming ideas."/>
+        </div>
+      </div>
+      <div class="about-copy">
+        <h2 class="what-is-spark">What is Spark?</h2> 
+        <p class="what-is-spark-1">
+          Spark Hackathon x Case Competition is a 24-hour innovation challenge
+          where students come together to design, prototype, and pitch creative
+          solutions to a real-world provlem. 
+        
+        </p>
+        <p class="what-is-spark-2">
+          By combining the hands-on building
+          of a hackathon with the strategic thinking of a case competition,
+          Spark pushes participants to go beyond coding and think deeply about
+          why their solutions matter.
+        </p>
+        <p class="what-is-spark-3">
+          At Spark, teams of up to 4 are challeged with a real life case,
+          centered on social good, an issue that impacts communities locally
+          or globally.
+        </p>
+        <p class="what-is-spark-4">
+          Spark is designed for everyone: developers, designers, entrepreneurs,
+          and anyone excited to solve meaningful problems. It's a space where
+          students work collaboratively, learn new skills, and innovate
+          for causes that drive positive change.
+        </p>
       </div>
     </div>
-
-    <h2>Waitlist <span id="count-wl" class="pill">0</span></h2>
-    <div class="card table-wrap"><table id="tbl-wl"></table></div>
-
-    <h2>Sponsors <span id="count-sp" class="pill">0</span></h2>
-    <div class="card table-wrap"><table id="tbl-sp"></table></div>
+    <div class="about-stars" id="about-stars"></div>
   </section>
-</main>
 
-<script>
-  const qs = new URLSearchParams(location.search);
-  let OWNER_KEY = "";
+  <!-- Sponsor CTA -->
+  <section id="sponsors" class="section sponsor-cta-grass">
+    <img src="images/SparktoSponsor.png" alt="" aria-hidden="true" class="sponsor-hill" style="position: absolute; width: 100%; height: 50%; bottom: 450px; left: 0; z-index: 0;">
+    <div class = "sparkles" id="sponsor-stars"></div>
+    <div class="container center">
+      <img src="images/pink-flower.png" class="pinkf-sponsor" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 490px; right: 1500px"> 
+      <img src="images/green-flower.png" class="f-sponsor" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 70px; right: 1650px; z-index: 2;"> 
+      <img src="images/red-flower.png" class="redf-sponsor" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: -50px; right: 1350px; z-index: 2;"> 
+      <img src="images/red-flower.png" class="redf-sponsor2" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 390px; right: 200px"> 
+      <img src="images/orange-flower.svg" class="orangef-sponsor" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 550px; right: 750px"> 
+      <img src="images/leaf.png" class="leaf-sponsor" alt="" aria-hidden="true" style="position: absolute; width: 40px; height: 40px; bottom: 390px; right: 1600px">
+      <img src="images/leaf.png" class="leaf-sponsor2" alt="" aria-hidden="true" style="position: absolute; width: 50px; height: 50px; bottom: 100px; right: 300px"> 
+      <h2 class="want-sponsor" style="color: #ffffff; font-size: 45px;">Want to Sponsor?</h2>
+      <p class="max-600" style="color: #ffffff; font-size: 20px;">
+        Our sponsors make it possible for us to give our prospective developers, designers, and builders
+        the opportunity to build for social good. Hackers make meaningful connections with our sponsors beyond
+        just the hackathon weekend. Stay tuned as we confirm more sponsors for Spark!
+      </p>
 
-  async function fetchCSV(kind){
-    const r = await fetch(`/api/list?kind=${encodeURIComponent(kind)}&key=${encodeURIComponent(OWNER_KEY)}`, { cache:"no-store" });
-    if (!r.ok) throw new Error(`${kind} ${r.status} ${await r.text()}`);
-    return await r.text();
-  }
-  function csvToRows(csv){
-    if (!csv || !csv.trim()) return [];
-    const lines = csv.split(/\r?\n/); const rows=[];
-    for (const line of lines){
-      if (line === "") continue;
-      const cells = line.match(/("([^"]|"")*"|[^,]*)/g).filter(Boolean)
-        .map(s => s.replace(/^"|"$/g,"").replace(/""/g,'"'));
-      rows.push(cells);
-    }
-    return rows;
-  }
+      <!-- Logo rail with caption slot -->
+      <div class="logo-rail" id="logo-rail" aria-label="Sponsors"></div>
 
-  const state = { wl:{rows:[],filtered:[],sortCol:0,sortDir:1}, sp:{rows:[],filtered:[],sortCol:0,sortDir:1}, query:"" };
+      <a class="btn btn-peach magnet" href="sponsor.html">Become a Sponsor</a>
+    </div>
+    <img src="images/faq-top-section.png" class="sponsor-faq" alt="" aria-hidden="true" style="position: absolute; width: 100%; height: 70%; top: 800px; left: 0; z-index: 1;">
+  </section>
 
-  function filterRows(rows,q){ if(!q) return rows.slice(); const qq=q.toLowerCase(); return rows.filter((r,i)=>i===0||r.some(c=>String(c).toLowerCase().includes(qq))); }
-  function sortRows(rows,col,dir){ if(!rows.length) return rows; const head=rows[0]; const body=rows.slice(1).sort((a,b)=>{const va=(a[col]??"").toString().toLowerCase(); const vb=(b[col]??"").toString().toLowerCase(); return va<vb?-1*dir:va>vb?1*dir:0;}); return [head].concat(body); }
-  function renderTable(id,key){
-    const {filtered,sortCol,sortDir}=state[key]; const el=document.getElementById(id);
-    if(!filtered.length){ el.innerHTML="<tbody><tr><td>No data</td></tr></tbody>"; return; }
-    const head=filtered[0];
-    const ths=head.map((h,i)=>`<th data-key="${key}" data-col="${i}">${h}${i===sortCol?`<span class="sort-ind">${sortDir>0?"▲":"▼"}</span>`:""}</th>`).join("");
-    const body=filtered.slice(1).map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("");
-    el.innerHTML=`<thead><tr>${ths}</tr></thead><tbody>${body}</tbody>`;
-  }
-  function setCounts(){ document.getElementById('count-wl').textContent=Math.max(0,state.wl.filtered.length-1); document.getElementById('count-sp').textContent=Math.max(0,state.sp.filtered.length-1); }
-  async function loadAll(){ const wl=await fetchCSV('waitlist'); const sp=await fetchCSV('sponsor'); state.wl.rows=csvToRows(wl); state.sp.rows=csvToRows(sp); apply(); }
-  function apply(){ state.wl.filtered=sortRows(filterRows(state.wl.rows,state.query),state.wl.sortCol,state.wl.sortDir); state.sp.filtered=sortRows(filterRows(state.sp.rows,state.query),state.sp.sortCol,state.sp.sortDir); renderTable('tbl-wl','wl'); renderTable('tbl-sp','sp'); setCounts(); }
-  function exportCSV(filename, rows){ if(!rows.length) return; const head=rows[0]; const esc=v=>`"${String(v??"").replace(/"/g,'""')}"`; const csv=[head.join(",")].concat(rows.slice(1).map(r=>head.map((_,i)=>esc(r[i])).join(","))).join("\n"); const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}); const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url;a.download=filename;a.click(); URL.revokeObjectURL(url); }
-  function copyEmails(rows){ if(!rows.length) return; const head=rows[0].map(h=>h.toLowerCase()); const i=head.findIndex(h=>h.includes("email")); if(i===-1){alert("No Email column found.");return;} const list=rows.slice(1).map(r=>r[i]).filter(Boolean).join(", "); navigator.clipboard.writeText(list).then(()=>alert("Emails copied to clipboard.")); }
+  <!-- FAQ -->
+  <section id="faq" class="section faq" style="padding-bottom: 200px; font-size: 20px; color: #ffffff;">
+    <div class="sky bg-faq">
+      <img src="images/faq_clouds_top_left.png" class="faq-top-left" alt="" aria-hidden="true" style="position: absolute; width: 325px; height: 465px; top: 10px; left: 0px; z-index: 0;">
+      <div class="sparkles" id="faq-stars"></div>
+      <img src="images/faq_bottomright.png" class="faq-bottom-right" alt="" aria-hidden="true" style="position: absolute; width: 380px; height: 450px; bottom: -90px; right: 0px; z-index: 1;">
+    </div>
+    <div class="container">
+      <h2 class="center">FAQ</h2>
+      <div class="faq-list">
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">What is a hackathon?</button>
+        <div class="faq-a" hidden>A hackathon is a fast-paced event where people come together to build creative projects usually over 12–36 hours. Participants form teams, brainstorm ideas, and develop solutions using coding, design, and problem-solving. It's a space to learn new skills, meet others in tech, and turn an idea into something real in a short amount of time.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">What is a case competition?</button>
+        <div class="faq-a" hidden>A case competition is an event where teams analyze a real-world business problem and present their solution to judges. Participants research, strategize, and build a clear, persuasive pitch all within a set time limit.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">How does Spark combine a case competition and a hackathon?</button>
+        <div class="faq-a" hidden>Participants will analyze a real-world problem through a case, just like in a case competition, then build their proposed solution as they would in a hackathon, and finally pitch their product to a panel of judges.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">Do I need to come with a team?</button>
+        <div class="faq-a" hidden>You can come solo or with a team. If you already have a team of 3-4 people, you can register with them! If you don't have a team there will be time before hacking to form teams or we can match you up with one before the event.</div>
+        <button class="faq-q" aria-expanded="false" style="z-index: 2;">Will there be travel reimbursements?</button>
+        <div class="faq-a" hidden>Unfortunately at this time we will not be able to offer travel reimbursements.</div>
+      </div>
+    </div>
+    <img src="images/faq_hill.png" class="faq-hill" alt="" aria-hidden="true" class="faq-hill" style="position: absolute; width: 100%; height: 35%; bottom: -150px; left: 0; z-index: 0;">  
+  </section>
 
-  document.getElementById('go').addEventListener('click', async ()=>{
-    OWNER_KEY=document.getElementById('pw').value.trim();
-    if(!OWNER_KEY){alert("Enter passphrase");return;}
-    try{
-      await fetchCSV('waitlist'); // probe
-      document.getElementById('gate').hidden=true;
-      document.getElementById('app').hidden=false;
-      await loadAll();
-    }catch(e){
-      console.error(e); alert("Wrong passphrase or server error.");
-    }
-  });
-  document.getElementById('q').addEventListener('input',e=>{state.query=e.target.value;apply();});
-  document.getElementById('refresh').addEventListener('click',loadAll);
-  document.getElementById('exp-wl').addEventListener('click',()=>exportCSV('waitlist.csv',state.wl.filtered));
-  document.getElementById('exp-sp').addEventListener('click',()=>exportCSV('sponsors.csv',state.sp.filtered));
-  document.getElementById('copy-wl').addEventListener('click',()=>copyEmails(state.wl.filtered));
-  document.getElementById('copy-sp').addEventListener('click',()=>copyEmails(state.sp.filtered));
-  document.addEventListener('click',e=>{const th=e.target.closest('th[data-col]'); if(!th) return; const key=th.getAttribute('data-key'); const col=Number(th.getAttribute('data-col')); const k=state[key]; k.sortCol=col; k.sortDir=(k.sortDir===1&&k.sortCol===col)?-1:1; apply();});
-</script>
+  <footer class="footer">
+    <div class="container small">© Western Developer Society -- 2025</div>
+  </footer>
+
+  <script src="assets/main.js" defer></script>
 </body>
 </html>
