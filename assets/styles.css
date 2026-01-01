@@ -784,7 +784,7 @@ html { scroll-behavior: smooth; }
 
   .what-is-spark{
     font-size: 40px !important;
-    transform: translateY(-380px) translateX(120px) !important;
+    transform: translateY(-380px) translateX(170px) !important;
   }
   .about-copy p{
     font-size: 25px !important;
