@@ -784,7 +784,7 @@ html { scroll-behavior: smooth; }
 
   .what-is-spark{
     font-size: 40px !important;
-    transform: translateY(-380px) !important;
+    transform: translateY(-380px) translateX(-100px) !important;
   }
   .about-copy p{
     font-size: 25px !important;
@@ -821,15 +821,15 @@ html { scroll-behavior: smooth; }
   }
   .about-copy .what-is-spark-2{
     font-size: 18px !important;
-    transform: translateY(-340px) !important;
+    transform: translateY(-340px) translateX(-100px) !important;
   }
   .about-copy .what-is-spark-3{
     font-size: 18px !important;
-    transform: translateY(-290px) !important;
+    transform: translateY(-290px) translateX(-100px) !important;
   }
   .about-copy .what-is-spark-4{
     font-size: 18px !important;
-    transform: translateY(-250px) !important;
+    transform: translateY(-250px) translateX(-100px) !important;
   }
 
   .sponsor-hill{
