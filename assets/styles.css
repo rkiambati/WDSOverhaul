@@ -64,7 +64,7 @@ body{
   box-shadow:0 4px 12px rgba(0,0,0,.06);
 }
 .nav{
-  display:flex;align-items:center;justify-content:flex-start;
+  display:flex;align-items:center;justify-content:space-between;
   height:64px;
 }
 .brand{font-weight:800;letter-spacing:.5px;color:#122;
@@ -227,63 +227,14 @@ body{
 }
 
 /* ---------- About split ---------- */
-/*.split{display:grid;gap:40px;grid-template-columns:2fr 1fr;align-items:start}*/
+.split{display:grid;gap:28px;grid-template-columns:1.2fr 1fr;align-items:center}
 
-.split {
-  display: grid;
-  grid-template-columns: 520px minmax(450px, 1fr);
-  gap: 200px;
-  align-items: start;
-}
-.about-copy {
-  align-self: start;
-  margin-top: -170px;
-  padding-bottom: 120px;
-}
-
-.about-copy h2 {
-  font-size: 50px;
-  margin-bottom: 1rem;
-  color: #fff;
-}
-
-.about-copy p {
-  max-width: 450px;
-  font-size: 18px;
-  line-height: 1.65;
-  margin-bottom: 1rem;
-  color: #fff;
-  text-align: justify;
-  overflow-wrap: anywhere;
-}
-/*.about-copy {
-  outline: 2px solid red;
-}*/
-.about-copy .what-is-spark{
-  margin-top: 85px;
-  margin-left: -150px;
-}
-.about-copy .what-is-spark-1 {
-  margin-top: 20px;
-  margin-left: 20px;
-}
-.about-copy .what-is-spark-2{
-  margin-left: -56px;
-}
-.about-copy .what-is-spark-3{
-  margin-top: 50px;
-  margin-left: -30px;
-}
-.about-copy .what-is-spark-4{
-  margin-top: 20px;
-  margin-left: -30px;
-}
-/*.about-copy h2
+.about-copy h2
 {
   color: #ffffff;
   font-size:50px;
   margin:.4rem 0 1rem; 
-  margin-left: -60px;
+  margin-left: -60px; /* Shift title left */
   z-index: 3 ;
 }
 
@@ -296,11 +247,11 @@ body{
   text-align: justify;
 }
 .about-copy .what-is-spark{
-  transform: translateX(-250px) translateY(-160px);
+  transform: translateX(-290px) translateY(-160px);
   width: 600px;
 }
 .about-copy .what-is-spark-1{
-  transform: translateX(-170px) translateY(-130px);
+  transform: translateX(-200px) translateY(-130px);
 }
 .about-copy .what-is-spark-2{
   transform: translateX(-260px) translateY(-100px);
@@ -310,7 +261,7 @@ body{
 }
 .about-copy .what-is-spark-4{
   transform: translateX(-60px) translateY(-30px);
-} */
+}
 
 
 .about-copy p:first-of-type
@@ -337,7 +288,6 @@ body{
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 18px;
-  justify-items: center;
   z-index: 2;
 }
 
@@ -354,29 +304,29 @@ body{
 /* I gave each photo card a different height to make the collage more interesting */
 
 .photo-card:nth-child(1) {
-  height: 250x;
+  height: 250px;
   width: 350px;
-  transform: translateX(-170px) translateY(-50px);
+  transform: translateX(-300px) translateY(-50px);
   justify-self: end; /* This aligns the photo card to the right of its cell */
   align-self: end; /* This aligns the photo card to the bottom of its cell */
 }
 
 .photo-card:nth-child(2) {
   height: 350px;
-  max-width: 100%;
-  transform: translateX(-170px) translateY(0px); 
+  width: 450px;
+  transform: translateX(-300px) translateY(0px); 
 }
 
 .photo-card:nth-child(3) {
   height: 250px;
   width: 350px;
-  transform: translateX(-170px) translateY(-30px);
+  transform: translateX(-300px) translateY(-30px);
 }
 
 .photo-card:nth-child(4) {
   height: 300px;
   width: 450px;
-  transform: translateX(-170px) translateY(0px);
+  transform: translateX(-300px) translateY(0px);
 }
 
 /* ---------- Pond visuals ---------- */
