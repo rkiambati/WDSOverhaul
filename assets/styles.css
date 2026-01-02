@@ -219,7 +219,19 @@ body{
 .pond{background:#135551}
 .grass{background:#8ec442}
 .faq{background:linear-gradient(180deg, #3996c3, #81c7e3); overflow:hidden;}
-.footer{padding:28px 0;color:#ffffff;background:linear-gradient(180deg, #39280E, #271C0A);text-align:center}
+
+.footer{
+  padding:28px 0;
+  color:#ffffff;
+  background:linear-gradient(180deg, #39280E, #271C0A);
+  text-align:center;
+}
+.footer .container-small{
+  position:relative;
+  z-index:1;
+}
+
+
 
 /* Gives the section a bit more space */
 #about {
@@ -892,4 +904,138 @@ html { scroll-behavior: smooth; }
     transform: translateY(-115px) !important;
   }
 
+  img.footer-middle-1{
+    position: absolute !important;
+    z-index: 1;
+    width: 95px !important;  /* smaller than desktop */
+    top: 10px !important;   /* adjust vertical position */
+    left: 150px !important;      /* center horizontally */
+  }
+  img.footer-middle-2{
+    position: absolute !important;
+    z-index: 1;
+    height: 15px !important;
+    width: 55px !important;  /* smaller than desktop */
+    top: 23px !important;   /* adjust vertical position */
+    left: 165px !important; 
+  }
+  img.footer-middle-3{
+    position: absolute !important;
+    z-index: 1;
+    width: 95px !important;  /* smaller than desktop */
+    top: 30px !important;   /* adjust vertical position */
+    left: 150px !important; 
+  }
+  img.footer-middle-4{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 65px !important;  /* smaller than desktop */
+    top: 10px !important;   /* adjust vertical position */
+    left: 0px !important; 
+  }
+  img.footer-middle-5{
+    position: absolute !important;
+    z-index: 1;
+    height: 12px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 10px !important;   /* adjust vertical position */
+    left: 83px !important; 
+  }
+  img.footer-middle-6{
+    position: absolute !important;
+    z-index: 1;
+    height: 12px !important;
+    width: 100px !important;  /* smaller than desktop */
+    top: 22px !important;   /* adjust vertical position */
+    left: 10px !important; 
+  }
+  img.footer-middle-7{
+    position: absolute !important;
+    z-index: 1;
+    height: 12px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 39px !important;   /* adjust vertical position */
+    left: 0px !important; 
+  }
+  img.footer-middle-8{
+    position: absolute !important;
+    z-index: 1;
+    height: 12px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 48px !important;   /* adjust vertical position */
+    left: 75px !important; 
+  }
+  img.footer-middle-9{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 10px !important;   /* adjust vertical position */
+    right: 0px !important; 
+  }
+  img.footer-middle-10{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 20px !important;  /* smaller than desktop */
+    top: 22px !important;   /* adjust vertical position */
+    left: 125px !important; 
+  }
+  img.footer-middle-11{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 10px !important;   /* adjust vertical position */
+    right: 66px !important; 
+  }
+  img.footer-middle-12{
+    position: absolute !important;
+    z-index: 1;
+    height: 12px !important;
+    width: 85px !important;  /* smaller than desktop */
+    top: 29px !important;   /* adjust vertical position */
+    right: 0px !important; 
+  }
+  img.footer-middle-13{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 47px !important;   /* adjust vertical position */
+    right: 0px !important; 
+  }
+  img.footer-middle-14{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 47px !important;   /* adjust vertical position */
+    right: 66px !important; 
+  }
+  img.footer-middle-15{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 50px !important;  /* smaller than desktop */
+    top: 58px !important;   /* adjust vertical position */
+    right: 92px !important; 
+  }
+  img.footer-middle-16{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 20px !important;  /* smaller than desktop */
+    top: 22px !important;   /* adjust vertical position */
+    right: 115px !important; 
+  }
+  img.footer-middle-17{
+    position: absolute !important;
+    z-index: 1;
+    height: 10px !important;
+    width: 30px !important;  /* smaller than desktop */
+    top: 55px !important;   /* adjust vertical position */
+    left: 30px !important; 
+  }
 }
